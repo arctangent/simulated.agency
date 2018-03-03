@@ -58,43 +58,33 @@ class Walker(object):
             else:
                 self.target = kwargs['target']
         
-    def draw(self):
+    def colour(self):
         '''
-        Draws a Walker to the screen.
+        Returns the colour that a walker should be drawn
         '''
         
         # Use different colours to show different states
         if self.state == WalkerState.MOVING_RANDOMLY:
-            fill(0, 200, 0)
+            return 'green'
         elif self.state == WalkerState.DEAD:
-            fill(200, 0, 0)
+            return 'red'
         elif self.state == WalkerState.WAITING:
-            fill(200, 200, 0)
+            return 'cyan'
         elif self.state == WalkerState.MOVING_TOWARDS:
-            fill(200, 200, 200)   
+            return 'white'
         else:
             raise NotImplementedError
-            
-        # Draw a rectangle in the correct place
-        rectMode(CENTER)
-        rect(self.location.x_center, self.location.y_center, CELL_SIZE, CELL_SIZE)
-        
-        # Show status of objects with text
-        if SHOW_TEXT:
-            fill(255, 255, 255)
-            textSize(CELL_SIZE / 4)
-            text_x = self.location.x_left + 10
-            text_y = self.location.y_bottom - 10
-            if self.state == WalkerState.WAITING:
-                text(self.timer, text_x, text_y)
-            elif self.state == WalkerState.DEAD:
-                text('dead', text_x, text_y)
         
         
     def do_something(self):
         '''
         This method is called when it is a Walker's turn to do something.
         '''
+
+        # Introduce a bit of randomness
+        dice_roll = randint(1, 100)
+        if dice_roll < 20:
+            self.move_randomly()
         
         #
         # Based on current State, can/should we change State?
@@ -129,11 +119,6 @@ class Walker(object):
                 raise NotImplementedError("Unable to move towards this object")
         else:
             raise NotImplementedError("No action for state provided")
-        
-        #
-        # Don't forget to draw self
-        #
-        self.draw()
     
                                               
     def move_towards(self, target_x, target_y):

@@ -38,9 +38,6 @@ class Location(object):
         '''
         
         self.contents = None
-        fill(BACKGROUND_COLOUR)
-        rectMode(CENTER)
-        rect(self.x_center, self.y_center, CELL_SIZE, CELL_SIZE)
     
     
     def _wrap(self, val, min, max):
