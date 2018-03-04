@@ -2,9 +2,6 @@
 from time import time
 
 
-
-SHOW_TEXT = False
-
 RECORD_VIDEO = True
 START_TIME = time()
 
