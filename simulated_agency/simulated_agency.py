@@ -11,7 +11,7 @@ from walker import Walker, WalkerState
 
 # Set up GUI
 window = Tk()
-canvas = Canvas(window, width=SKETCH_WIDTH, height=SKETCH_HEIGHT, bg='black')
+canvas = Canvas(window, width=SKETCH_WIDTH, height=SKETCH_HEIGHT, bg='black', bd=0, highlightthickness=0)
 canvas.pack()
     
 # Initialise world
