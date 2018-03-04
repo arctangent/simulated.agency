@@ -27,9 +27,6 @@ for x in range(0, world.width):
 # Specify the World the Walkers live in
 Walker.world = world
 
-# Specify the canvas the Walkers are drawn on
-Walker.canvas = canvas
-
 # Specify an initial target
 target_x = int(world.width / 4)
 target_y = int(world.height / 4)
