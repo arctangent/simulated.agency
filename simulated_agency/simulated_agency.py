@@ -11,6 +11,7 @@ from walker import Walker, WalkerState
 
 # Set up GUI
 window = Tk()
+window.resizable(False, False)
 canvas = Canvas(window, width=SKETCH_WIDTH, height=SKETCH_HEIGHT, bg='black', bd=0, highlightthickness=0)
 canvas.pack()
     
