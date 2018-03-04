@@ -1,6 +1,7 @@
 
 from random import randint, choice
 from tkinter import *
+from PIL import ImageGrab
 
 from constants import *
 from world import World
@@ -12,8 +13,11 @@ from walker import Walker, WalkerState
 # Set up GUI
 window = Tk()
 window.resizable(False, False)
-canvas = Canvas(window, width=SKETCH_WIDTH, height=SKETCH_HEIGHT, bg='black', bd=0, highlightthickness=0)
+canvas = Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg='black', bd=0, highlightthickness=0)
 canvas.pack()
+
+# Initialise counter for image frame numbers
+counter = 0
     
 # Initialise world
 world = World(WORLD_WIDTH, WORLD_HEIGHT)
@@ -53,6 +57,9 @@ while True:
     '''
     Event loop
     '''
+
+    # Counter for image frame numbers
+    counter += 1
     
     # Clear the canvas
     canvas.delete('all')
@@ -82,6 +89,20 @@ while True:
     # Update the canvas
     canvas.after(20)
     canvas.update()
+
+    # Save images
+    if RECORD_VIDEO:
+        # The name of our image
+        image_name = 'images/' + str(counter).zfill(8) + '.png'
+
+        # Compute location of screen to grab
+        x1 = window.winfo_rootx() + canvas.winfo_x()
+        y1 = window.winfo_rooty() + canvas.winfo_y()
+        x2 = x1 + canvas.winfo_width()
+        y2 = y1 + canvas.winfo_height()
+        
+        # Save the image
+        ImageGrab.grab((x1, y1, x2, y2)).save(image_name)
 
 
 window.mainloop()
