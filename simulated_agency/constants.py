@@ -2,7 +2,7 @@
 from time import time
 
 
-RECORD_VIDEO = True
+RECORD_VIDEO = False
 START_TIME = time()
 
 CANVAS_WIDTH = 800

@@ -1,12 +1,17 @@
 
 from random import randint, choice
 from tkinter import *
-from PIL import ImageGrab
 
 from constants import *
 from world import World
 from location import Location
 from walker import Walker, WalkerState
+
+# ImageGrab doesn't work on Linux
+try:
+    from PIL import ImageGrab
+except:
+    RECORD_VIDEO = False
 
 
 
