@@ -17,6 +17,7 @@ except:
 
 # Set up GUI
 window = Tk()
+window.title("simulated.agency")
 window.resizable(False, False)
 canvas = Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg='black', bd=0, highlightthickness=0)
 canvas.pack()
