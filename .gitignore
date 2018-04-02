@@ -2,4 +2,4 @@
 *.class
 __pycache__
 images/*
-
+.vscode

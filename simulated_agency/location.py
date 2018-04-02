@@ -1,5 +1,4 @@
 
-from constants import *
     
 class Location(object):
     '''
@@ -24,12 +23,12 @@ class Location(object):
         self.contents = None
         
         # Pixel locations
-        self.x_left = self.x * CELL_SIZE
-        self.x_right = (self.x + 1) * CELL_SIZE
-        self.y_top = self.y * CELL_SIZE
-        self.y_bottom = (self.y + 1) * CELL_SIZE
-        self.x_center = CELL_SIZE/2 + self.x_left
-        self.y_center = CELL_SIZE/2 + self.y_top
+        self.x_left = self.x * self.world.cell_size
+        self.x_right = (self.x + 1) * self.world.cell_size
+        self.y_top = self.y * self.world.cell_size
+        self.y_bottom = (self.y + 1) * self.world.cell_size
+        self.x_center = self.world.cell_size/2 + self.x_left
+        self.y_center = self.world.cell_size/2 + self.y_top
      
            
     def unset(self):

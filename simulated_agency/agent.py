@@ -1,13 +1,12 @@
 
 from random import randint
 
-from constants import *
-from location import Location
+from .location import Location
 
 
-class WalkerState(object):
+class AgentState(object):
     '''
-    Represents the state of the Walker
+    Represents the state of the Agent
     (This object resembles an Enum object)
     '''
         
@@ -17,7 +16,7 @@ class WalkerState(object):
     MOVING_TOWARDS = 3
  
  
-class Walker(object):
+class Agent(object):
     '''
     Represents an agent that can move around in the World.
     '''
@@ -30,29 +29,29 @@ class Walker(object):
         '''
         
         # Ensure world is set
-        assert self.world is not None, "Walker must have 'world' property set!"
+        assert self.world is not None, "Agent must have 'world' property set!"
         # Basic properties
         self.location = location
         # State - assumed to be random motion if not specified
-        state = state or WalkerState.MOVING_RANDOMLY
+        state = state or AgentState.MOVING_RANDOMLY
         self.set_state(state)
         
         
     def set_state(self, state, **kwargs):
         '''
         This function ensures that necessary initialisation
-        actions are carried out when a Walker changes state.
+        actions are carried out when a Agent changes state.
         '''
         
         self.state = state
         
         # If state is WAITING then we need to set
         # a timer so that we know when to change states
-        if self.state == WalkerState.WAITING:
+        if self.state == AgentState.WAITING:
             self.timer = 10
             
         # If state is MOVING_TOWARDS then we need to ensure a target was specified
-        if self.state == WalkerState.MOVING_TOWARDS:
+        if self.state == AgentState.MOVING_TOWARDS:
             if 'target' not in kwargs:
                 raise Exception("No target specified!")
             else:
@@ -60,17 +59,17 @@ class Walker(object):
         
     def colour(self):
         '''
-        Returns the colour that a walker should be drawn
+        Returns the colour that a Agent should be drawn
         '''
         
         # Use different colours to show different states
-        if self.state == WalkerState.MOVING_RANDOMLY:
+        if self.state == AgentState.MOVING_RANDOMLY:
             return 'green'
-        elif self.state == WalkerState.DEAD:
+        elif self.state == AgentState.DEAD:
             return 'red'
-        elif self.state == WalkerState.WAITING:
+        elif self.state == AgentState.WAITING:
             return 'cyan'
-        elif self.state == WalkerState.MOVING_TOWARDS:
+        elif self.state == AgentState.MOVING_TOWARDS:
             return 'white'
         else:
             raise NotImplementedError
@@ -78,7 +77,7 @@ class Walker(object):
         
     def do_something(self):
         '''
-        This method is called when it is a Walker's turn to do something.
+        This method is called when it is a Agent's turn to do something.
         '''
 
         # Introduce a bit of randomness
@@ -89,25 +88,25 @@ class Walker(object):
         #
         # Based on current State, can/should we change State?
         #
-        if self.state == WalkerState.MOVING_RANDOMLY:
+        if self.state == AgentState.MOVING_RANDOMLY:
             # Maybe die, or perhaps take a shorter rest?
             dice_roll = randint(1, 100)
             if dice_roll == 1:
-                self.set_state(WalkerState.DEAD)
+                self.set_state(AgentState.DEAD)
             elif dice_roll <= 10:
-                self.set_state(WalkerState.WAITING)
+                self.set_state(AgentState.WAITING)
             else:
                 self.move_randomly()
-        elif self.state == WalkerState.DEAD:
-            # Dead Walkers just remain where they are forever
+        elif self.state == AgentState.DEAD:
+            # Dead Agents just remain where they are forever
             pass
-        elif self.state == WalkerState.WAITING:
+        elif self.state == AgentState.WAITING:
             # Decrement our timer
             self.timer -= 1
             # Can we change state?
             if self.timer == 0:
-                self.set_state(WalkerState.MOVING_RANDOMLY)
-        elif self.state == WalkerState.MOVING_TOWARDS:
+                self.set_state(AgentState.MOVING_RANDOMLY)
+        elif self.state == AgentState.MOVING_TOWARDS:
             # Move towards the target
             # We need to check whether the target
             # *has* a location or *is* a location
@@ -177,7 +176,7 @@ class Walker(object):
             
     def move_randomly(self):
         '''
-        Move the Walker in a random direction.
+        Move the Agent in a random direction.
         '''
         
         # Randomly choose from up/down/left/right
@@ -194,7 +193,7 @@ class Walker(object):
     
     def move_to_location(self, new_location):
         '''
-        Move the Walker to a directly adjacent location.
+        Move the Agent to a directly adjacent location.
         '''
         
         # Check that proposed new location is empty
