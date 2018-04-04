@@ -2,7 +2,12 @@
 from random import randint, choice
 from time import time
 from tkinter import *
-from PIL import ImageGrab
+
+# Linux doesn't have ImageGrab but we can use pyscreenshot instead
+try:
+    from PIL import ImageGrab
+except:
+    import pyscreenshot as ImageGrab
 
 # Ugly hack to fix s.a imports
 import sys
