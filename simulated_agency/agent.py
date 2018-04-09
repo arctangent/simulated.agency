@@ -75,7 +75,7 @@ class Agent(object):
             raise NotImplementedError
         
         
-    def do_something(self):
+    def go(self):
         '''
         This method is called when it is a Agent's turn to do something.
         '''

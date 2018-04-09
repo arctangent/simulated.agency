@@ -31,7 +31,7 @@ class World(object):
 
         # Attribute storage
         self.locations = {}
-        self.things = []
+        self.agents = []
 
         # GUI
         self.window = Tk()

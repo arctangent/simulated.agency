@@ -43,7 +43,7 @@ for _ in range(0, NUM_WALKERS):
     walker = Walker(world.locations[x, y])
     world.locations[x, y].contents = walker
     walker.set_state(AgentState.MOVING_TOWARDS, target=target)
-    world.things.append(walker)
+    world.agents.append(walker)
             
 
 
@@ -68,13 +68,13 @@ while True:
         target_y = randint(0, world.height - 1)
         target = world.locations[target_x, target_y]
     
-    # Go through the list of things and tell each of them to do something
-    for thing in world.things:
+    # Go through the list of agents and tell each of them to do someagent
+    for agent in world.agents:
         if change_target:
-            thing.set_state(AgentState.MOVING_TOWARDS, target=target)
-        # Tell the thing to act
-        thing.do_something()
-        world.draw(thing.location.x, thing.location.y, fill=thing.colour())
+            agent.set_state(AgentState.MOVING_TOWARDS, target=target)
+        # Tell the agent to act
+        agent.go()
+        world.draw(agent.location.x, agent.location.y, fill=agent.colour())
 
     # Draw the target last
     target_gui_handle = world.canvas.find_withtag('target')
