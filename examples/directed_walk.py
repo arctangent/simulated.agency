@@ -1,13 +1,6 @@
 
 from random import randint, choice
-from time import time
-from tkinter import *
 
-# Linux doesn't have ImageGrab but we can use pyscreenshot instead
-try:
-    from PIL import ImageGrab
-except:
-    import pyscreenshot as ImageGrab
 
 # Ugly hack to fix s.a imports
 import sys
@@ -17,38 +10,14 @@ sys.path.append(sys.path[0] + "/../..")
 from simulated_agency.world import World
 from simulated_agency.location import Location
 from simulated_agency.agent import Agent, AgentState
-
+ 
 
 
 # Constants
-# FIXME: These should be attributes of the World
-
-RECORD_VIDEO = False
-START_TIME = time()
-
-CANVAS_WIDTH = 800
-CANVAS_HEIGHT = 800
-CELL_SIZE = 8       
-
-WORLD_WIDTH = int(CANVAS_WIDTH / CELL_SIZE)
-WORLD_HEIGHT = int(CANVAS_HEIGHT / CELL_SIZE)
-
 NUM_WALKERS = 500
 
-BACKGROUND_COLOUR = 0
-
-
-# Set up GUI
-window = Tk()
-window.resizable(False, False)
-canvas = Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg='black', bd=0, highlightthickness=0)
-canvas.pack()
-
-# Initialise counter for image frame numbers
-counter = 0
-    
 # Initialise world
-world = World(WORLD_WIDTH, WORLD_HEIGHT, CELL_SIZE)
+world = World()
 
 # Add some locations to the world - specifically, a simple grid
 Location.world = world
@@ -76,13 +45,7 @@ for _ in range(0, NUM_WALKERS):
     walker.set_state(AgentState.MOVING_TOWARDS, target=target)
     world.things.append(walker)
             
-# Convenient draw function
-def rect(x, y, fill):
-    if CELL_SIZE < 4:
-        width = 0
-    else:
-        width = int(CELL_SIZE / 5)
-    canvas.create_rectangle(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE * (x + 1), CELL_SIZE * (y + 1), fill=fill, width=width)
+
 
 while True:
     '''
@@ -90,10 +53,10 @@ while True:
     '''
 
     # Counter for image frame numbers
-    counter += 1
+    world.counter += 1
     
     # Clear the canvas
-    canvas.delete('all')
+    world.canvas.delete('all')
 
     # Change the target from time to time
     change_target = False
@@ -111,29 +74,19 @@ while True:
             thing.set_state(AgentState.MOVING_TOWARDS, target=target)
         # Tell the thing to act
         thing.do_something()
-        rect(thing.location.x, thing.location.y, fill=thing.colour())
+        world.draw(thing.location.x, thing.location.y, fill=thing.colour())
 
     # Draw the target last
-    target_gui_handle = canvas.find_withtag('target')
-    rect(target_x, target_y, fill='red')
+    target_gui_handle = world.canvas.find_withtag('target')
+    world.draw(target_x, target_y, fill='red')
 
     # Update the canvas
-    canvas.after(20)
-    canvas.update()
+    world.canvas.after(20)
+    world.canvas.update()
 
     # Save images
-    if RECORD_VIDEO:
-        # The name of our image
-        image_name = 'images/directed_walk/' + str(counter).zfill(8) + '.png'
-
-        # Compute location of screen to grab
-        x1 = window.winfo_rootx() + canvas.winfo_x()
-        y1 = window.winfo_rooty() + canvas.winfo_y()
-        x2 = x1 + canvas.winfo_width()
-        y2 = y1 + canvas.winfo_height()
+    if world.record_video:
+        world.save_image('images/directed_walk/')
         
-        # Save the image
-        ImageGrab.grab((x1, y1, x2, y2)).save(image_name)
 
-
-window.mainloop()
+world.window.mainloop()
