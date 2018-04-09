@@ -1,4 +1,5 @@
 
+import sys
 from time import time
 from tkinter import *
 
@@ -37,6 +38,12 @@ class World(object):
         self.window.resizable(False, False)
         self.canvas = Canvas(self.window, width=self.canvas_width, height=self.canvas_height, bg='black', bd=0, highlightthickness=0)
         self.canvas.pack()
+
+        # Sane program termination
+        def _quit():
+            self.window.destroy()
+            sys.exit()
+        self.window.protocol("WM_DELETE_WINDOW", _quit)
 
     def draw(self, x, y, fill):
         ''' The most basic way to draw something '''
