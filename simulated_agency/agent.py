@@ -40,7 +40,7 @@ class Agent(object):
     def set_state(self, state, **kwargs):
         '''
         This function ensures that necessary initialisation
-        actions are carried out when a Agent changes state.
+        actions are carried out when an Agent changes state.
         '''
         
         self.state = state
@@ -48,7 +48,7 @@ class Agent(object):
         # If state is WAITING then we need to set
         # a timer so that we know when to change states
         if self.state == AgentState.WAITING:
-            self.timer = 10
+            self.timer = randint(10, 100)
             
         # If state is MOVING_TOWARDS then we need to ensure a target was specified
         if self.state == AgentState.MOVING_TOWARDS:
@@ -81,16 +81,18 @@ class Agent(object):
         '''
 
         # Introduce a bit of randomness
-        dice_roll = randint(1, 100)
-        if dice_roll < 20:
-            self.move_randomly()
+        if self.state != AgentState.DEAD:
+            dice_roll = randint(1, 100)
+            if dice_roll < 20:
+                self.move_randomly()
+                return
         
         #
         # Based on current State, can/should we change State?
         #
         if self.state == AgentState.MOVING_RANDOMLY:
             # Maybe die, or perhaps take a shorter rest?
-            dice_roll = randint(1, 100)
+            dice_roll = randint(1, 1000)
             if dice_roll == 1:
                 self.set_state(AgentState.DEAD)
             elif dice_roll <= 10:

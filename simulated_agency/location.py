@@ -21,9 +21,7 @@ class Location(object):
         
         # Location capacity
         # Setting this to zero effectively defines an impassable location
-        if capacity is None:
-            capacity = 1
-        self.capacity = capacity
+        self.capacity = capacity or 1
 
         # Contents
         self.contents = []
