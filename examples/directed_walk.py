@@ -1,5 +1,5 @@
 
-from random import randint, choice
+from random import randint, choice, shuffle
 
 
 # Ugly hack to fix s.a imports
@@ -69,6 +69,7 @@ while True:
         target = world.locations[target_x, target_y]
     
     # Go through the list of agents and tell each of them to do someagent
+    shuffle(world.agents)
     for agent in world.agents:
         if change_target:
             agent.set_state(AgentState.MOVING_TOWARDS, target=target)
