@@ -131,10 +131,12 @@ class Agent(object):
         
         # Adjust for screen wrap
         # Note that dx and dy could be negative
-        if abs(dx) > (self.world.width / 2):
-            dx = ((dx + (self.world.width * 3/2)) % self.world.width) - (self.world.width / 2)
-        if abs(dy) > (self.world.height / 2):
-            dy = ((dy + (self.world.height * 3/2)) % self.world.height) - (self.world.height / 2)
+        if self.world.wrap_x:
+            if abs(dx) > (self.world.width / 2):
+                dx = ((dx + (self.world.width * 3/2)) % self.world.width) - (self.world.width / 2)
+        if self.world.wrap_y:
+            if abs(dy) > (self.world.height / 2):
+                dy = ((dy + (self.world.height * 3/2)) % self.world.height) - (self.world.height / 2)
 
         # Decide which direction to move in depending
         # on the magnituds of the component parts of the vector

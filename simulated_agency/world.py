@@ -26,6 +26,10 @@ class World(object):
         self.width = int(self.canvas_width / self.cell_size)
         self.height = int(self.canvas_height / self.cell_size)
 
+        # Wrapping
+        self.wrap_x = True
+        self.wrap_y = True
+
         # Initial values
         self.counter = 0
 

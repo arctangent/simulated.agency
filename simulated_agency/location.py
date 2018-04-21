@@ -55,13 +55,31 @@ class Location(object):
         '''
         Wrap a value within World width
         '''
-        return self._wrap(val, 0, self.world.width - 1)
+
+        if self.world.wrap_x:
+            return self._wrap(val, 0, self.world.width - 1)
+        else:
+            if val < 0:
+                return 0
+            elif val > self.world.width - 1:
+                return self.world.width - 1
+            else:
+                return val
     
     def _wrap_height(self, val):
         '''
         Wrap a value within World height
         '''
-        return self._wrap(val, 0, self.world.height - 1)
+
+        if self.world.wrap_y:
+            return self._wrap(val, 0, self.world.height - 1)
+        else:
+            if val < 0:
+                return 0
+            elif val > self.world.height - 1:
+                return self.world.height - 1
+            else:
+                return val
    
     #
     # Utility methods to make movement simpler to code.
