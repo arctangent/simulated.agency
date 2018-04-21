@@ -41,7 +41,7 @@ for _ in range(0, NUM_WALKERS):
     x = randint(0, world.width - 1)
     y = randint(0, world.height -1)
     walker = Walker(world.locations[x, y])
-    world.locations[x, y].contents = walker
+    world.locations[x, y].contents.append(walker)
     walker.set_state(AgentState.MOVING_TOWARDS, target=target)
     world.agents.append(walker)
             
@@ -63,7 +63,6 @@ while True:
     dice_roll = randint(1, 30)
     if dice_roll == 1:
         change_target = True
-        target.unset()
         target_x = randint(0, world.width - 1)
         target_y = randint(0, world.height - 1)
         target = world.locations[target_x, target_y]

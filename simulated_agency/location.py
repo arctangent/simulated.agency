@@ -7,7 +7,7 @@ class Location(object):
     
     world = None
     
-    def __init__(self, x, y):
+    def __init__(self, x, y, capacity=None):
         '''
         Initialise
         '''
@@ -19,8 +19,14 @@ class Location(object):
         self.x = x
         self.y = y
         
-        # Start empty
-        self.contents = None
+        # Location capacity
+        # Setting this to zero effectively defines an impassable location
+        if capacity is None:
+            capacity = 1
+        self.capacity = capacity
+
+        # Contents
+        self.contents = []
         
         # Pixel locations
         self.x_left = self.x * self.world.cell_size
@@ -30,14 +36,16 @@ class Location(object):
         self.x_center = self.world.cell_size/2 + self.x_left
         self.y_center = self.world.cell_size/2 + self.y_top
      
-           
-    def unset(self):
+    def occupancy(self):
         '''
-        Remove contents from location and redraw it as empty.
+        Define this to be the number of agents in the location,
+        i.e. no concept of 'mass' or 'size'.
         '''
-        
-        self.contents = None
-    
+        return len(self.contents)
+
+    def is_full(self):
+        return self.occupancy() == self.capacity
+     
     
     def _wrap(self, val, min, max):
         '''
