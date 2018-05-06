@@ -9,7 +9,8 @@ sys.path.append(sys.path[0] + "/../..")
 
 from simulated_agency.world import World
 from simulated_agency.location import Location
-from simulated_agency.agent import Agent, AgentState
+from simulated_agency.agent import Agent
+from simulated_agency import states
  
 
 
@@ -42,7 +43,7 @@ for _ in range(0, NUM_WALKERS):
     y = randint(0, world.height -1)
     walker = Walker(world.locations[x, y])
     world.locations[x, y].contents.append(walker)
-    walker.set_state(AgentState.MOVING_TOWARDS, target=target)
+    walker.set_state(states.MovingTowards, target=target)
     world.agents.append(walker)
             
 
@@ -71,10 +72,10 @@ while True:
     shuffle(world.agents)
     for agent in world.agents:
         if change_target:
-            agent.set_state(AgentState.MOVING_TOWARDS, target=target)
+            agent.set_state(states.MovingTowards, target=target)
         # Tell the agent to act
-        agent.go()
-        world.draw(agent.location.x, agent.location.y, fill=agent.colour())
+        agent.state.execute()
+        world.draw(agent.location.x, agent.location.y, fill=agent.state.colour)
 
     # Draw the target last
     target_gui_handle = world.canvas.find_withtag('target')
