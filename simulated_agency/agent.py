@@ -2,7 +2,7 @@
 from random import randint
 
 from .location import Location
-
+from .mixins import Mobile
 
 class AgentState(object):
     '''
@@ -14,24 +14,27 @@ class AgentState(object):
     WAITING = 1
     MOVING_RANDOMLY = 2
     MOVING_TOWARDS = 3
- 
- 
-class Agent(object):
+
+
+
+
+
+
+class Agent(Mobile):
     '''
     Represents an agent that can move around in the World.
     '''
     
     world = None
         
-    def __init__(self, location, state=None):
+    def __init__(self, location=None, state=None):
         '''
         Initialise
         '''
-        
+        super().__init__(location, state)
         # Ensure world is set
         assert self.world is not None, "Agent must have 'world' property set!"
-        # Basic properties
-        self.location = location
+
         # State - assumed to be random motion if not specified
         state = state or AgentState.MOVING_RANDOMLY
         self.set_state(state)
@@ -193,24 +196,3 @@ class Agent(object):
             self.move_to_location(self.location.left())
         else:
             self.move_to_location(self.location.right())
-    
-    
-    def move_to_location(self, new_loc):
-        '''
-        Move the Agent to a directly adjacent location.
-        '''
-
-        new_location = self.world.locations[new_loc.x, new_loc.y]
-        
-        # Check that proposed new location is not full to capacity
-        if new_location.is_full():
-            # Do nothing
-            return
-        
-        # Remove from current location
-        current_location = self.world.locations[self.location.x, self.location.y]
-        current_location.contents.remove(self)
-        
-        # Add to new location
-        self.location = new_location
-        new_location.contents.append(self)
