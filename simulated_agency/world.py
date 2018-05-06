@@ -15,16 +15,18 @@ class World(object):
     Represents the universe in which our simulation unfolds.
     '''
     
-    def __init__(self):
-        # Constants
-        self.record_video = False
-        self.canvas_width = 800
-        self.canvas_height = 800
-        self.cell_size = 8
+    def __init__(self, width=None, height=None, cell_size=None):
+        # Constants - do not change these directly after world instantiation
+        self.canvas_width = width or 800
+        self.canvas_height = height or 800
+        self.cell_size = cell_size or 8
         
         # Computed properties
         self.width = int(self.canvas_width / self.cell_size)
         self.height = int(self.canvas_height / self.cell_size)
+
+        # Preferences
+        self.record_video = False
 
         # Wrapping
         self.wrap_x = True
@@ -48,6 +50,14 @@ class World(object):
             self.window.destroy()
             sys.exit()
         self.window.protocol("WM_DELETE_WINDOW", _quit)
+
+    def set_cell_size(self, cell_size):
+        '''
+        Call this method instead of changing cell_size directly
+        '''
+        self.cell_size = cell_size
+        self.width = int(self.canvas_width / self.cell_size)
+        self.height = int(self.canvas_height / self.cell_size)
 
     def draw(self, x, y, fill):
         ''' The most basic way to draw something '''

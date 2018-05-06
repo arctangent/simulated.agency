@@ -13,12 +13,11 @@ from simulated_agency.agent import Agent
 from simulated_agency import states
  
 
+# Initialise world
+world = World(cell_size=20)
 
 # Constants
-NUM_WALKERS = 500
-
-# Initialise world
-world = World()
+NUM_WALKERS = int(world.width * world.height * 0.3)
 
 # Add some locations to the world - specifically, a simple grid
 Location.world = world
@@ -36,10 +35,12 @@ Walker.world = world
 for _ in range(0, NUM_WALKERS):
     x = randint(0, world.width - 1)
     y = randint(0, world.height -1)
-    walker = Walker(world.locations[x, y])
-    world.locations[x, y].contents.append(walker)
-    walker.set_state(states.MovingRandomly)
-    world.agents.append(walker)
+    location = world.locations[x, y]
+    if not location.is_full():
+        walker = Walker(location)
+        location.contents.append(walker)
+        walker.set_state(states.MovingRandomly)
+        world.agents.append(walker)
             
 
 
