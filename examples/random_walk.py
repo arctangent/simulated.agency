@@ -68,7 +68,7 @@ while True:
 
     # Save images
     if world.record_video:
-        world.save_image('images/directed_walk/')
+        world.save_image('random_walk')
         
 
 world.window.mainloop()
