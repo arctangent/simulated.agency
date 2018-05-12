@@ -10,11 +10,13 @@ class State(abc.ABC):
     '''
     Abstract base class to define what a State is
     '''
-
+    c = 0
     name = ''
     colour = None
 
     def __init__(self, agent=None):
+        State.c += 1
+        print(State.c)
         self.agent = agent
 
     @abc.abstractmethod

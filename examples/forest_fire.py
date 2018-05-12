@@ -9,7 +9,7 @@ sys.path.append(sys.path[0] + "/../..")
 
 from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
-from simulated_agency.agents import Agent
+from simulated_agency.agents import Cell
 from simulated_agency.states import State
 
 
@@ -44,7 +44,7 @@ class NotOnFire(State):
             # Pick a direction to try to spread in
             location = choice(tree.location.neighbourhood())
             # If that location is empty, put a tree there
-            Tree(location, NotOnFire)
+            Cell(location, NotOnFire)
 
 
 class OnFire(State):
@@ -90,19 +90,14 @@ class OnFire(State):
 # Initialise simulation
 simulation = Simulation(cell_size=40)
 Location.simulation = simulation
+Cell.simulation = simulation
 
 # Constants
 NUM_TREES = int(simulation.width * simulation.height * 0.5)
 
-# A Tree is identical to the Agent class (for now)
-Tree = Agent
-
-# Specify the Simulation the Trees live in
-Tree.simulation = simulation
-
 # Add some Trees to the simulation
 for _ in range(0, NUM_TREES):
-    Tree(simulation.random_location(), NotOnFire)
+    Cell(simulation.random_location(), NotOnFire)
             
 
 
@@ -117,12 +112,12 @@ def loop():
     # Clear the canvas
     simulation.canvas.delete('all')
 
-    # Go through the list of agents and tell each of them to do something
-    shuffle(Tree.objects)
-    for agent in Tree.objects:
-        # Tell the agent to act
-        agent.state.execute()
-        simulation.draw(agent)
+    # Go through the list of cells and tell each of them to do something
+    shuffle(Cell.objects)
+    for cell in Cell.objects:
+        # Tell the cell to act
+        cell.state.execute()
+        simulation.draw(cell)
 
     # Save images
     if simulation.record_video:
