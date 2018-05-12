@@ -35,10 +35,6 @@ class World(object):
         # Initial values
         self.counter = 0
 
-        # Attribute storage
-        self.locations = {}
-        self.agents = []
-
         # GUI
         self.window = Tk()
         self.window.resizable(False, False)

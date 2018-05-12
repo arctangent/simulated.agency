@@ -62,8 +62,8 @@ while True:
         target.location = Location(x, y)
     
     # Go through the list of agents and tell each of them to do something
-    shuffle(world.agents)
-    for agent in world.agents:
+    shuffle(Walker.objects)
+    for agent in Walker.objects:
         if change_target:
             # Don't change the state of our target
             if agent is target:

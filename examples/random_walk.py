@@ -46,8 +46,8 @@ while True:
     world.canvas.delete('all')
 
     # Go through the list of agents and tell each of them to do something
-    shuffle(world.agents)
-    for agent in world.agents:
+    shuffle(Walker.objects)
+    for agent in Walker.objects:
         # Tell the agent to act
         agent.state.execute()
         world.draw(agent)

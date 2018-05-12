@@ -8,14 +8,15 @@ class Createable(object):
     '''
 
     world = None
+    objects = []
 
     def __init__(self, *args, **kwargs):
         # Ensure world is set
         assert self.world is not None, "Creatable objects must have 'world' property set!"
-        self.world.agents.append(self)
+        Createable.objects.append(self)
 
     def destroy(self):
-        self.world.agents.remove(self)
+        Createable.objects.remove(self)
 
 
 class Locatable(Createable):
