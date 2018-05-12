@@ -88,7 +88,7 @@ class OnFire(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=40)
+simulation = Simulation(cell_size=4)
 Location.simulation = simulation
 Cell.simulation = simulation
 
