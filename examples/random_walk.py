@@ -28,8 +28,8 @@ Walker.simulation = simulation
 
 # Add some walkers to the simulation
 for _ in range(0, NUM_WALKERS):
-    x = randint(0, simulation.width - 1)
-    y = randint(0, simulation.height -1)
+    x = simulation.rand_x()
+    y = simulation.rand_y()
     Walker(Location(x, y), states.MovingRandomly)
             
 

@@ -1,5 +1,7 @@
 
 import sys
+
+from random import randint
 from time import time
 from tkinter import *
 
@@ -54,6 +56,12 @@ class Simulation(object):
         self.cell_size = cell_size
         self.width = int(self.canvas_width / self.cell_size)
         self.height = int(self.canvas_height / self.cell_size)
+
+    def rand_x(self):
+        return randint(0, self.width - 1)
+
+    def rand_y(self):
+        return randint(0, self.height - 1)
 
     def draw(self, thing, fill=None):
         '''
