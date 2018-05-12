@@ -1,16 +1,34 @@
 
+from collections import defaultdict
     
 class Location(object):
     '''
     Represents a location within the World.
     '''
-    
+
     world = None
+
+    # Borg/Monostate pattern
+    # Store instance state in class-level dict
+    # indexed on (x, y) i.e. unique location identifier
+    __shared_state = defaultdict(dict)
     
     def __init__(self, x, y, capacity=None):
         '''
         Initialise
         '''
+
+        # Borg/Monostate pattern
+        # If we already instantiated a location at (x, y)
+        # then copy the state into the new location at (x, y)
+        if (x, y) in Location.__shared_state.keys():
+            self.__dict__ = Location.__shared_state[x, y]
+            return
+
+        #
+        # Init code below runs only the first time a
+        # location is instantiated at a particular (x, y)
+        #
         
         # Ensure world is set
         assert self.world is not None, "Location must have 'world' property set!"
@@ -33,7 +51,15 @@ class Location(object):
         self.y_bottom = (self.y + 1) * self.world.cell_size
         self.x_center = self.world.cell_size/2 + self.x_left
         self.y_center = self.world.cell_size/2 + self.y_top
-     
+
+        # Borg/Monostate pattern
+        # The first time we instatiate a location at (x, y)
+        # we must store that state in the class for later
+        Location.__shared_state[x, y] = self.__dict__
+
+    def __repr__(self):
+        return 'Location (%s, %s) with contents %s' % (self.x, self.y, self.contents)
+
     def occupancy(self):
         '''
         Define this to be the number of agents in the location,
@@ -103,7 +129,7 @@ class Location(object):
             return self._up
         else:
             y = self._wrap_height(self.y - 1)
-            self._up = self.world.locations[self.x, y]
+            self._up = Location(self.x, y)
             return self._up
     
     def down(self):
@@ -111,7 +137,7 @@ class Location(object):
             return self._down
         else:        
             y = self._wrap_height(self.y + 1)
-            self._down = self.world.locations[self.x, y]
+            self._down = Location(self.x, y)
             return self._down
         
     def left(self):
@@ -119,7 +145,7 @@ class Location(object):
             return self._left
         else:    
             x = self._wrap_width(self.x - 1)
-            self._left = self.world.locations[x, self.y]
+            self._left = Location(x, self.y)
             return self._left
     
     def right(self):
@@ -127,5 +153,5 @@ class Location(object):
             return self._right
         else:        
             x = self._wrap_width(self.x + 1)
-            self._right = self.world.locations[x, self.y]
+            self._right = Location(x, self.y)
             return self._right

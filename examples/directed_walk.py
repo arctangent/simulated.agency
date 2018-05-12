@@ -14,16 +14,11 @@ from simulated_agency import states
  
 
 # Initialise world
-world = World()
+world = World(cell_size=8)
+Location.world = world
 
 # Constants
 NUM_WALKERS = int(world.width * world.height * 0.1)
-
-# Add some locations to the world - specifically, a simple grid
-Location.world = world
-for x in range(0, world.width):
-    for y in range(0, world.height):
-        world.locations[x, y] = Location(x, y)
 
 # A Walker is identical to the Agent class (for now)
 Walker = Agent
@@ -31,21 +26,18 @@ Walker = Agent
 # Specify the World the Walkers live in
 Walker.world = world
 
-# Specify an initial target
-x = int(world.width / 4)
-y = int(world.height / 4)
-location = world.locations[x, y]
 # A static target is the same thing as a "Dead" walker
 Static = states.Dead
 Static.colour = 'cyan'
-target = Walker(location, Static)
+x = int(world.width / 4)
+y = int(world.height / 4)
+target = Walker(Location(x, y), Static)
 
 # Add some walkers to the world
 for _ in range(0, NUM_WALKERS):
     x = randint(0, world.width - 1)
     y = randint(0, world.height -1)
-    location = world.locations[x, y]
-    Walker(location, states.MovingTowards, target=target)
+    Walker(Location(x, y), states.MovingTowards, target=target)
             
 
 
@@ -67,7 +59,7 @@ while True:
         change_target = True
         x = randint(0, world.width - 1)
         y = randint(0, world.height - 1)
-        target.location = world.locations[x, y]
+        target.location = Location(x, y)
     
     # Go through the list of agents and tell each of them to do something
     shuffle(world.agents)

@@ -15,15 +15,10 @@ from simulated_agency import states
 
 # Initialise world
 world = World(cell_size=20)
+Location.world = world
 
 # Constants
 NUM_WALKERS = int(world.width * world.height * 0.3)
-
-# Add some locations to the world - specifically, a simple grid
-Location.world = world
-for x in range(0, world.width):
-    for y in range(0, world.height):
-        world.locations[x, y] = Location(x, y)
 
 # A Walker is identical to the Agent class (for now)
 Walker = Agent
@@ -35,8 +30,7 @@ Walker.world = world
 for _ in range(0, NUM_WALKERS):
     x = randint(0, world.width - 1)
     y = randint(0, world.height -1)
-    location = world.locations[x, y]
-    Walker(location, states.MovingRandomly)
+    Walker(Location(x, y), states.MovingRandomly)
             
 
 

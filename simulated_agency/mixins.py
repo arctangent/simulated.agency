@@ -1,4 +1,5 @@
 
+from .location import Location
 
 class Createable(object):
     '''
@@ -29,14 +30,12 @@ class Locatable(Createable):
             return None
 
         instance = super().__new__(cls)
-        instance.location = location
         return instance
 
     def __init__(self, location, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)      
         self.location = location
-        self.location.contents.append(self)
-        
+        self.location.contents.append(self)  
 
     def destroy(self):
         super().destroy()
@@ -55,8 +54,8 @@ class Mobile(Locatable):
         '''
         Move the Agent to a directly adjacent location.
         '''
-
-        new_location = self.world.locations[new_loc.x, new_loc.y]
+        
+        new_location = Location(new_loc.x, new_loc.y)
         
         # Check that proposed new location is not full to capacity
         if new_location.is_full():
@@ -64,9 +63,9 @@ class Mobile(Locatable):
             return
         
         # Remove from current location
-        current_location = self.world.locations[self.location.x, self.location.y]
+        current_location = Location(self.location.x, self.location.y)
         current_location.contents.remove(self)
-        
+
         # Add to new location
         self.location = new_location
         new_location.contents.append(self)
