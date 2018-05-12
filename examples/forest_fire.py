@@ -106,7 +106,7 @@ for _ in range(0, NUM_TREES):
             
 
 
-while True:
+def loop():
     '''
     Event loop
     '''
@@ -124,13 +124,11 @@ while True:
         agent.state.execute()
         simulation.draw(agent)
 
-    # Update the canvas
-    simulation.canvas.after(20)
-    simulation.canvas.update()
-
     # Save images
     if simulation.record_video:
         simulation.save_image('forest_fire')
-        
 
+    simulation.canvas.after(20, loop)
+        
+loop()
 simulation.window.mainloop()

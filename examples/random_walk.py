@@ -32,7 +32,7 @@ for _ in range(0, NUM_WALKERS):
             
 
 
-while True:
+def loop():
     '''
     Event loop
     '''
@@ -50,13 +50,11 @@ while True:
         agent.state.execute()
         simulation.draw(agent)
 
-    # Update the canvas
-    simulation.canvas.after(20)
-    simulation.canvas.update()
-
     # Save images
     if simulation.record_video:
         simulation.save_image('random_walk')
-        
 
+    simulation.canvas.after(20, loop)
+        
+loop()
 simulation.window.mainloop()

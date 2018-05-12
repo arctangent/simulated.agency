@@ -84,7 +84,7 @@ for x in range(0, simulation.width):
             
 
 
-while True:
+def loop():
     '''
     Event loop
     '''
@@ -93,7 +93,7 @@ while True:
     simulation.counter += 1
 
     # Figure out what the cells would do next
-
+    
     for cell in Cell.objects:
         # Cache current cell
         current_state = cell.state
@@ -109,13 +109,11 @@ while True:
         if cell.dirty:
             simulation.draw(cell)
 
-    # Update the canvas
-    simulation.canvas.after(20)
-    simulation.canvas.update()
-
     # Save images
     if simulation.record_video:
         simulation.save_image('game_of_life')
-        
 
+    simulation.canvas.after(20, loop)
+        
+loop()
 simulation.window.mainloop()

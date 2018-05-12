@@ -39,7 +39,7 @@ for _ in range(0, NUM_WALKERS):
             
 
 
-while True:
+def loop():
     '''
     Event loop
     '''
@@ -72,13 +72,11 @@ while True:
     # Draw the target last
     simulation.draw(target)
 
-    # Update the canvas
-    simulation.canvas.after(20)
-    simulation.canvas.update()
-
     # Save images
     if simulation.record_video:
         simulation.save_image('directed_walk')
-        
 
+    simulation.canvas.after(20, loop)
+        
+loop()
 simulation.window.mainloop()

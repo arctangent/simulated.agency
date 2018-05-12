@@ -5,7 +5,7 @@ class Location(object):
     '''
     Represents a location within the Simulation.
     '''
-
+    
     simulation = None
 
     # Borg/Monostate pattern
@@ -20,7 +20,7 @@ class Location(object):
         '''
         Initialise
         '''
-
+        
         # Borg/Monostate pattern
         # If we already instantiated a location at (x, y)
         # then copy the state into the new location at (x, y)
