@@ -44,20 +44,16 @@ class NotOnFire(State):
             # Pick a direction to try to spread in
             dice_roll = randint(1, 4)
             if dice_roll == 1:
-                target = tree.location.up()
+                location = tree.location.up()
             elif dice_roll == 2:
-                target = tree.location.down()
+                location = tree.location.down()
             elif dice_roll == 3:
-                target = tree.location.left()
+                location = tree.location.left()
             elif dice_roll == 4:
-                target = tree.location.right()
+                location = tree.location.right()
 
             # If that location is empty, put a tree there
-            if not target.is_full():
-                new_tree = Tree(target)
-                new_tree.set_state(NotOnFire)
-                target.contents.append(new_tree)
-                world.agents.append(new_tree)
+            Tree(location, NotOnFire)
 
 
 class OnFire(State):
@@ -84,8 +80,7 @@ class OnFire(State):
         self.timer -= 1
         if self.timer == 0:
             # Remove self from the world (i.e. burn down)
-            tree.location.contents.remove(tree)
-            world.agents.remove(tree)
+            tree.destroy()
             return
 
         # If still on fire, see if the fire spreads
@@ -111,7 +106,7 @@ class OnFire(State):
 
 # Initialise world
 world = World(cell_size=40)
-world.record_video = True
+
 # Constants
 NUM_TREES = int(world.width * world.height * 0.5)
 
@@ -132,11 +127,7 @@ for _ in range(0, NUM_TREES):
     x = randint(0, world.width - 1)
     y = randint(0, world.height -1)
     location = world.locations[x, y]
-    if not location.is_full():
-        tree = Tree(location)
-        tree.set_state(NotOnFire)
-        location.contents.append(tree)
-        world.agents.append(tree)
+    Tree(location, NotOnFire)
             
 
 

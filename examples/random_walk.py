@@ -36,11 +36,7 @@ for _ in range(0, NUM_WALKERS):
     x = randint(0, world.width - 1)
     y = randint(0, world.height -1)
     location = world.locations[x, y]
-    if not location.is_full():
-        walker = Walker(location)
-        location.contents.append(walker)
-        walker.set_state(states.MovingRandomly)
-        world.agents.append(walker)
+    Walker(location, states.MovingRandomly)
             
 
 

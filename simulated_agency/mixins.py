@@ -1,23 +1,55 @@
 
 
+class Createable(object):
+    '''
+    Represents something which can be created in a world
+    and which can also be destroyed (i.e. removed from it)
+    '''
+
+    world = None
+
+    def __init__(self, *args, **kwargs):
+        # Ensure world is set
+        assert self.world is not None, "Locatable objects must have 'world' property set!"
+        self.world.agents.append(self)
+
+    def destroy(self):
+        self.world.agents.remove(self)
 
 
-class Locatable(object):
+class Locatable(Createable):
     '''
     Represents something which can have a location
     '''
 
-    def __init__(self, location=None, *args, **kwargs):
-        self.location = location
+    def __new__(cls, location, *args, **kwargs):
+        # We should only create an instance of a thing
+        # if the specified location has room for it
+        if location.is_full():
+            return None
 
+        instance = super().__new__(cls)
+        instance.location = location
+        return instance
+
+    def __init__(self, location, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.location = location
+        self.location.contents.append(self)
+        
+
+    def destroy(self):
+        super().destroy()
+        self.location.contents.remove(self)
+        
 
 class Mobile(Locatable):
     '''
     Represents something which can move around
     '''
 
-    def __init__(self, location=None, *args, **kwargs):
-        super().__init__(location, *args, **kwargs)
+    def __init__(self, location, *args, **kwargs):
+        super().__init__(location)
 
     def move_to_location(self, new_loc):
         '''

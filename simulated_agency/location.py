@@ -43,6 +43,10 @@ class Location(object):
 
     def is_full(self):
         return self.occupancy() == self.capacity
+
+    def has_space(self):
+        has_space = not self.is_full()
+        return has_space
      
     
     def _wrap(self, val, min, max):
