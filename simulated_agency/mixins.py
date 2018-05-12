@@ -10,7 +10,7 @@ class Createable(object):
 
     def __init__(self, *args, **kwargs):
         # Ensure world is set
-        assert self.world is not None, "Locatable objects must have 'world' property set!"
+        assert self.world is not None, "Creatable objects must have 'world' property set!"
         self.world.agents.append(self)
 
     def destroy(self):
