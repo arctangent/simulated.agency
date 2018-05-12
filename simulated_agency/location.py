@@ -47,7 +47,6 @@ class Location(object):
     def has_space(self):
         has_space = not self.is_full()
         return has_space
-     
     
     def _wrap(self, val, min, max):
         '''
