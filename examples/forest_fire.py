@@ -147,7 +147,7 @@ while True:
     for agent in world.agents:
         # Tell the agent to act
         agent.state.execute()
-        world.draw(agent.location.x, agent.location.y, fill=agent.state.colour)
+        world.draw(agent)
 
     # Update the canvas
     world.canvas.after(20)

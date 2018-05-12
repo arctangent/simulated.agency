@@ -31,3 +31,6 @@ class Agent(Mobile):
         
         # We pass the kwargs to the state class so it can init correctly
         self.state = state_class(self, **state_params)
+
+    def colour(self):
+        return self.state.colour

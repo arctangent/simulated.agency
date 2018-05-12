@@ -59,13 +59,30 @@ class World(object):
         self.width = int(self.canvas_width / self.cell_size)
         self.height = int(self.canvas_height / self.cell_size)
 
-    def draw(self, x, y, fill):
-        ''' The most basic way to draw something '''
-        if self.cell_size < 4:
-            width = 0
+    def draw(self, thing, fill=None):
+        '''
+        A very simple way to draw something
+        '''
+
+        # Location to draw
+        x = thing.location.x
+        y = thing.location.y
+
+        # Colour to draw
+        fill = fill or thing.colour()
+
+        # Determine appropriate border width
+        if self.cell_size <= 4:
+            border_width = 0
         else:
-            width = int(self.cell_size / 5)
-            self.canvas.create_rectangle(self.cell_size * x, self.cell_size * y, self.cell_size * (x + 1), self.cell_size * (y + 1), fill=fill, width=width)
+            border_width = int(self.cell_size / 5)
+
+        # Draw a rectangle
+        x1 = self.cell_size * x
+        x2 = self.cell_size * (x + 1)
+        y1 = self.cell_size * y
+        y2 = self.cell_size * (y + 1)
+        self.canvas.create_rectangle(x1, y1, x2, y2 , fill=fill, width=border_width)
 
     def save_image(self, path):
         ''' Basic save image '''

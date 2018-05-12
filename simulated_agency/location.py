@@ -129,4 +129,3 @@ class Location(object):
             x = self._wrap_width(self.x + 1)
             self._right = self.world.locations[x, self.y]
             return self._right
-    

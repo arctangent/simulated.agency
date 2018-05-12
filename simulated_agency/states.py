@@ -24,10 +24,11 @@ class Dead(State):
     Represents death
     '''
 
+    colour = 'red'
+    name = 'DEAD'
+
     def __init__(self, agent):
         super().__init__(agent)
-        self.name = 'DEAD'
-        self.colour = 'red'
 
     def execute(self):
         pass
@@ -38,10 +39,11 @@ class Waiting(State):
     Represents waiting for some period of time
     '''
 
+    name = 'WAITING'
+    colour = 'cyan'
+
     def __init__(self, agent, timer=None):
         super().__init__(agent)
-        self.name = 'WAITING'
-        self.colour = 'cyan'
         self.timer = timer or randint(10, 100)
 
     def execute(self):
@@ -55,10 +57,11 @@ class MovingRandomly(State):
     Represents moving randomly
     ''' 
 
+    name = 'MOVING_RANDOMLY'
+    colour = 'green'
+
     def __init__(self, agent):
         super().__init__(agent)
-        self.name = 'MOVING_RANDOMLY'
-        self.colour = 'green'
 
     def execute(self):
         agent = self.agent
@@ -89,10 +92,11 @@ class MovingTowards(State):
     Represents moving towards a target
     '''  
 
+    name = 'MOVING_TOWARDS'
+    colour = 'red'
+
     def __init__(self, agent, target=None):
         super().__init__(agent)
-        self.name = 'DEAD'
-        self.colour = 'red'
         if target is None:
             raise Exception("No target specified!")
         else:

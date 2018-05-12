@@ -32,9 +32,13 @@ Walker = Agent
 Walker.world = world
 
 # Specify an initial target
-target_x = int(world.width / 4)
-target_y = int(world.height / 4)
-target = world.locations[target_x, target_y]
+x = int(world.width / 4)
+y = int(world.height / 4)
+location = world.locations[x, y]
+# A static target is the same thing as a "Dead" walker
+Static = states.Dead
+Static.colour = 'cyan'
+target = Walker(location, Static)
 
 # Add some walkers to the world
 for _ in range(0, NUM_WALKERS):
@@ -61,22 +65,24 @@ while True:
     dice_roll = randint(1, 30)
     if dice_roll == 1:
         change_target = True
-        target_x = randint(0, world.width - 1)
-        target_y = randint(0, world.height - 1)
-        target = world.locations[target_x, target_y]
+        x = randint(0, world.width - 1)
+        y = randint(0, world.height - 1)
+        target.location = world.locations[x, y]
     
-    # Go through the list of agents and tell each of them to do someagent
+    # Go through the list of agents and tell each of them to do something
     shuffle(world.agents)
     for agent in world.agents:
         if change_target:
+            # Don't change the state of our target
+            if agent is target:
+                continue
             agent.set_state(states.MovingTowards, target=target)
         # Tell the agent to act
         agent.state.execute()
-        world.draw(agent.location.x, agent.location.y, fill=agent.state.colour)
+        world.draw(agent)
 
     # Draw the target last
-    target_gui_handle = world.canvas.find_withtag('target')
-    world.draw(target_x, target_y, fill='red')
+    world.draw(target)
 
     # Update the canvas
     world.canvas.after(20)
