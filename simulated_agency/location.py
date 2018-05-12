@@ -55,6 +55,11 @@ class Location(object):
         self.x_center = self.simulation.cell_size/2 + self.x_left
         self.y_center = self.simulation.cell_size/2 + self.y_top
 
+        # Memoised results
+        self._up = self._down = self._left = self._right = None
+        self._neighbours = None
+        self._neighbourhood = None
+
         # Borg/Monostate pattern
         # The first time we instatiate a location at (x, y)
         # we must store that state in the class for later
@@ -125,8 +130,6 @@ class Location(object):
     # have to calculate them once.
     #
     
-    _up = _down = _left = _right = None
-    
     def up(self):
         if self._up:
             return self._up
@@ -163,12 +166,15 @@ class Location(object):
     # Definition of neighbours and neighbourhoods
     #
 
-    def neighbours(self, include_self=False, include_self_location=False):
+    def neighbours(self, include_self=False, include_self_location=False, recalculate=False):
         '''
         Returns the neighbours of a given cell.
         This is a aggregate list of the contents of its neighbourhood, less itself.
         Note that this will include any other agents in the same location as us.
         '''
+
+        if self._neighbours and not recalculate:
+            return self._neighbours
         
         neighbours_list = [
             neighbour
@@ -179,29 +185,36 @@ class Location(object):
         if not include_self and include_self_location:
             neighbours_list.remove(self)
         
+        self._neighbours_list = neighbours_list
+
         return neighbours_list
 
-    def neighbourhood(self, include_self_location=True):
+    def neighbourhood(self, include_self_location=True, recalculate=False):
         '''
         Returns the neighbourhood of a given cell.
         This can be calculated in several ways.
         '''
+
+        if self._neighbourhood and not recalculate:
+            return self._neighbourhood
         
         # Strategy pattern
         strategy = self.neighbourhood_strategy
 
         if strategy == 'von_neumann':
             # Von Neumann neighbourhood is the cell itself and the four adjacent cells
-            n = [self, self.up(), self.down(), self.left(), self.right()]
+            neighbourhood_list = [self, self.up(), self.down(), self.left(), self.right()]
         elif strategy == 'moore':
             # Moore neighbourhood is the cell itself and the eight cells surrounding it
-            n =  [
+            neighbourhood_list =  [
                 self.up().left(), self.up(), self.up().right(),
                 self.left(), self, self.right(),
                 self.down().left(), self.down(),  self.down().right()
             ]
 
         if not include_self_location:
-            n.remove(self)
+            neighbourhood_list.remove(self)
 
-        return n
+        self._neighbourhood = neighbourhood_list
+
+        return neighbourhood_list

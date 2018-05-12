@@ -32,10 +32,12 @@ class Alive(State):
         '''
         
         cell = self.agent
-        neighbour_count = len([x for x in cell.location.neighbours() if isinstance(x.state, Alive)])
+        cell.dirty = False
+        neighbour_count = len([x for x in cell.location.neighbours() if x.state.name == 'ALIVE'])
 
         if neighbour_count not in [2, 3]:
             cell.set_state(Dead)
+            cell.dirty = True
 
 
 class Dead(State):
@@ -54,20 +56,22 @@ class Dead(State):
         '''
 
         cell = self.agent
-        neighbour_count = len([x for x in cell.location.neighbours() if isinstance(x.state, Alive)])
+        cell.dirty = False
+        neighbour_count = len([x for x in cell.location.neighbours() if x.state.name == 'ALIVE'])
 
         if neighbour_count == 3:
             cell.set_state(Alive)
+            cell.dirty = True
 
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=40)
+simulation = Simulation(cell_size=20)
 Location.simulation = simulation
 Cell.simulation = simulation
 
 # Constants
-NUM_CELLS = int(simulation.width * simulation.height * 0.3)
+NUM_CELLS = int(simulation.width * simulation.height * 0.5)
 
 # Specify the appropriate neighbourhood model
 Location.neighbourhood_strategy = 'moore'
@@ -84,16 +88,26 @@ while True:
     '''
     Event loop
     '''
-    print(len(Cell.objects))
+    
     # Counter for image frame numbers
     simulation.counter += 1
 
-    # Go through the list of agents and tell each of them to do something
-    shuffle(Cell.objects)
-    for agent in Cell.objects:
-        # Tell the agent to act
-        agent.state.execute()
-        simulation.draw(agent)
+    # Figure out what the cells would do next
+
+    for cell in Cell.objects:
+        # Cache current cell
+        current_state = cell.state
+        # Tell the cell to act
+        cell.state.execute()
+        # Restore state
+        cell.next_state = cell.state
+        cell.state = current_state
+
+    # Update all state at once and draw them
+    for cell in Cell.objects:
+        cell.state = cell.next_state
+        if cell.dirty:
+            simulation.draw(cell)
 
     # Update the canvas
     simulation.canvas.after(20)

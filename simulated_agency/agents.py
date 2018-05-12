@@ -54,6 +54,9 @@ class Cell(Stateful):
     def destroy(self):
         super().destroy()
         self.location.contents.remove(self)
+
+    def __repr__(self):
+        return 'Cell with state %s at (%s, %s)' % (self.state.name, self.location.x, self.location.y)
         
 
 class Agent(Cell):
@@ -82,3 +85,6 @@ class Agent(Cell):
         # Add to new location
         self.location = new_location
         new_location.contents.append(self)
+
+    def __repr__(self):
+        return 'Cell with state %s at (%s, %s)' % (self.state.name, self.location.x, self.location.y)
