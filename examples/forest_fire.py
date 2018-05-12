@@ -42,16 +42,7 @@ class NotOnFire(State):
 
         elif dice_roll <= 100:
             # Pick a direction to try to spread in
-            dice_roll = randint(1, 4)
-            if dice_roll == 1:
-                location = tree.location.up()
-            elif dice_roll == 2:
-                location = tree.location.down()
-            elif dice_roll == 3:
-                location = tree.location.left()
-            elif dice_roll == 4:
-                location = tree.location.right()
-
+            location = choice(tree.location.neighbours())
             # If that location is empty, put a tree there
             Tree(location, NotOnFire)
 
@@ -84,15 +75,7 @@ class OnFire(State):
             return
 
         # If still on fire, see if the fire spreads
-
-        adjacent_cells = [
-            tree.location.up(),
-            tree.location.down(),
-            tree.location.left(),
-            tree.location.right()
-        ]
-
-        for target in adjacent_cells:
+        for target in tree.location.neighbours():
             dice_roll = randint(1, 100)
             if dice_roll <= 50:
                 # If that location has a tree, set it on fire

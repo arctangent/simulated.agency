@@ -1,7 +1,7 @@
 
 import abc
 
-from random import randint
+from random import randint, choice
 
 from .location import Location
 
@@ -76,15 +76,8 @@ class MovingRandomly(State):
     def move_randomly(self):
         # Randomly choose from up/down/left/right
         agent = self.agent
-        move_choice = randint(1, 4)
-        if move_choice == 1:
-            agent.move_to_location(agent.location.up())
-        elif move_choice == 2:
-            agent.move_to_location(agent.location.down())
-        elif move_choice == 3:
-            agent.move_to_location(agent.location.left())
-        else:
-            agent.move_to_location(agent.location.right())        
+        location = choice(agent.location.neighbours())
+        agent.move_to_location(location)      
 
 
 class MovingTowards(State):

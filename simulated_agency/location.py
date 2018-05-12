@@ -155,3 +155,6 @@ class Location(object):
             x = self._wrap_width(self.x + 1)
             self._right = Location(x, self.y)
             return self._right
+
+    def neighbours(self):
+        return [self.up(), self.down(), self.left(), self.right()]
