@@ -10,7 +10,7 @@ sys.path.append(sys.path[0] + "/../..")
 from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
 from simulated_agency.agents import Agent
-from simulated_agency import states
+from simulated_agency.states import *
  
 
 # Initialise simulation
@@ -22,13 +22,13 @@ NUM_WALKERS = int(simulation.width * simulation.height * 0.3)
 
 # A Walker is identical to the Agent class (for now)
 Walker = Agent
-
-# Specify the Simulation the Walkers live in
+Walker.state_machine = StateMachine([Dead, Waiting, MovingRandomly])
 Walker.simulation = simulation
+
 
 # Add some walkers to the simulation
 for _ in range(0, NUM_WALKERS):
-    Walker(simulation.random_location(), states.MovingRandomly)
+    Walker(simulation.random_location(), MovingRandomly)
             
 
 
@@ -47,7 +47,7 @@ def loop():
     shuffle(Walker.objects)
     for agent in Walker.objects:
         # Tell the agent to act
-        agent.state.execute()
+        agent.execute()
         simulation.draw(agent)
 
     # Save images

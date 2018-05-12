@@ -10,7 +10,7 @@ sys.path.append(sys.path[0] + "/../..")
 from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
 from simulated_agency.agents import Agent
-from simulated_agency import states
+from simulated_agency.states import *
  
 
 # Initialise simulation
@@ -22,20 +22,15 @@ NUM_WALKERS = int(simulation.width * simulation.height * 0.1)
 
 # A Walker is identical to the Agent class (for now)
 Walker = Agent
-
-# Specify the Simulation the Walkers live in
+Walker.state_machine = StateMachine([Dead, Waiting, MovingTowardsLocation])
 Walker.simulation = simulation
 
-# A static target is the same thing as a "Dead" walker
-Static = states.Dead
-Static.colour = 'cyan'
-x = int(simulation.width / 4)
-y = int(simulation.height / 4)
-target = Walker(Location(x, y), Static)
+# Create a target location
+target_location = simulation.random_location()
 
 # Add some walkers to the simulation
 for _ in range(0, NUM_WALKERS):
-    Walker(simulation.random_location(), states.MovingTowards, target=target)
+    Walker(simulation.random_location(), MovingTowardsLocation, target_location=target_location)
             
 
 
@@ -50,27 +45,21 @@ def loop():
     # Clear the canvas
     simulation.canvas.delete('all')
 
-    # Change the target from time to time
+    # Change the target location from time to time
     change_target = False
     dice_roll = randint(1, 30)
     if dice_roll == 1:
         change_target = True
-        target.location = simulation.random_location()
+        target_location = simulation.random_location()
     
     # Go through the list of agents and tell each of them to do something
     shuffle(Walker.objects)
     for agent in Walker.objects:
         if change_target:
-            # Don't change the state of our target
-            if agent is target:
-                continue
-            agent.set_state(states.MovingTowards, target=target)
+            agent.set_state(MovingTowardsLocation, target_location=target_location)
         # Tell the agent to act
-        agent.state.execute()
+        agent.execute()
         simulation.draw(agent)
-
-    # Draw the target last
-    simulation.draw(target)
 
     # Save images
     if simulation.record_video:

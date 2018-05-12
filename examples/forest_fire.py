@@ -9,8 +9,8 @@ sys.path.append(sys.path[0] + "/../..")
 
 from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
-from simulated_agency.agents import Cell
-from simulated_agency.states import State
+from simulated_agency.agents import Cell as Tree
+from simulated_agency.states import StateMachine, State
 
 
 # Define some custom states for this simulation
@@ -20,31 +20,26 @@ class NotOnFire(State):
     Represents a tree that is not on fire
     '''
 
-    def __init__(self, agent):
-        super().__init__(agent)
-        self.name = 'NOT_ON_FIRE'
-        self.colour = 'green'
+    name = 'NOT_ON_FIRE'
+    colour = 'green'
 
-    def execute(self):
+    def execute(self, tree):
         '''
         A tree not on fire may:
         (a) try to create a new adjancent tree
         (b) spontaneously set on fire (i.e. lightning strike)
         '''
 
-        tree = self.agent
-        simulation = tree.simulation
-
         dice_roll = randint(1, 1000)
 
         if dice_roll == 1:
-            tree.set_state(OnFire)
+            tree.set_state(OnFire, timer=3)
 
         elif dice_roll <= 100:
             # Pick a direction to try to spread in
             location = choice(tree.location.neighbourhood())
             # If that location is empty, put a tree there
-            Cell(location, NotOnFire)
+            Tree(location, NotOnFire)
 
 
 class OnFire(State):
@@ -52,24 +47,19 @@ class OnFire(State):
     Represents a tree that is on fire
     '''
 
-    def __init__(self, agent):
-        super().__init__(agent)
-        self.name = 'ON_FIRE'
-        self.colour = 'red'
-        self.timer = randint(1, 3)
+    name = 'ON_FIRE'
+    colour = 'red'
+    required_params = ['timer']
 
-    def execute(self):
+    def execute(self, tree):
         '''
         A tree on fire will try to set fire to any adjancent trees.
         A tree on fire will burn down when its timer expires
         '''
 
-        tree = self.agent
-        simulation = tree.simulation
-
         # Check if burned down yet
-        self.timer -= 1
-        if self.timer == 0:
+        tree.memory['timer'] -= 1
+        if tree.memory['timer'] == 0:
             # Remove self from the simulation (i.e. burn down)
             tree.destroy()
             return
@@ -77,27 +67,32 @@ class OnFire(State):
         # If still on fire, see if the fire spreads
         for target in tree.location.neighbourhood():
             dice_roll = randint(1, 100)
-            if dice_roll <= 50:
-                # If that location has a tree, set it on fire
+            if dice_roll <= 25:
+                # If that location has a tree, set it on fire if it isn't already on fire
                 if target.contents:
                     tree_to_burn = target.contents[0]
-                    tree_to_burn.set_state(OnFire)
+                    if not tree_to_burn.state_name == 'ON_FIRE':
+                        tree_to_burn.set_state(OnFire, timer=3)
 
 
-
+# Initialise state machine
+state_machine = StateMachine()
+state_machine.register(OnFire)
+state_machine.register(NotOnFire)
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=4)
+simulation = Simulation(cell_size=20)
 Location.simulation = simulation
-Cell.simulation = simulation
+Tree.simulation = simulation
+Tree.state_machine = state_machine
 
 # Constants
 NUM_TREES = int(simulation.width * simulation.height * 0.5)
 
 # Add some Trees to the simulation
 for _ in range(0, NUM_TREES):
-    Cell(simulation.random_location(), NotOnFire)
+    Tree(simulation.random_location(), NotOnFire)
             
 
 
@@ -112,12 +107,12 @@ def loop():
     # Clear the canvas
     simulation.canvas.delete('all')
 
-    # Go through the list of cells and tell each of them to do something
-    shuffle(Cell.objects)
-    for cell in Cell.objects:
-        # Tell the cell to act
-        cell.state.execute()
-        simulation.draw(cell)
+    # Go through the list of trees and tell each of them to do something
+    shuffle(Tree.objects)
+    for tree in Tree.objects:
+        # Tell the tree to act
+        tree.execute()
+        simulation.draw(tree)
 
     # Save images
     if simulation.record_video:
