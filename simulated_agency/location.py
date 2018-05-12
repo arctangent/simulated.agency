@@ -3,10 +3,10 @@ from collections import defaultdict
     
 class Location(object):
     '''
-    Represents a location within the World.
+    Represents a location within the Simulation.
     '''
 
-    world = None
+    simulation = None
 
     # Borg/Monostate pattern
     # Store instance state in class-level dict
@@ -30,8 +30,8 @@ class Location(object):
         # location is instantiated at a particular (x, y)
         #
         
-        # Ensure world is set
-        assert self.world is not None, "Location must have 'world' property set!"
+        # Ensure simulation is set
+        assert self.simulation is not None, "Location must have 'simulation' property set!"
         
         # Basic properties
         self.x = x
@@ -45,12 +45,12 @@ class Location(object):
         self.contents = []
         
         # Pixel locations
-        self.x_left = self.x * self.world.cell_size
-        self.x_right = (self.x + 1) * self.world.cell_size
-        self.y_top = self.y * self.world.cell_size
-        self.y_bottom = (self.y + 1) * self.world.cell_size
-        self.x_center = self.world.cell_size/2 + self.x_left
-        self.y_center = self.world.cell_size/2 + self.y_top
+        self.x_left = self.x * self.simulation.cell_size
+        self.x_right = (self.x + 1) * self.simulation.cell_size
+        self.y_top = self.y * self.simulation.cell_size
+        self.y_bottom = (self.y + 1) * self.simulation.cell_size
+        self.x_center = self.simulation.cell_size/2 + self.x_left
+        self.y_center = self.simulation.cell_size/2 + self.y_top
 
         # Borg/Monostate pattern
         # The first time we instatiate a location at (x, y)
@@ -88,31 +88,31 @@ class Location(object):
         
     def _wrap_width(self, val):
         '''
-        Wrap a value within World width
+        Wrap a value within Simulation width
         '''
 
-        if self.world.wrap_x:
-            return self._wrap(val, 0, self.world.width - 1)
+        if self.simulation.wrap_x:
+            return self._wrap(val, 0, self.simulation.width - 1)
         else:
             if val < 0:
                 return 0
-            elif val > self.world.width - 1:
-                return self.world.width - 1
+            elif val > self.simulation.width - 1:
+                return self.simulation.width - 1
             else:
                 return val
     
     def _wrap_height(self, val):
         '''
-        Wrap a value within World height
+        Wrap a value within Simulation height
         '''
 
-        if self.world.wrap_y:
-            return self._wrap(val, 0, self.world.height - 1)
+        if self.simulation.wrap_y:
+            return self._wrap(val, 0, self.simulation.height - 1)
         else:
             if val < 0:
                 return 0
-            elif val > self.world.height - 1:
-                return self.world.height - 1
+            elif val > self.simulation.height - 1:
+                return self.simulation.height - 1
             else:
                 return val
    

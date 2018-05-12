@@ -3,16 +3,16 @@ from .location import Location
 
 class Createable(object):
     '''
-    Represents something which can be created in a world
+    Represents something which can be created in a simulation
     and which can also be destroyed (i.e. removed from it)
     '''
 
-    world = None
+    simulation = None
     objects = []
 
     def __init__(self, *args, **kwargs):
-        # Ensure world is set
-        assert self.world is not None, "Creatable objects must have 'world' property set!"
+        # Ensure simulation is set
+        assert self.simulation is not None, "Creatable objects must have 'simulation' property set!"
         Createable.objects.append(self)
 
     def destroy(self):

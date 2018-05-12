@@ -10,13 +10,13 @@ except:
     import pyscreenshot as ImageGrab
 
 
-class World(object):
+class Simulation(object):
     '''
     Represents the universe in which our simulation unfolds.
     '''
     
     def __init__(self, width=None, height=None, cell_size=None):
-        # Constants - do not change these directly after world instantiation
+        # Constants - do not change these directly after simulation instantiation
         self.canvas_width = width or 800
         self.canvas_height = height or 800
         self.cell_size = cell_size or 8

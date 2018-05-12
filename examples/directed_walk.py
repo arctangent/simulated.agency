@@ -7,36 +7,36 @@ import sys
 sys.path.append(sys.path[0] + "/..")
 sys.path.append(sys.path[0] + "/../..")
 
-from simulated_agency.world import World
+from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
 from simulated_agency.agent import Agent
 from simulated_agency import states
  
 
-# Initialise world
-world = World(cell_size=8)
-Location.world = world
+# Initialise simulation
+simulation = Simulation(cell_size=8)
+Location.simulation = simulation
 
 # Constants
-NUM_WALKERS = int(world.width * world.height * 0.1)
+NUM_WALKERS = int(simulation.width * simulation.height * 0.1)
 
 # A Walker is identical to the Agent class (for now)
 Walker = Agent
 
-# Specify the World the Walkers live in
-Walker.world = world
+# Specify the Simulation the Walkers live in
+Walker.simulation = simulation
 
 # A static target is the same thing as a "Dead" walker
 Static = states.Dead
 Static.colour = 'cyan'
-x = int(world.width / 4)
-y = int(world.height / 4)
+x = int(simulation.width / 4)
+y = int(simulation.height / 4)
 target = Walker(Location(x, y), Static)
 
-# Add some walkers to the world
+# Add some walkers to the simulation
 for _ in range(0, NUM_WALKERS):
-    x = randint(0, world.width - 1)
-    y = randint(0, world.height -1)
+    x = randint(0, simulation.width - 1)
+    y = randint(0, simulation.height -1)
     Walker(Location(x, y), states.MovingTowards, target=target)
             
 
@@ -47,18 +47,18 @@ while True:
     '''
 
     # Counter for image frame numbers
-    world.counter += 1
+    simulation.counter += 1
     
     # Clear the canvas
-    world.canvas.delete('all')
+    simulation.canvas.delete('all')
 
     # Change the target from time to time
     change_target = False
     dice_roll = randint(1, 30)
     if dice_roll == 1:
         change_target = True
-        x = randint(0, world.width - 1)
-        y = randint(0, world.height - 1)
+        x = randint(0, simulation.width - 1)
+        y = randint(0, simulation.height - 1)
         target.location = Location(x, y)
     
     # Go through the list of agents and tell each of them to do something
@@ -71,18 +71,18 @@ while True:
             agent.set_state(states.MovingTowards, target=target)
         # Tell the agent to act
         agent.state.execute()
-        world.draw(agent)
+        simulation.draw(agent)
 
     # Draw the target last
-    world.draw(target)
+    simulation.draw(target)
 
     # Update the canvas
-    world.canvas.after(20)
-    world.canvas.update()
+    simulation.canvas.after(20)
+    simulation.canvas.update()
 
     # Save images
-    if world.record_video:
-        world.save_image('directed_walk')
+    if simulation.record_video:
+        simulation.save_image('directed_walk')
         
 
-world.window.mainloop()
+simulation.window.mainloop()

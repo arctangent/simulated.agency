@@ -7,7 +7,7 @@ import sys
 sys.path.append(sys.path[0] + "/..")
 sys.path.append(sys.path[0] + "/../..")
 
-from simulated_agency.world import World
+from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
 from simulated_agency.agent import Agent
 from simulated_agency.states import State
@@ -33,7 +33,7 @@ class NotOnFire(State):
         '''
 
         tree = self.agent
-        world = tree.world
+        simulation = tree.simulation
 
         dice_roll = randint(1, 1000)
 
@@ -74,12 +74,12 @@ class OnFire(State):
         '''
 
         tree = self.agent
-        world = tree.world
+        simulation = tree.simulation
 
         # Check if burned down yet
         self.timer -= 1
         if self.timer == 0:
-            # Remove self from the world (i.e. burn down)
+            # Remove self from the simulation (i.e. burn down)
             tree.destroy()
             return
 
@@ -104,23 +104,23 @@ class OnFire(State):
 
 
 
-# Initialise world
-world = World(cell_size=40)
-Location.world = world
+# Initialise simulation
+simulation = Simulation(cell_size=40)
+Location.simulation = simulation
 
 # Constants
-NUM_TREES = int(world.width * world.height * 0.5)
+NUM_TREES = int(simulation.width * simulation.height * 0.5)
 
 # A Tree is identical to the Agent class (for now)
 Tree = Agent
 
-# Specify the World the Trees live in
-Tree.world = world
+# Specify the Simulation the Trees live in
+Tree.simulation = simulation
 
-# Add some Trees to the world
+# Add some Trees to the simulation
 for _ in range(0, NUM_TREES):
-    x = randint(0, world.width - 1)
-    y = randint(0, world.height -1)
+    x = randint(0, simulation.width - 1)
+    y = randint(0, simulation.height -1)
     Tree(Location(x, y), NotOnFire)
             
 
@@ -131,25 +131,25 @@ while True:
     '''
 
     # Counter for image frame numbers
-    world.counter += 1
+    simulation.counter += 1
     
     # Clear the canvas
-    world.canvas.delete('all')
+    simulation.canvas.delete('all')
 
     # Go through the list of agents and tell each of them to do something
     shuffle(Tree.objects)
     for agent in Tree.objects:
         # Tell the agent to act
         agent.state.execute()
-        world.draw(agent)
+        simulation.draw(agent)
 
     # Update the canvas
-    world.canvas.after(20)
-    world.canvas.update()
+    simulation.canvas.after(20)
+    simulation.canvas.update()
 
     # Save images
-    if world.record_video:
-        world.save_image('forest_fire')
+    if simulation.record_video:
+        simulation.save_image('forest_fire')
         
 
-world.window.mainloop()
+simulation.window.mainloop()

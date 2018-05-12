@@ -119,7 +119,7 @@ class MovingTowards(State):
 
         # Shorthand references
         agent = self.agent
-        world = agent.world
+        simulation = agent.simulation
 
         # Compute naive, non-wrapping distance
         dx = target_x - agent.location.x
@@ -127,12 +127,12 @@ class MovingTowards(State):
         
         # Adjust for screen wrap
         # Note that dx and dy could be negative
-        if world.wrap_x:
-            if abs(dx) > (world.width / 2):
-                dx = ((dx + (world.width * 3/2)) % world.width) - (world.width / 2)
-        if world.wrap_y:
-            if abs(dy) > (world.height / 2):
-                dy = ((dy + (world.height * 3/2)) % world.height) - (world.height / 2)
+        if simulation.wrap_x:
+            if abs(dx) > (simulation.width / 2):
+                dx = ((dx + (simulation.width * 3/2)) % simulation.width) - (simulation.width / 2)
+        if simulation.wrap_y:
+            if abs(dy) > (simulation.height / 2):
+                dy = ((dy + (simulation.height * 3/2)) % simulation.height) - (simulation.height / 2)
 
         # Decide which direction to move in depending
         # on the magnituds of the component parts of the vector

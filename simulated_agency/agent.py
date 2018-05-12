@@ -9,7 +9,7 @@ from .states import Dead, Waiting, MovingRandomly, MovingTowards
 
 class Agent(Mobile):
     '''
-    Represents an agent that can move around in the World.
+    Represents an agent that can move around in the Simulation.
     '''
         
     def __init__(self, location, state=None, **state_params):
