@@ -9,7 +9,7 @@ sys.path.append(sys.path[0] + "/../..")
 
 from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
-from simulated_agency.agent import Agent as Cell
+from simulated_agency.agents import Cell
 from simulated_agency.states import State
 
 
@@ -67,14 +67,14 @@ Location.simulation = simulation
 Cell.simulation = simulation
 
 # Constants
-NUM_CELLS = int(simulation.width * simulation.height * 0.5)
+NUM_CELLS = int(simulation.width * simulation.height * 0.3)
 
 # Specify the appropriate neighbourhood model
 Location.neighbourhood_strategy = 'moore'
 
 # Initialise a grid of Cells with random starting state
-for x in range(0, simulation.width - 1):
-    for y in range(0, simulation.width - 1):
+for x in range(0, simulation.width):
+    for y in range(0, simulation.width):
         initial_state = choice([Alive, Dead])
         Cell(Location(x, y), initial_state)
             
@@ -84,7 +84,7 @@ while True:
     '''
     Event loop
     '''
-
+    print(len(Cell.objects))
     # Counter for image frame numbers
     simulation.counter += 1
 

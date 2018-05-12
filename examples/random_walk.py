@@ -9,7 +9,7 @@ sys.path.append(sys.path[0] + "/../..")
 
 from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
-from simulated_agency.agent import Agent
+from simulated_agency.agents import Agent
 from simulated_agency import states
  
 

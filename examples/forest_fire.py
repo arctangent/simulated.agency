@@ -9,7 +9,7 @@ sys.path.append(sys.path[0] + "/../..")
 
 from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
-from simulated_agency.agent import Agent
+from simulated_agency.agents import Agent
 from simulated_agency.states import State
 
 
@@ -42,7 +42,7 @@ class NotOnFire(State):
 
         elif dice_roll <= 100:
             # Pick a direction to try to spread in
-            location = choice(tree.location.neighbours())
+            location = choice(tree.location.neighbourhood())
             # If that location is empty, put a tree there
             Tree(location, NotOnFire)
 
@@ -75,7 +75,7 @@ class OnFire(State):
             return
 
         # If still on fire, see if the fire spreads
-        for target in tree.location.neighbours():
+        for target in tree.location.neighbourhood():
             dice_roll = randint(1, 100)
             if dice_roll <= 50:
                 # If that location has a tree, set it on fire
