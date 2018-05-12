@@ -12,6 +12,9 @@ class Location(object):
     # Store instance state in class-level dict
     # indexed on (x, y) i.e. unique location identifier
     __shared_state = defaultdict(dict)
+
+    # Strategy pattern for neighbour location
+    neighbourhood_strategy = 'von_neumann'
     
     def __init__(self, x, y, capacity=None):
         '''
@@ -156,5 +159,49 @@ class Location(object):
             self._right = Location(x, self.y)
             return self._right
 
-    def neighbours(self):
-        return [self.up(), self.down(), self.left(), self.right()]
+    #
+    # Definition of neighbours and neighbourhoods
+    #
+
+    def neighbours(self, include_self=False, include_self_location=False):
+        '''
+        Returns the neighbours of a given cell.
+        This is a aggregate list of the contents of its neighbourhood, less itself.
+        Note that this will include any other agents in the same location as us.
+        '''
+        
+        neighbours_list = [
+            neighbour
+            for cell in self.neighbourhood(include_self_location=include_self_location)
+            for neighbour in cell.contents
+        ]
+
+        if not include_self and include_self_location:
+            neighbours_list.remove(self)
+        
+        return neighbours_list
+
+    def neighbourhood(self, include_self_location=True):
+        '''
+        Returns the neighbourhood of a given cell.
+        This can be calculated in several ways.
+        '''
+        
+        # Strategy pattern
+        strategy = self.neighbourhood_strategy
+
+        if strategy == 'von_neumann':
+            # Von Neumann neighbourhood is the cell itself and the four adjacent cells
+            n = [self, self.up(), self.down(), self.left(), self.right()]
+        elif strategy == 'moore':
+            # Moore neighbourhood is the cell itself and the eight cells surrounding it
+            n =  [
+                self.up().left(), self.up(), self.up().right(),
+                self.left(), self, self.right(),
+                self.down().left(), self.down(),  self.down().right()
+            ]
+
+        if not include_self_location:
+            n.remove(self)
+
+        return n

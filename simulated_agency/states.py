@@ -11,6 +11,9 @@ class State(abc.ABC):
     Abstract base class to define what a State is
     '''
 
+    name = ''
+    colour = None
+
     def __init__(self, agent=None):
         self.agent = agent
 
@@ -24,8 +27,8 @@ class Dead(State):
     Represents death
     '''
 
-    colour = 'red'
     name = 'DEAD'
+    colour = 'red'
 
     def __init__(self, agent):
         super().__init__(agent)
@@ -76,7 +79,7 @@ class MovingRandomly(State):
     def move_randomly(self):
         # Randomly choose from up/down/left/right
         agent = self.agent
-        location = choice(agent.location.neighbours())
+        location = choice(agent.location.neighbourhood())
         agent.move_to_location(location)      
 
 
