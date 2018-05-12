@@ -12,6 +12,9 @@ except:
     import pyscreenshot as ImageGrab
 
 
+from .location import Location
+
+
 class Simulation(object):
     '''
     Represents the universe in which our simulation unfolds.
@@ -57,11 +60,17 @@ class Simulation(object):
         self.width = int(self.canvas_width / self.cell_size)
         self.height = int(self.canvas_height / self.cell_size)
 
-    def rand_x(self):
+    def random_x(self):
         return randint(0, self.width - 1)
 
-    def rand_y(self):
+    def random_y(self):
         return randint(0, self.height - 1)
+
+    def random_xy(self):
+        return self.random_x(), self.random_y()
+
+    def random_location(self):
+        return Location(*self.random_xy())
 
     def draw(self, thing, fill=None):
         '''

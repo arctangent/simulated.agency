@@ -35,9 +35,7 @@ target = Walker(Location(x, y), Static)
 
 # Add some walkers to the simulation
 for _ in range(0, NUM_WALKERS):
-    x = simulation.rand_x()
-    y = simulation.rand_y()
-    Walker(Location(x, y), states.MovingTowards, target=target)
+    Walker(simulation.random_location(), states.MovingTowards, target=target)
             
 
 
@@ -57,9 +55,7 @@ while True:
     dice_roll = randint(1, 30)
     if dice_roll == 1:
         change_target = True
-        x = simulation.rand_x()
-        y = simulation.rand_y()
-        target.location = Location(x, y)
+        target.location = simulation.random_location()
     
     # Go through the list of agents and tell each of them to do something
     shuffle(Walker.objects)

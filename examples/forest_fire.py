@@ -102,9 +102,7 @@ Tree.simulation = simulation
 
 # Add some Trees to the simulation
 for _ in range(0, NUM_TREES):
-    x = simulation.rand_x()
-    y = simulation.rand_y()
-    Tree(Location(x, y), NotOnFire)
+    Tree(simulation.random_location(), NotOnFire)
             
 
 
