@@ -29,7 +29,7 @@ class NotOnFire(State):
         (a) try to create a new adjancent tree
         (b) spontaneously set on fire (i.e. lightning strike)
         '''
-
+        #super().execute(tree)
         dice_roll = randint(1, 1000)
 
         if dice_roll == 1:
@@ -56,7 +56,7 @@ class OnFire(State):
         A tree on fire will try to set fire to any adjancent trees.
         A tree on fire will burn down when its timer expires
         '''
-
+        #super().execute(tree)
         # Check if burned down yet
         tree.memory['timer'] -= 1
         if tree.memory['timer'] == 0:
@@ -71,7 +71,7 @@ class OnFire(State):
                 # If that location has a tree, set it on fire if it isn't already on fire
                 if target.contents:
                     tree_to_burn = target.contents[0]
-                    if not tree_to_burn.state_name == 'ON_FIRE':
+                    if not tree_to_burn.state == OnFire:
                         tree_to_burn.set_state(OnFire, timer=3)
 
 

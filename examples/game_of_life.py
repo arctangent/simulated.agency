@@ -30,7 +30,7 @@ class Alive(State):
         '''
         
         agent.dirty = False
-        neighbour_count = len([x for x in agent.location.neighbours() if x.state_name == 'ALIVE'])
+        neighbour_count = len([x for x in agent.location.neighbours() if isinstance(x.state, Alive)]
 
         if neighbour_count not in [2, 3]:
             agent.set_state(Dead)
@@ -51,7 +51,7 @@ class Dead(State):
         '''
         
         agent.dirty = False
-        neighbour_count = len([x for x in agent.location.neighbours() if x.state_name == 'ALIVE'])
+        neighbour_count = len([x for x in agent.location.neighbours() if isinstance(x.state, Alive))
 
         if neighbour_count == 3:
             agent.set_state(Alive)
@@ -88,16 +88,16 @@ def loop():
     # Figure out what the Cells would do next
     for cell in Cell.objects:
         # Cache current Cell
-        current_state = cell.state_name
+        current_state = cell.state
         # Tell the Cell to act
         cell.execute()
         # Restore state
-        cell.next_state = cell.state_name
-        cell.state_name = current_state
+        cell.next_state = cell.state
+        cell.state = current_state
 
     # Update all state at once and draw them
     for cell in Cell.objects:
-        cell.state_name = cell.next_state
+        cell.state = cell.next_state
         if cell.dirty:
             simulation.draw(cell)
 

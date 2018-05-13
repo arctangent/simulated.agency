@@ -29,17 +29,17 @@ class Stateful(object):
         Stateful.objects.remove(self)
         del(self)
 
-    def set_state(self, state_class, **state_params):
+    def set_state(self, state, **state_params):
         '''
         This function ensures that necessary initialisation
         actions are carried out when an Agent changes state.
         '''
         
         # Check all required params are there
-        if hasattr(state_class, 'required_params'):
-            if not all(key in state_params for key in state_class.required_params):
-                raise Exception('Not all required params passed to %s' % state_class)
-        self.state_name = state_class.name
+        if hasattr(state, 'required_params'):
+            if not all(key in state_params for key in state.required_params):
+                raise Exception('Not all required params passed to %s' % state)
+        self.state = state
         self.memory.update(**state_params)
 
     def execute(self):
@@ -47,7 +47,7 @@ class Stateful(object):
         self.state_machine.execute(self)
 
     def colour(self):
-        return self.state_machine.get_state_by_name(self.state_name).colour
+        return self.state.colour
 
 
 class Cell(Stateful):
@@ -74,7 +74,7 @@ class Cell(Stateful):
         self.location.contents.remove(self)
 
     def __repr__(self):
-        return 'Cell with state %s at (%s, %s)' % (self.state_name, self.location.x, self.location.y)
+        return 'Cell with state %s at (%s, %s)' % (self.state, self.location.x, self.location.y)
         
 
 class Agent(Cell):
@@ -86,7 +86,7 @@ class Agent(Cell):
         super().__init__(location, state, **state_params)
 
     def __repr__(self):
-        return 'Cell with state %s at (%s, %s)' % (self.state_name, self.location.x, self.location.y)
+        return 'Cell with state %s at (%s, %s)' % (self.state, self.location.x, self.location.y)
 
     def move_to_location(self, new_loc):
         '''

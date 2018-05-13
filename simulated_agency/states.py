@@ -34,10 +34,9 @@ class StateMachine(object):
         '''
         Run an agent through the state machine
         '''
-        
-        state_class = self.get_state_by_name(agent.state_name)
-        state = state_class()
-        state.execute(agent)
+        state_class = agent.state
+        state_instance = state_class(agent)
+        state_instance.execute(agent)
 
 
 class State(abc.ABC):
@@ -47,10 +46,24 @@ class State(abc.ABC):
     
     name = None
     colour = None
+    timer = None
+    required_params = []
+
+    def __init__(self, agent, timer=None):
+        if timer:
+            self.timer = timer
 
     @abc.abstractmethod
     def execute(self, agent):
-        pass
+        # Check all required params are there
+        if not all(key in agent.memory for key in self.required_params):
+            raise Exception('Not all required params exist in agent memory')
+        # Decrement timer if necessary
+        if self.timer:
+            self.timer -= 1
+            if self.timer == 0:
+                raise Exception('Now what do I do, Jacob?')
+                # agent.set_state(agent.default_state)
 
 
 class Dead(State):
@@ -62,6 +75,7 @@ class Dead(State):
     colour = 'red'
 
     def execute(self, agent):
+        super().execute(agent)
         pass
 
 
@@ -72,12 +86,10 @@ class Waiting(State):
 
     name = 'WAITING'
     colour = 'cyan'
-    required_params = ['timer']
+    required_params = []
 
     def execute(self, agent):
-        agent.memory['timer'] -= 1
-        if agent.memory['timer'] == 0:
-            agent.set_state(MovingRandomly)
+        super().execute(agent)
 
 
 class MovingRandomly(State):
@@ -89,6 +101,7 @@ class MovingRandomly(State):
     colour = 'green'
 
     def execute(self, agent):
+        super().execute(agent)
         dice_roll = randint(1, 1000)
         if dice_roll == 1:
             agent.set_state(Dead)
@@ -108,5 +121,6 @@ class MovingTowardsLocation(State):
     required_params = ['target_location']
 
     def execute(self, agent):
+        super().execute(agent)
         target_location = agent.memory['target_location']
         agent.move_towards(target_location.x, target_location.y)
