@@ -76,11 +76,7 @@ Cell.simulation = simulation
 Location.neighbourhood_strategy = 'moore'
 
 # Initialise a grid of Cells with random starting state
-for x in range(0, simulation.width):
-    for y in range(0, simulation.width):
-        cell = Cell(Location(x, y))
-        initial_state = choice([Alive(cell), Dead(cell)])
-        cell.add_state(initial_state)
+simulation.seed_all(Cell, [Alive, Dead])
                 
 
 def loop():

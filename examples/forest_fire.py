@@ -89,13 +89,9 @@ simulation = Simulation(cell_size=20)
 Location.simulation = simulation
 Tree.simulation = simulation
 
-# Constants
-NUM_TREES = int(simulation.width * simulation.height * 0.3)
-
 # Add some Trees to the simulation
-for _ in range(0, NUM_TREES):
-    # Try to add - may fail if location already occupied
-    Tree(simulation.random_location(), NotOnFire)
+simulation.seed(Tree, 0.3, NotOnFire)
+
 
 
 def loop():

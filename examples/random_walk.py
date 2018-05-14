@@ -18,12 +18,10 @@ simulation = Simulation(cell_size=20)
 Location.simulation = simulation
 Walker.simulation = simulation
 
-# Constants
-NUM_WALKERS = int(simulation.width * simulation.height * 0.3)
-
 # Add some walkers to the simulation
-for _ in range(0, NUM_WALKERS):
-    Walker(simulation.random_location(), MoveRandomly)
+simulation.seed(Walker, 0.3, MoveRandomly)
+
+
             
 
 
