@@ -10,7 +10,7 @@ sys.path.append(sys.path[0] + "/../..")
 from simulated_agency.simulation import Simulation
 from simulated_agency.location import Location
 from simulated_agency.agents import Cell as Tree
-from simulated_agency.states import StateMachine, State
+from simulated_agency.states import State
 
 
 # Define some custom states for this simulation
@@ -23,23 +23,30 @@ class NotOnFire(State):
     name = 'NOT_ON_FIRE'
     colour = 'green'
 
-    def execute(self, tree):
+    def handle(self):
         '''
         A tree not on fire may:
         (a) try to create a new adjancent tree
         (b) spontaneously set on fire (i.e. lightning strike)
         '''
-        #super().execute(tree)
+        
+        super().handle()
+
+        tree = self.agent
+        
         dice_roll = randint(1, 1000)
 
-        if dice_roll == 1:
-            tree.set_state(OnFire, timer=3)
+        if dice_roll == 1: 
+            tree.replace_state(OnFire(tree, timer=3))
 
         elif dice_roll <= 100:
             # Pick a direction to try to spread in
             location = choice(tree.location.neighbourhood())
-            # If that location is empty, put a tree there
-            Tree(location, NotOnFire)
+            # If that location is empty, put a new tree there
+            t = Tree(location)
+            if t:
+                t.add_state(NotOnFire(t))
+            
 
 
 class OnFire(State):
@@ -51,18 +58,15 @@ class OnFire(State):
     colour = 'red'
     required_params = ['timer']
 
-    def execute(self, tree):
+    def handle(self):
         '''
         A tree on fire will try to set fire to any adjancent trees.
         A tree on fire will burn down when its timer expires
         '''
-        #super().execute(tree)
-        # Check if burned down yet
-        tree.memory['timer'] -= 1
-        if tree.memory['timer'] == 0:
-            # Remove self from the simulation (i.e. burn down)
-            tree.destroy()
-            return
+        
+        super().handle()
+
+        tree = self.agent
 
         # If still on fire, see if the fire spreads
         for target in tree.location.neighbourhood():
@@ -71,36 +75,38 @@ class OnFire(State):
                 # If that location has a tree, set it on fire if it isn't already on fire
                 if target.contents:
                     tree_to_burn = target.contents[0]
-                    if not tree_to_burn.state == OnFire:
-                        tree_to_burn.set_state(OnFire, timer=3)
+                    if not isinstance(tree_to_burn.current_state, OnFire):
+                        tree_to_burn.replace_state(OnFire(tree_to_burn, timer=3))
+
+    def handle_timeout(self):
+        ''' When tree is finished burning we should remove it from the simulation '''
+        tree = self.agent
+        tree.destroy()
 
 
-# Initialise state machine
-state_machine = StateMachine()
-state_machine.register(OnFire)
-state_machine.register(NotOnFire)
 
 
 # Initialise simulation
 simulation = Simulation(cell_size=20)
 Location.simulation = simulation
 Tree.simulation = simulation
-Tree.state_machine = state_machine
 
 # Constants
-NUM_TREES = int(simulation.width * simulation.height * 0.5)
+NUM_TREES = int(simulation.width * simulation.height * 0.3)
 
 # Add some Trees to the simulation
 for _ in range(0, NUM_TREES):
-    Tree(simulation.random_location(), NotOnFire)
-            
+    # Try to add - may fail if location already occupied
+    t = Tree(simulation.random_location())
+    if t:
+        t.add_state(NotOnFire(t))
 
 
 def loop():
     '''
     Event loop
     '''
-
+    #import pdb; pdb.set_trace() 
     # Counter for image frame numbers
     simulation.counter += 1
     

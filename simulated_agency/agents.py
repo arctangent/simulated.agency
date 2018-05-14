@@ -3,7 +3,36 @@ from collections import defaultdict
 from random import choice, randint
 
 from .location import Location
-from .states import StateMachine
+from .states import State, MoveRandomly
+
+
+class Stack(object):
+    '''
+    Represents a stack of states
+    '''
+
+    def __init__(self):
+        self.items = []
+
+    def is_empty(self):
+        return self.items == []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        return self.items.pop()
+
+    def peek(self):
+        return self.items[len(self.items)-1]
+
+    def size(self):
+        return len(self.items)
+
+    def flush(self):
+        self.items = []
+
+
 
 class Stateful(object):
     '''
@@ -15,39 +44,65 @@ class Stateful(object):
     state_machine = None
     objects = []
 
-    def __init__(self, state, **state_params):
+    def __init__(self):
         # Ensure simulation is set
         assert self.simulation is not None, "Creatable objects must have 'simulation' property set!"
-        # Ensure state machine is set
-        assert self.state_machine is not None, "Creatable objects must have 'state_machine' property set!"
         # Init
-        self.memory = defaultdict(None)
         Stateful.objects.append(self)
-        self.set_state(state, **state_params)
+        self._state_stack = Stack()
+        # Default state
+        self.default_state = MoveRandomly(self)
 
     def destroy(self):
         Stateful.objects.remove(self)
-        del(self)
-
-    def set_state(self, state, **state_params):
-        '''
-        This function ensures that necessary initialisation
-        actions are carried out when an Agent changes state.
-        '''
-        
-        # Check all required params are there
-        if hasattr(state, 'required_params'):
-            if not all(key in state_params for key in state.required_params):
-                raise Exception('Not all required params passed to %s' % state)
-        self.state = state
-        self.memory.update(**state_params)
 
     def execute(self):
+        if self._state_stack.is_empty():
+            self._state_stack.push(self.default_state)
         # Delegate to state machine
-        self.state_machine.execute(self)
+        self._state_stack.peek().handle()
+
+    def is_in_state(self, state_class):
+        return isinstance(self.current_state(), state_class)
+
+    def validate_state(self, state_instance):
+        if not isinstance(state_instance, State):
+            raise Exception('Not a state instance!')
+
+    def current_state(self):
+        ''' Return the top entry of the state stack '''
+        return self._state_stack.peek()
+
+    def current_state_class(self):
+        ''' Return the class of the top entry of the state stack '''
+        return self.current_state().__class__
+
+    def replace_state(self, state_instance):
+        ''' Replace the top entry of the state stack with a new state '''
+        self.validate_state(state_instance)
+        if self._state_stack.size():
+            self._state_stack.pop()
+        self._state_stack.push(state_instance)
+
+    def add_state(self, state_instance):
+        ''' Change state by addind a new state to the state stack '''
+        self.validate_state(state_instance)
+        self._state_stack.push(state_instance)
+
+    def remove_state(self):
+        ''' Change state by removing the top state from the stack '''
+        self._state_stack.pop()
+        # Ensure there's always something in the state stack
+        if self._state_stack.is_empty():
+            self.add_state(self.default_state)
+
+    def flush_state_stack(self):
+        ''' Remove all states and replace with default state '''
+        self._state_stack.flush()
+        self._state_stack.push(self.default_state)
 
     def colour(self):
-        return self.state.colour
+        return self._state_stack.peek().colour
 
 
 class Cell(Stateful):
@@ -55,7 +110,7 @@ class Cell(Stateful):
     Represents a type of agent which has an unchangeable location.
     '''
 
-    def __new__(cls, location, *args, **kwargs):
+    def __new__(cls, location):
         # We should only create an instance of a thing
         # if the specified location has room for it
         if location.is_full():
@@ -64,17 +119,18 @@ class Cell(Stateful):
         instance = super().__new__(cls)
         return instance
 
-    def __init__(self, location, state, **state_params):
-        super().__init__(state, **state_params)      
+    def __init__(self, location):
+        super().__init__()      
         self.location = location
         self.location.contents.append(self)  
 
     def destroy(self):
-        super().destroy()
+        # We need to delete the object last
         self.location.contents.remove(self)
+        super().destroy()
 
     def __repr__(self):
-        return 'Cell with state %s at (%s, %s)' % (self.state, self.location.x, self.location.y)
+        return 'Cell with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
         
 
 class Agent(Cell):
@@ -82,11 +138,11 @@ class Agent(Cell):
     Represents a type of agent with a changeable location.
     '''
 
-    def __init__(self, location, state, **state_params):
-        super().__init__(location, state, **state_params)
+    def __init__(self, location):
+        super().__init__(location)
 
     def __repr__(self):
-        return 'Cell with state %s at (%s, %s)' % (self.state, self.location.x, self.location.y)
+        return 'Agent with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
 
     def move_to_location(self, new_loc):
         '''
@@ -110,6 +166,9 @@ class Agent(Cell):
     def move_randomly(self):
         location = choice(self.location.neighbourhood())
         self.move_to_location(location)
+
+    def move_towards_location(self, location):
+        self.move_towards(location.x, location.y)
 
     def move_towards(self, target_x, target_y):
         '''

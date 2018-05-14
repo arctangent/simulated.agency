@@ -6,39 +6,6 @@ from random import randint, choice
 from .location import Location
 
 
-
-class StateMachine(object):
-    '''
-    Manages states and transitions
-    '''
-
-    states = {}
-
-    def __init__(self, states=[]):
-        '''
-        Init
-        '''
-        for state in states:
-            self.register(state)
-
-    def register(self, state):
-        '''
-        Add possible state to the machine
-        '''
-        self.states[state.name] = state
-
-    def get_state_by_name(self, state_name):
-        return self.states[state_name]
-
-    def execute(self, agent):
-        '''
-        Run an agent through the state machine
-        '''
-        state_class = agent.state
-        state_instance = state_class(agent)
-        state_instance.execute(agent)
-
-
 class State(abc.ABC):
     '''
     Abstract base class to define what a State is
@@ -48,22 +15,32 @@ class State(abc.ABC):
     colour = None
     timer = None
     required_params = []
+    context = {}
 
-    def __init__(self, agent, timer=None):
-        if timer:
-            self.timer = timer
+    def __init__(self, agent, **kwargs):
+        self.agent = agent
+        # Set countdown if specified
+        if 'timer' in kwargs.keys():
+            self.timer = kwargs['timer']
+        # Check all required data is there
+        if not all(key in kwargs for key in self.required_params):
+            raise Exception('Not all required data exist in state context')
+        # Update state context
+        self.context.update(**kwargs)
 
     @abc.abstractmethod
-    def execute(self, agent):
-        # Check all required params are there
-        if not all(key in agent.memory for key in self.required_params):
-            raise Exception('Not all required params exist in agent memory')
+    def handle(self):
+        ''' Execute the state in it's context '''
         # Decrement timer if necessary
         if self.timer:
             self.timer -= 1
             if self.timer == 0:
-                raise Exception('Now what do I do, Jacob?')
-                # agent.set_state(agent.default_state)
+                self.handle_timeout()
+                
+    def handle_timeout(self):
+        ''' Called by default when the timer hits zero '''
+        # Stop doing the thing we're doing
+        self.agent.remove_state()
 
 
 class Dead(State):
@@ -74,25 +51,24 @@ class Dead(State):
     name = 'DEAD'
     colour = 'red'
 
-    def execute(self, agent):
-        super().execute(agent)
-        pass
+    def handle(self):
+        super().handle()
 
 
-class Waiting(State):
+class Wait(State):
     '''
     Represents waiting for some period of time
     '''
 
     name = 'WAITING'
     colour = 'cyan'
-    required_params = []
+    required_params = ['timer']
 
-    def execute(self, agent):
-        super().execute(agent)
+    def handle(self):
+        super().handle()
 
 
-class MovingRandomly(State):
+class MoveRandomly(State):
     '''
     Represents moving randomly
     ''' 
@@ -100,27 +76,26 @@ class MovingRandomly(State):
     name = 'MOVING_RANDOMLY'
     colour = 'green'
 
-    def execute(self, agent):
-        super().execute(agent)
-        dice_roll = randint(1, 1000)
-        if dice_roll == 1:
-            agent.set_state(Dead)
-        elif dice_roll <= 10:
-            agent.set_state(Waiting, timer=randint(3,7))
-        else:
-            agent.move_randomly()
+    def handle(self):
+        super().handle()
+        self.agent.move_randomly()
     
 
-class MovingTowardsLocation(State):
+class MoveToLocation(State):
     '''
     Represents moving towards a target location
     '''  
 
-    name = 'MOVING_TOWARDS'
+    name = 'MOVING_TOWARDS_LOCATION'
     colour = 'red'
-    required_params = ['target_location']
+    required_params = ['location']
 
-    def execute(self, agent):
-        super().execute(agent)
-        target_location = agent.memory['target_location']
-        agent.move_towards(target_location.x, target_location.y)
+    def handle(self):
+        super().handle()
+        location = self.context['location']
+        # Are we there yet?
+        if self.agent.location == location:
+            self.agent.remove_state()
+            return
+        self.agent.move_towards_location(location)
+        
