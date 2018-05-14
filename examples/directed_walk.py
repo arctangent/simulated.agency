@@ -26,10 +26,7 @@ target_location = simulation.random_location()
 
 # Add some walkers to the simulation
 for _ in range(0, NUM_WALKERS):
-    # Try to add - may fail if location already occupied
-    w = Walker(simulation.random_location())
-    if w:
-        w.add_state(MoveToLocation(w, location=target_location))
+    Walker(simulation.random_location(), MoveToLocation, location=target_location)
             
 
 

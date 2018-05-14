@@ -43,9 +43,7 @@ class NotOnFire(State):
             # Pick a direction to try to spread in
             location = choice(tree.location.neighbourhood())
             # If that location is empty, put a new tree there
-            t = Tree(location)
-            if t:
-                t.add_state(NotOnFire(t))
+            Tree(location, NotOnFire)
             
 
 
@@ -97,9 +95,7 @@ NUM_TREES = int(simulation.width * simulation.height * 0.3)
 # Add some Trees to the simulation
 for _ in range(0, NUM_TREES):
     # Try to add - may fail if location already occupied
-    t = Tree(simulation.random_location())
-    if t:
-        t.add_state(NotOnFire(t))
+    Tree(simulation.random_location(), NotOnFire)
 
 
 def loop():

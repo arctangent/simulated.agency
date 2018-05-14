@@ -23,10 +23,7 @@ NUM_WALKERS = int(simulation.width * simulation.height * 0.3)
 
 # Add some walkers to the simulation
 for _ in range(0, NUM_WALKERS):
-    # Try to add - may fail if location already occupied
-    w = Walker(simulation.random_location())
-    if w:
-        w.add_state(MoveRandomly(w))
+    Walker(simulation.random_location(), MoveRandomly)
             
 
 

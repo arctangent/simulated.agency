@@ -44,7 +44,7 @@ class Stateful(object):
     state_machine = None
     objects = []
 
-    def __init__(self):
+    def __init__(self, initial_location, initial_state=None, **kwargs):
         # Ensure simulation is set
         assert self.simulation is not None, "Creatable objects must have 'simulation' property set!"
         # Init
@@ -52,6 +52,9 @@ class Stateful(object):
         self._state_stack = Stack()
         # Default state
         self.default_state = MoveRandomly(self)
+        # Initial state
+        if initial_state:
+            self.add_state(initial_state(self, **kwargs))
 
     def destroy(self):
         Stateful.objects.remove(self)
@@ -110,36 +113,36 @@ class Cell(Stateful):
     Represents a type of agent which has an unchangeable location.
     '''
 
-    def __new__(cls, location):
+    def __new__(cls, initial_location, initial_state=None, **kwargs):
         # We should only create an instance of a thing
         # if the specified location has room for it
-        if location.is_full():
+        if initial_location.is_full():
             return None
 
         instance = super().__new__(cls)
         return instance
 
-    def __init__(self, location):
-        super().__init__()      
-        self.location = location
+    def __init__(self, initial_location, initial_state=None, **kwargs):
+        super().__init__(initial_location, initial_state, **kwargs)      
+        self.location = initial_location
         self.location.contents.append(self)  
-
-    def destroy(self):
-        # We need to delete the object last
-        self.location.contents.remove(self)
-        super().destroy()
 
     def __repr__(self):
         return 'Cell with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
         
+    def destroy(self):
+        # We need to delete the object last
+        self.location.contents.remove(self)
+        super().destroy()
+     
 
 class Agent(Cell):
     '''
     Represents a type of agent with a changeable location.
     '''
 
-    def __init__(self, location):
-        super().__init__(location)
+    def __init__(self, initial_location, initial_state=None, **kwargs):
+        super().__init__(initial_location, initial_state, **kwargs)
 
     def __repr__(self):
         return 'Agent with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
