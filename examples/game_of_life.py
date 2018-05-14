@@ -35,7 +35,7 @@ class Alive(State):
 
         agent.dirty = False
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
-        #print('neighbour_count: %s' % neighbour_count)
+        
         if neighbour_count not in [2, 3]:
             agent.replace_state(Dead(agent))
             agent.dirty = True
@@ -60,7 +60,7 @@ class Dead(State):
 
         agent.dirty = False
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
-        #print('neighbour_count: %s' % neighbour_count)
+        
         if neighbour_count == 3:
             agent.replace_state(Alive(agent))
             agent.dirty = True
