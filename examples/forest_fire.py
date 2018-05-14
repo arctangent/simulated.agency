@@ -102,7 +102,7 @@ def loop():
     '''
     Event loop
     '''
-    #import pdb; pdb.set_trace() 
+    
     # Counter for image frame numbers
     simulation.counter += 1
     
