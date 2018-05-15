@@ -1,16 +1,10 @@
 
-from random import randint, choice, shuffle
+from random import randint, choice
 
-
-# Ugly hack to fix s.a imports
-import sys
-sys.path.append(sys.path[0] + "/..")
-sys.path.append(sys.path[0] + "/../..")
-
-from simulated_agency.simulation import Simulation
-from simulated_agency.location import Location
-from simulated_agency.agents import Cell as Tree
-from simulated_agency.states import State
+from ..simulation import Simulation
+from ..location import Location
+from ..agents import Cell as Tree
+from ..states import State
 
 
 # Define some custom states for this simulation
