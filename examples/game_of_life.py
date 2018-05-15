@@ -68,7 +68,9 @@ class Dead(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=25)
+simulation = Simulation(cell_size=20, name='GameOfLife')
+
+# Bind models to simulation
 Location.simulation = simulation
 Cell.simulation = simulation
 
@@ -77,51 +79,10 @@ Location.neighbourhood_strategy = 'moore'
 
 # Initialise a grid of Cells with random starting state
 simulation.seed_all(Cell, [Alive, Dead])
-                
-
-def loop():
-    '''
-    Event loop
-    '''
-    
-    # Counter for image frame numbers
-    simulation.counter += 1
-
-    # Clear the canvas
-    simulation.canvas.delete('all')
-
-   
-    # Execute in parallel
-    # This sort of thing only works if a Cell
-    # makes no direct change on anything but itself
-    # i.e. if it has no side effects
-
-    # Figure out what the Cells would do next
-    for cell in Cell.objects:
-        # Cache the current cell state
-        cell.state_before = cell.current_state()
-        # Tell the Cell to act
-        cell.execute()
-        # Cache the next cell state
-        cell.state_after = cell.current_state()
-        # Restore the current cell state
-        cell.replace_state(cell.state_before)
-
-    # Update and then draw them
-    for cell in Cell.objects:
-        # Update to current state
-        cell.replace_state(cell.state_after)
-        # Draw
-        if cell.dirty:
-            simulation.draw(cell)
-    
-
-    # Save images
-    if simulation.record_video:
-        simulation.save_image('game_of_life')
-
-    simulation.canvas.after(20, loop)
-
         
-loop()
+# Run the simulation
+# Setting the synchronous flag updates all cells simultaneosly
+simulation.execute(Cell, synchronous=True)
+
+# Handle GUI events etc
 simulation.window.mainloop()

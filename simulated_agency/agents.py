@@ -55,6 +55,10 @@ class Stateful(object):
         # Initial state
         if initial_state:
             self.add_state(initial_state(self, **kwargs))
+        # We can use dirty flags to only draw objects when they have changed.
+        # We set the flag to True by default so that things are drawn even
+        # when the dirty flag functionality is not defined in the State
+        self.dirty = True
 
     def destroy(self):
         Stateful.objects.remove(self)

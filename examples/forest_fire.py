@@ -85,38 +85,17 @@ class OnFire(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=20)
+simulation = Simulation(cell_size=20, name='ForestFire')
+
+# Bind models to simulation
 Location.simulation = simulation
 Tree.simulation = simulation
 
 # Add some Trees to the simulation
 simulation.seed(Tree, 0.3, NotOnFire)
 
+# Run the simulation
+simulation.execute(Tree)
 
-
-def loop():
-    '''
-    Event loop
-    '''
-    
-    # Counter for image frame numbers
-    simulation.counter += 1
-    
-    # Clear the canvas
-    simulation.canvas.delete('all')
-
-    # Go through the list of trees and tell each of them to do something
-    shuffle(Tree.objects)
-    for tree in Tree.objects:
-        # Tell the tree to act
-        tree.execute()
-        simulation.draw(tree)
-
-    # Save images
-    if simulation.record_video:
-        simulation.save_image('forest_fire')
-
-    simulation.canvas.after(20, loop)
-        
-loop()
+# Handle GUI events etc
 simulation.window.mainloop()

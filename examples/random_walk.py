@@ -14,40 +14,17 @@ from simulated_agency.states import *
  
 
 # Initialise simulation
-simulation = Simulation(cell_size=20)
+simulation = Simulation(cell_size=20, name='RandomWalk')
+
+# Bind models to simulation
 Location.simulation = simulation
 Walker.simulation = simulation
 
 # Add some walkers to the simulation
 simulation.seed(Walker, 0.3, MoveRandomly)
 
+# Run the simulation
+simulation.execute(Walker)
 
-            
-
-
-def loop():
-    '''
-    Event loop
-    '''
-
-    # Counter for image frame numbers
-    simulation.counter += 1
-    
-    # Clear the canvas
-    simulation.canvas.delete('all')
-
-    # Go through the list of agents and tell each of them to do something
-    shuffle(Walker.objects)
-    for w in Walker.objects:
-        # Tell the agent to act
-        w.execute()
-        simulation.draw(w)
-
-    # Save images
-    if simulation.record_video:
-        simulation.save_image('random_walk')
-
-    simulation.canvas.after(20, loop)
-        
-loop()
+# Handle GUI events etc
 simulation.window.mainloop()

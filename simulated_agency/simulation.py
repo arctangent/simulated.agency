@@ -1,7 +1,7 @@
 
 import sys
 
-from random import randint, choice
+from random import randint, choice, shuffle
 from time import time
 from tkinter import *
 
@@ -20,7 +20,11 @@ class Simulation(object):
     Represents the universe in which our simulation unfolds.
     '''
     
-    def __init__(self, width=None, height=None, cell_size=None):
+    def __init__(self, width=None, height=None, cell_size=None, name=None):
+
+        # Name of this simulation - used for file output
+        self.name = name or 'simulation'
+
         # Constants - do not change these directly after simulation instantiation
         self.canvas_width = width or 800
         self.canvas_height = height or 800
@@ -186,3 +190,90 @@ class Simulation(object):
                     # Unadorned states
                     object_instance.add_state(chosen_state(object_instance))
 
+    def execute(self, agent_class_or_class_list, before_each_loop=None, before_each_agent=None, synchronous=False):
+        '''
+        Run the simulation's loop for the agent_classes listed.
+        
+        By default the list of agents is shuffled and each is executed
+        one at a time, with the simulation being immediately updated. 
+
+        If preferred, the synchronous flag can be set. This will execute all agents
+        to determine their 'next' state and then update all of them at the same time.
+        This mode of execution only makes sense if agents do not have side effects on
+        the rest of the simulation i.e. they only update their own state and do not
+        modify properties of the locations they are in.
+
+        The agent_classes param can be either a single class or a list of classes.
+        '''
+        
+        # Get a list of all the objects to be executed/drawn
+        if isinstance(agent_class_or_class_list, list):
+            agent_list = [a for agent_class in agent_class_or_class_list for a in agent_class.objects]
+        else:
+            agent_list = agent_class_or_class_list.objects
+
+        # Define our simulation loop
+        def loop():
+
+            # Counter for image frame numbers
+            self.counter += 1
+            
+            # Clear the canvas
+            self.canvas.delete('all')
+
+            # Execute user-defined function
+            if before_each_loop:
+                # We capture any emitted variables for use
+                # in the before_each_agent section
+                before_each_loop_vars = before_each_loop()
+            
+            # Go through the list of agents and tell each of them to do something
+
+            if synchronous:
+
+                # Figure out what the agents' future state will be
+                for agent in agent_list:
+                    # Execute user-defined function
+                    if before_each_agent:
+                        before_each_agent(agent, before_each_loop_vars)
+                    # Cache the current state
+                    agent.state_before = agent.current_state()
+                    # Tell the agent to act
+                    agent.execute()
+                    # Cache the next agent state
+                    agent.state_after = agent.current_state()
+                    # Restore the current agent state
+                    agent.replace_state(agent.state_before)
+
+                # Update and then draw them
+                for agent in agent_list:
+                    # Update to current state
+                    agent.replace_state(agent.state_after)
+                    # Draw
+                    if agent.dirty:
+                        self.draw(agent)
+
+            else:
+
+                shuffle(agent_list)
+                for agent in agent_list:
+                    # Execute user-defined function
+                    if before_each_agent:
+                        before_each_agent(agent, before_each_loop_vars)
+                    # Tell the agent to act
+                    agent.execute()
+                    # Draw them
+                    if agent.dirty:
+                        self.draw(agent)
+
+            # Save images
+            if self.record_video:
+                self.save_image(self.name)
+
+            self.canvas.after(20, loop)
+
+        # Execute our siulation loop
+        loop()
+
+        # Handle GUI events etc.
+        self.window.mainloop()
