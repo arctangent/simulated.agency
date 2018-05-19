@@ -129,7 +129,7 @@ class Cell(Stateful):
     def __init__(self, initial_location, initial_state=None, **kwargs):
         super().__init__(initial_location, initial_state, **kwargs)      
         self.location = initial_location
-        self.location.contents.append(self)  
+        self.location.contents.append(self)
 
     def __repr__(self):
         return 'Cell with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)

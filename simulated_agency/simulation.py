@@ -92,9 +92,13 @@ class Simulation(object):
 
         glyph = thing.current_state().glyph
         if glyph:
+            # Establish location
             x = thing.location.x_center
             y = thing.location.y_center
-            self.canvas.create_text(x, y, fill=fill, font='Helvetica %s' % self.cell_size, text=glyph)
+            # Establish size
+            size = int(thing.size * self.cell_size)
+            # Draw the glyph
+            self.canvas.create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
             return
 
         #
