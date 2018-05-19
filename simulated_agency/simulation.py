@@ -83,12 +83,27 @@ class Simulation(object):
         A very simple way to draw something
         '''
 
+        # Colour to draw
+        fill = fill or thing.colour()
+
+        #
+        # Can we draw a unicode glyph?
+        #
+
+        glyph = thing.current_state().glyph
+        if glyph:
+            x = thing.location.x_center
+            y = thing.location.y_center
+            self.canvas.create_text(x, y, fill=fill, font='Helvetica %s' % self.cell_size, text=glyph)
+            return
+
+        #
+        # Default to drawing a rectangle
+        #
+
         # Location to draw
         x = thing.location.x
         y = thing.location.y
-
-        # Colour to draw
-        fill = fill or thing.colour()
 
         # Determine appropriate border width
         if self.cell_size <= 4:

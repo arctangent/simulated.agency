@@ -16,6 +16,7 @@ class NotOnFire(State):
 
     name = 'NOT_ON_FIRE'
     colour = 'green'
+    glyph = '▲'
 
     def handle(self):
         '''
@@ -48,6 +49,7 @@ class OnFire(State):
 
     name = 'ON_FIRE'
     colour = 'red'
+    glyph = '▲'
     required_params = ['timer']
 
     def handle(self):
@@ -67,7 +69,7 @@ class OnFire(State):
                 # If that location has a tree, set it on fire if it isn't already on fire
                 if target.contents:
                     tree_to_burn = target.contents[0]
-                    if not isinstance(tree_to_burn.current_state, OnFire):
+                    if not tree_to_burn.is_in_state(OnFire):
                         tree_to_burn.replace_state(OnFire(tree_to_burn, timer=3))
 
     def handle_timeout(self):
@@ -79,7 +81,7 @@ class OnFire(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=20, name='ForestFire')
+simulation = Simulation(cell_size=40, name='ForestFire')
 
 # Bind models to simulation
 Location.simulation = simulation

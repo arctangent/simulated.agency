@@ -16,6 +16,7 @@ class State(abc.ABC):
     timer = None
     required_params = []
     context = {}
+    glyph = None
 
     def __init__(self, agent, **kwargs):
         self.agent = agent
