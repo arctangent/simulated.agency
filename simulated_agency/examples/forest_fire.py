@@ -38,8 +38,10 @@ class NotOnFire(State):
         
         dice_roll = randint(1, 1000)
 
-        if dice_roll == 1: 
-            tree.replace_state(OnFire(tree, timer=3))
+        if dice_roll == 1:
+            # Oh no! The tree was struck by lightning.
+            # It will burn for a variable amount of time.
+            tree.replace_state(OnFire(tree, timer=randint(6,10)))
 
         elif dice_roll <= 100:
             # Grow tree a bit
@@ -67,7 +69,8 @@ class OnFire(State):
 
     def handle(self):
         '''
-        A tree on fire will try to set fire to any adjancent trees.
+        A tree on fire for 5 turns or more will try to set
+        fire to any adjancent trees.
         A tree on fire will burn down when its timer expires
         '''
         
@@ -75,7 +78,22 @@ class OnFire(State):
 
         tree = self.agent
 
-        # If still on fire, see if the fire spreads
+        # It always takes 2 turns of yellow burning
+        # before we get to orange burning
+        if self.age <= 2:
+            self.colour = "yellow"
+            return
+
+        # It always takes 2 turns of orange buring
+        # before we get to red burning
+        if self.age <= 4:
+            self.colour = "orange"
+            return
+
+        # Red burning trees are able to spread fire
+        self.colour = "red"
+
+        # See if the fire spreads
         for target in tree.location.neighbourhood():
             dice_roll = randint(1, 100)
             if dice_roll <= 25:
@@ -83,7 +101,8 @@ class OnFire(State):
                 if target.contents:
                     tree_to_burn = target.contents[0]
                     if not tree_to_burn.is_in_state(OnFire):
-                        tree_to_burn.replace_state(OnFire(tree_to_burn, timer=3))
+                        # The tree_to_burn will burn for a variable amount of time
+                        tree_to_burn.replace_state(OnFire(tree_to_burn, timer=randint(6, 10)))
 
     def handle_timeout(self):
         ''' When tree is finished burning we should remove it from the simulation '''
