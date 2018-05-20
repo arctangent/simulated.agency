@@ -126,7 +126,7 @@ class Simulation(object):
         ''' Basic save image '''
 
         # The name of our image
-        image_name = path + '_' + str(self.counter).zfill(8) + '.png'
+        image_name = 'simulated_agency/images/%s_%s.png' % (path, str(self.counter).zfill(8))
 
         # Compute location of screen to grab
         x1 = self.window.winfo_rootx() + self.canvas.winfo_x()
