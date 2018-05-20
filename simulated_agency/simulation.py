@@ -41,8 +41,8 @@ class Simulation(object):
         self.wrap_x = True
         self.wrap_y = True
 
-        # Initial values
-        self.counter = 0
+        # Track simulation age
+        self.age = 0
 
         # GUI
         self.window = Tk()
@@ -91,12 +91,13 @@ class Simulation(object):
         #
 
         glyph = thing.current_state().glyph
+        glyph_size = thing.current_state().size
         if glyph:
             # Establish location
             x = thing.location.x_center
             y = thing.location.y_center
             # Establish size
-            size = int(thing.size * self.cell_size)
+            size = int(thing.size * glyph_size * self.cell_size)
             # Draw the glyph
             self.canvas.create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
             return
@@ -126,7 +127,7 @@ class Simulation(object):
         ''' Basic save image '''
 
         # The name of our image
-        image_name = 'simulated_agency/images/%s_%s.png' % (path, str(self.counter).zfill(8))
+        image_name = 'simulated_agency/images/%s_%s.png' % (path, str(self.age).zfill(8))
 
         # Compute location of screen to grab
         x1 = self.window.winfo_rootx() + self.canvas.winfo_x()
@@ -234,8 +235,8 @@ class Simulation(object):
         # Define our simulation loop
         def loop():
 
-            # Counter for image frame numbers
-            self.counter += 1
+            # Increment simulation age
+            self.age += 1
             
             # Clear the canvas
             self.canvas.delete('all')
@@ -252,6 +253,8 @@ class Simulation(object):
 
                 # Figure out what the agents' future state will be
                 for agent in agent_list:
+                    # Increment agent age
+                    agent.age += 1
                     # Execute user-defined function
                     if before_each_agent:
                         before_each_agent(agent, before_each_loop_vars)
@@ -276,6 +279,8 @@ class Simulation(object):
 
                 shuffle(agent_list)
                 for agent in agent_list:
+                    # Increment agent age
+                    agent.age += 1
                     # Execute user-defined function
                     if before_each_agent:
                         before_each_agent(agent, before_each_loop_vars)

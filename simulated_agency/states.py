@@ -16,10 +16,13 @@ class State(abc.ABC):
     timer = None
     required_params = []
     context = {}
-    glyph = None
+    glyph = None    # Used for drawing
+    size = 1        # Used for drawing
 
     def __init__(self, agent, **kwargs):
         self.agent = agent
+        # Track state age (i.e. how long in this state)
+        self.age = 0
         # Set countdown if specified
         if 'timer' in kwargs.keys():
             self.timer = kwargs['timer']
@@ -32,6 +35,8 @@ class State(abc.ABC):
     @abc.abstractmethod
     def handle(self):
         ''' Execute the state in it's context '''
+        # Increment state age
+        self.age += 1
         # Decrement timer if necessary
         if self.timer:
             self.timer -= 1

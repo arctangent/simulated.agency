@@ -43,10 +43,18 @@ class Stateful(object):
     simulation = None
     state_machine = None
     objects = []
+    # Used for drawing
+    size = 1
+    # We can use dirty flags to only draw objects when they have changed.
+    # We set the flag to True by default so that things are drawn even
+    # when the dirty flag functionality is not defined in the State
+    dirty = True
 
     def __init__(self, initial_location, initial_state=None, **kwargs):
         # Ensure simulation is set
         assert self.simulation is not None, "Creatable objects must have 'simulation' property set!"
+        # Track agent age
+        self.age = 0
         # Init
         Stateful.objects.append(self)
         self._state_stack = Stack()
@@ -55,10 +63,6 @@ class Stateful(object):
         # Initial state
         if initial_state:
             self.add_state(initial_state(self, **kwargs))
-        # We can use dirty flags to only draw objects when they have changed.
-        # We set the flag to True by default so that things are drawn even
-        # when the dirty flag functionality is not defined in the State
-        self.dirty = True
 
     def destroy(self):
         Stateful.objects.remove(self)

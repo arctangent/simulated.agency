@@ -17,12 +17,13 @@ class NotOnFire(State):
     name = 'NOT_ON_FIRE'
     colour = 'green'
     glyph = '▲'
+    size = 0.4
 
     def __init__(self, agent, **kwargs):
         ''' Initialise '''
         super().__init__(agent, **kwargs)
         # Trees start small
-        self.agent.size = 0.4
+        self.size = 0.4
 
     def handle(self):
         '''
@@ -41,8 +42,11 @@ class NotOnFire(State):
             tree.replace_state(OnFire(tree, timer=3))
 
         elif dice_roll <= 100:
-            # Grow a bit, up to a maximum size
-            self.agent.size = min(self.agent.size + 0.1, 1.4)
+            # Grow tree a bit
+            self.agent.size += 0.25
+            # Trees aren't fertile until they are 3
+            if self.agent.age < 3:
+                return
             # Pick a direction to try to spread in
             location = choice(tree.location.neighbourhood())
             # If that location is empty, put a new tree there
@@ -58,6 +62,7 @@ class OnFire(State):
     name = 'ON_FIRE'
     colour = 'red'
     glyph = '▲'
+    size = 0.4
     required_params = ['timer']
 
     def handle(self):
