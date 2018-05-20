@@ -9,7 +9,10 @@ from tkinter import *
 try:
     from PIL import ImageGrab
 except:
-    import pyscreenshot as ImageGrab
+    try:
+        import pyscreenshot as ImageGrab
+    except:
+        print("Can't do video!")
 
 
 from .location import Location
