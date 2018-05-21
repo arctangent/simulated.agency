@@ -66,7 +66,7 @@ class Location(object):
         Location.__shared_state[x, y] = self.__dict__
 
     def __repr__(self):
-        return 'Location (%s, %s) with contents %s' % (self.x, self.y, self.contents)
+        return 'Location(%s, %s)' % (self.x, self.y)
 
     def occupancy(self):
         '''
@@ -185,7 +185,7 @@ class Location(object):
         if not include_self and include_self_location:
             neighbours_list.remove(self)
         
-        self._neighbours_list = neighbours_list
+        self._neighbours = neighbours_list
 
         return neighbours_list
 

@@ -234,13 +234,13 @@ class Simulation(object):
             agent_list = [a for agent_class in agent_class_or_class_list for a in agent_class.objects]
         else:
             agent_list = agent_class_or_class_list.objects
-
+       
         # Define our simulation loop
         def loop():
 
             # Increment simulation age
             self.age += 1
-            
+
             # Clear the canvas
             self.canvas.delete('all')
 
@@ -251,9 +251,9 @@ class Simulation(object):
                 before_each_loop_vars = before_each_loop()
             
             # Go through the list of agents and tell each of them to do something
-
+             
             if synchronous:
-
+                
                 # Figure out what the agents' future state will be
                 for agent in agent_list:
                     # Increment agent age
@@ -275,8 +275,7 @@ class Simulation(object):
                     # Update to current state
                     agent.replace_state(agent.state_after)
                     # Draw
-                    if agent.dirty:
-                        self.draw(agent)
+                    self.draw(agent)
 
             else:
 
@@ -290,8 +289,7 @@ class Simulation(object):
                     # Tell the agent to act
                     agent.execute()
                     # Draw them
-                    if agent.dirty:
-                        self.draw(agent)
+                    self.draw(agent)
 
             # Save images
             if self.record_video:

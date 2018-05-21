@@ -14,6 +14,7 @@ class Alive(State):
 
     name = 'ALIVE'
     colour = 'white'
+    uses_dirty = True
 
     def handle(self):
         '''
@@ -25,12 +26,10 @@ class Alive(State):
 
         agent = self.agent
 
-        agent.dirty = False
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
         
         if neighbour_count not in [2, 3]:
             agent.replace_state(Dead(agent))
-            agent.dirty = True
 
 
 class Dead(State):
@@ -40,6 +39,7 @@ class Dead(State):
 
     name = 'DEAD'
     colour = 'black'
+    uses_dirty = True
 
     def handle(self):
         '''
@@ -50,12 +50,10 @@ class Dead(State):
 
         agent = self.agent
 
-        agent.dirty = False
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
         
         if neighbour_count == 3:
             agent.replace_state(Alive(agent))
-            agent.dirty = True
 
 
 

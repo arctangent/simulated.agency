@@ -45,10 +45,6 @@ class Stateful(object):
     objects = []
     # Used for drawing
     size = 1
-    # We can use dirty flags to only draw objects when they have changed.
-    # We set the flag to True by default so that things are drawn even
-    # when the dirty flag functionality is not defined in the State
-    dirty = True
 
     def __init__(self, initial_location, initial_state=None, **kwargs):
         # Ensure simulation is set
@@ -136,7 +132,7 @@ class Cell(Stateful):
         self.location.contents.append(self)
 
     def __repr__(self):
-        return 'Cell with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
+        return 'Cell %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
         
     def destroy(self):
         # We need to delete the object last

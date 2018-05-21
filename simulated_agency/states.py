@@ -32,6 +32,9 @@ class State(abc.ABC):
         # Update state context
         self.context.update(**kwargs)
 
+    def __repr__(self):
+        return 'State(%s)' % self.name
+
     @abc.abstractmethod
     def handle(self):
         ''' Execute the state in it's context '''
