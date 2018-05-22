@@ -14,4 +14,4 @@ Additional requirements are to be installed using "pip install -r requirements.t
 
 1. Download the code
 2. Change into the directory containing this README.md
-3. Execute e.g. `python -m simulated_agency.examples.game_of_life`
+3. Execute e.g. `python -m examples.game_of_life`

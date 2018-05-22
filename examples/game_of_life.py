@@ -1,8 +1,8 @@
 
-from ..simulation import Simulation
-from ..location import Location
-from ..agents import Cell
-from ..states import State
+from simulated_agency.simulation import Simulation
+from simulated_agency.location import Location
+from simulated_agency.agents import Cell
+from simulated_agency.states import State
 
 
 # Define some custom states for this simulation

@@ -1,24 +1,24 @@
 
 from random import randint
 
-from ..simulation import Simulation
-from ..location import Location
-from ..agents import Agent as Walker
-from ..states import *
+from simulated_agency.simulation import Simulation
+from simulated_agency.location import Location
+from simulated_agency.agents import Agent as ForgetfulWalker
+from simulated_agency.states import *
  
 
 # Initialise simulation
-simulation = Simulation(cell_size=8, name='DirectedWalk')
+simulation = Simulation(cell_size=8, name='ForgetfulWalk')
 
 # Bind models to simulation
 Location.simulation = simulation
-Walker.simulation = simulation
+ForgetfulWalker.simulation = simulation
 
 # Create a target location
 target_location = simulation.random_location()
 
 # Add some walkers to the simulation
-simulation.seed(Walker, 0.1, MoveToLocation, location=target_location)
+simulation.seed(ForgetfulWalker, 0.1, MoveToLocation, location=target_location, timer=randint(10,30))
 
 # Define a function to run at the start of every loop.
 # You only need to do this if you want to introduce
@@ -28,7 +28,7 @@ def maybe_move_target():
     ''' Change the target from time to time '''
     change_target = False
     target_location = None
-    dice_roll = randint(1, 50)
+    dice_roll = randint(1, 100)
     if dice_roll == 1:
         change_target = True
         target_location = simulation.random_location()
@@ -39,16 +39,23 @@ def maybe_move_target():
 # Define a function to run on each agent before they execute and are drawn.
 # You only need to do this if you have introduced external change as per
 # the function defined above.
-def update_agent(walker, maybe_move_target_return_vars):
+def update_agent_target(walker, maybe_move_target_return_vars):
     ''' Update agent target if the target location has changed '''
     # Use locals to access vars from maybe_move_target
     change_target = maybe_move_target_return_vars['change_target']
     target_location = maybe_move_target_return_vars['target_location']
     if change_target:
-        walker.replace_state(MoveToLocation(walker, location=target_location))
-            
+        walker.flush_state_stack()
+        # Note that stack is populated from bottom to top, so the next three lines
+        # instruct a walker to (1) Wait a short while, (2) MoveToLocation for a while,
+        # and then (3) forget what they are doing and MoveRandomly (until this code
+        # branch is executed again by the target changing).
+        walker.add_state(MoveRandomly(walker))
+        walker.add_state(MoveToLocation(walker, location=target_location, timer=randint(10,30)))
+        walker.add_state(Wait(walker, timer=randint(1, 10)))
+
 # Run the simulation
-simulation.execute(Walker, before_each_loop=maybe_move_target, before_each_agent=update_agent)
+simulation.execute(ForgetfulWalker, before_each_loop=maybe_move_target, before_each_agent=update_agent_target)
 
 # Handle GUI events etc
 simulation.window.mainloop()
