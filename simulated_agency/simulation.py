@@ -4,6 +4,7 @@ import sys
 from random import randint, choice, shuffle
 from time import time
 from tkinter import *
+from tkinter import messagebox
 
 # Linux doesn't have ImageGrab but we can use pyscreenshot instead
 try:
@@ -57,14 +58,20 @@ class Simulation(object):
         # GUI
         self.window = Tk()
         self.window.resizable(False, False)
+        # GUI - State
+        self.paused = False
+        # GUI - Canvas
         self.canvas = Canvas(self.window, width=self.canvas_width, height=self.canvas_height, bg='black', bd=0, highlightthickness=0)
         self.canvas.pack()
 
         # Sane program termination
-        def _quit():
+        def _quit(event=None):
             self.window.destroy()
             sys.exit()
         self.window.protocol("WM_DELETE_WINDOW", _quit)
+
+        # Keyboard - Quit
+        self.window.bind('q', _quit)
 
     def set_cell_size(self, cell_size):
         '''
@@ -309,6 +316,7 @@ class Simulation(object):
             if self.record_video:
                 self.save_image(self.name)
 
+            # Continue simulation loop
             self.canvas.after(20, loop)
 
         # Execute our simulation loop
