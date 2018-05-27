@@ -7,6 +7,7 @@ class Location(object):
     '''
     
     simulation = None
+    colour = None
     
     def __init__(self, x, y, capacity=None):
         '''

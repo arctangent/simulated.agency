@@ -3,6 +3,7 @@ import abc
 
 from random import randint, choice
 
+from simulated_agency import glyphs
 
 class State(abc.ABC):
     '''
@@ -14,8 +15,9 @@ class State(abc.ABC):
     timer = None
     required_params = []
     context = {}
-    glyph = None    # Used for drawing
-    size = 1        # Used for drawing
+    # Used for drawing
+    glyph = glyphs.BLACK_SQUARE
+    size = 1
 
     def __init__(self, agent, **kwargs):
         self.agent = agent

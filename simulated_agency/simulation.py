@@ -101,7 +101,7 @@ class Simulation(object):
 
 
 
-    def draw(self, thing, fill=None):
+    def draw_agent(self, thing, fill=None):
         '''
         A very simple way to draw something
         '''
@@ -125,26 +125,20 @@ class Simulation(object):
             self.canvas.create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
             return
 
-        #
-        # Default to drawing a rectangle
-        #
+    def draw_location(self, location):
+        '''
+        Draw a coloured rectangle
+        '''
 
-        # Location to draw
-        x = thing.location.x
-        y = thing.location.y
-
-        # Determine appropriate border width
-        if self.cell_size <= 4:
-            border_width = 0
-        else:
-            border_width = int(self.cell_size / 5)
+        # Determine appropriate fill and border width
+        fill = location.colour
+        border_width = 0
 
         # Draw a rectangle
-        x1 = self.cell_size * x
-        x2 = self.cell_size * (x + 1)
-        y1 = self.cell_size * y
-        y2 = self.cell_size * (y + 1)
-        self.canvas.create_rectangle(x1, y1, x2, y2 , fill=fill, width=border_width)
+        self.canvas.create_rectangle(
+            location.x_left, location.y_top, location.x_right, location.y_bottom,
+            fill=fill, width=border_width
+        )
 
     def save_image(self, path):
         ''' Basic save image '''
@@ -160,6 +154,18 @@ class Simulation(object):
         
         # Save the image
         ImageGrab.grab((x1, y1, x2, y2)).save(image_name)
+
+    def create_obstruction_rectangle(self, x_start, y_start, width, height):
+        '''
+        Marks a rectangular area of the world as impassable.
+        Note: Does not take into account screen wrapping.
+        '''
+
+        for x in range(x_start, x_start + width):
+            for y in range(y_start, y_start + height):
+                location = self.locations[x, y]
+                location.capacity = 0
+                location.colour = "yellow"
 
 
     def seed(self, object_class, num_or_density, state_class, **kwargs):
@@ -270,7 +276,12 @@ class Simulation(object):
                 # We capture any emitted variables for use
                 # in the before_each_agent section
                 before_each_loop_vars = before_each_loop()
-            
+
+            # Draw all the locations which have a colour
+            for location in self.locations.values():
+                if location.colour:
+                    self.draw_location(location)
+
             # Go through the list of agents and tell each of them to do something
              
             if synchronous:
@@ -296,7 +307,7 @@ class Simulation(object):
                     # Update to current state
                     agent.replace_state(agent.state_after)
                     # Draw
-                    self.draw(agent)
+                    self.draw_agent(agent)
 
             else:
 
@@ -310,7 +321,7 @@ class Simulation(object):
                     # Tell the agent to act
                     agent.execute()
                     # Draw them
-                    self.draw(agent)
+                    self.draw_agent(agent)
 
             # Save images
             if self.record_video:

@@ -3,6 +3,7 @@ from random import randint, choice
 
 from simulated_agency.simulation import Simulation
 from simulated_agency.agents import Cell as Tree
+from simulated_agency import glyphs
 from simulated_agency.states import State
 
 
@@ -15,7 +16,7 @@ class NotOnFire(State):
 
     name = 'NOT_ON_FIRE'
     colour = 'green'
-    glyph = '▲'
+    glyph = glyphs.BLACK_UP_POINTING_TRIANGLE
     size = 0.4
 
     def __init__(self, agent, **kwargs):
@@ -62,7 +63,7 @@ class OnFire(State):
 
     name = 'ON_FIRE'
     colour = 'red'
-    glyph = '▲'
+    glyph = glyphs.BLACK_UP_POINTING_TRIANGLE
     size = 0.4
     required_params = ['timer']
 
