@@ -2,7 +2,6 @@
 from random import randint, choice
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.location import Location
 from simulated_agency.agents import Cell as Tree
 from simulated_agency.states import State
 
@@ -116,7 +115,6 @@ class OnFire(State):
 simulation = Simulation(cell_size=40, name='ForestFire')
 
 # Bind models to simulation
-Location.simulation = simulation
 Tree.simulation = simulation
 
 # Add some Trees to the simulation

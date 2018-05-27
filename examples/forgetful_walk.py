@@ -2,7 +2,6 @@
 from random import randint
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.location import Location
 from simulated_agency.agents import Agent as ForgetfulWalker
 from simulated_agency.states import *
  
@@ -11,7 +10,6 @@ from simulated_agency.states import *
 simulation = Simulation(cell_size=8, name='ForgetfulWalk')
 
 # Bind models to simulation
-Location.simulation = simulation
 ForgetfulWalker.simulation = simulation
 
 # Create a target location

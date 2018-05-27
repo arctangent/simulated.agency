@@ -1,6 +1,5 @@
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.location import Location
 from simulated_agency.agents import Cell
 from simulated_agency.states import State
 
@@ -61,11 +60,10 @@ class Dead(State):
 simulation = Simulation(cell_size=20, name='GameOfLife')
 
 # Bind models to simulation
-Location.simulation = simulation
 Cell.simulation = simulation
 
 # Specify the appropriate neighbourhood model
-Location.neighbourhood_strategy = 'moore'
+simulation.neighbourhood_strategy = 'moore'
 
 # Initialise a grid of Cells with random starting state
 simulation.seed_all(Cell, [Alive, Dead])

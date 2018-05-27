@@ -2,7 +2,6 @@
 from collections import defaultdict
 from random import choice, randint
 
-from .location import Location
 from .states import State, MoveRandomly
 
 
@@ -156,7 +155,7 @@ class Agent(Cell):
         Move the Agent to a specified adjacent location.
         '''
         
-        new_location = Location(new_loc.x, new_loc.y)
+        new_location = self.simulation.locations[new_loc.x, new_loc.y]
         
         # Check that proposed new location is not full to capacity
         if new_location.is_full():

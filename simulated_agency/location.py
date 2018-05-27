@@ -7,31 +7,11 @@ class Location(object):
     '''
     
     simulation = None
-
-    # Borg/Monostate pattern
-    # Store instance state in class-level dict
-    # indexed on (x, y) i.e. unique location identifier
-    __shared_state = defaultdict(dict)
-
-    # Strategy pattern for neighbour location
-    neighbourhood_strategy = 'von_neumann'
     
     def __init__(self, x, y, capacity=None):
         '''
         Initialise
         '''
-        
-        # Borg/Monostate pattern
-        # If we already instantiated a location at (x, y)
-        # then copy the state into the new location at (x, y)
-        if (x, y) in Location.__shared_state.keys():
-            self.__dict__ = Location.__shared_state[x, y]
-            return
-
-        #
-        # Init code below runs only the first time a
-        # location is instantiated at a particular (x, y)
-        #
         
         # Ensure simulation is set
         assert self.simulation is not None, "Location must have 'simulation' property set!"
@@ -59,11 +39,6 @@ class Location(object):
         self._up = self._down = self._left = self._right = None
         self._neighbours = None
         self._neighbourhood = None
-
-        # Borg/Monostate pattern
-        # The first time we instatiate a location at (x, y)
-        # we must store that state in the class for later
-        Location.__shared_state[x, y] = self.__dict__
 
     def __repr__(self):
         return 'Location(%s, %s)' % (self.x, self.y)
@@ -135,7 +110,7 @@ class Location(object):
             return self._up
         else:
             y = self._wrap_height(self.y - 1)
-            self._up = Location(self.x, y)
+            self._up = self.simulation.locations[self.x, y]
             return self._up
     
     def down(self):
@@ -143,7 +118,7 @@ class Location(object):
             return self._down
         else:        
             y = self._wrap_height(self.y + 1)
-            self._down = Location(self.x, y)
+            self._down = self.simulation.locations[self.x, y]
             return self._down
         
     def left(self):
@@ -151,7 +126,7 @@ class Location(object):
             return self._left
         else:    
             x = self._wrap_width(self.x - 1)
-            self._left = Location(x, self.y)
+            self._left = self.simulation.locations[x, self.y]
             return self._left
     
     def right(self):
@@ -159,7 +134,7 @@ class Location(object):
             return self._right
         else:        
             x = self._wrap_width(self.x + 1)
-            self._right = Location(x, self.y)
+            self._right = self.simulation.locations[x, self.y]
             return self._right
 
     #
@@ -199,7 +174,7 @@ class Location(object):
             return self._neighbourhood
         
         # Strategy pattern
-        strategy = self.neighbourhood_strategy
+        strategy = self.simulation.neighbourhood_strategy
 
         if strategy == 'von_neumann':
             # Von Neumann neighbourhood is the cell itself and the four adjacent cells

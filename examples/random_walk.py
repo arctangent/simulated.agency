@@ -1,6 +1,5 @@
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.location import Location
 from simulated_agency.agents import Agent as Walker
 from simulated_agency.states import *
  
@@ -9,7 +8,6 @@ from simulated_agency.states import *
 simulation = Simulation(cell_size=20, name='RandomWalk')
 
 # Bind models to simulation
-Location.simulation = simulation
 Walker.simulation = simulation
 
 # Add some walkers to the simulation

@@ -22,11 +22,17 @@ class Simulation(object):
     '''
     Represents the universe in which our simulation unfolds.
     '''
+
+    # Strategy pattern for neighbour location
+    neighbourhood_strategy = 'von_neumann'
     
     def __init__(self, width=None, height=None, cell_size=None, name=None):
 
         # Name of this simulation - used for file output
         self.name = name or 'simulation'
+
+        # Locations
+        self.locations = {}
 
         # Constants - do not change these directly after simulation instantiation
         self.canvas_width = width or 800
@@ -36,6 +42,7 @@ class Simulation(object):
         # Computed properties
         self.width = int(self.canvas_width / self.cell_size)
         self.height = int(self.canvas_height / self.cell_size)
+        self.init_locations()
 
         # Preferences
         self.record_video = False
@@ -67,6 +74,12 @@ class Simulation(object):
         self.width = int(self.canvas_width / self.cell_size)
         self.height = int(self.canvas_height / self.cell_size)
 
+    def init_locations(self):
+        Location.simulation = self
+        for x in range(0, self.width):
+            for y in range(0, self.height):
+                self.locations[x, y] = Location(x, y)
+
     def random_x(self):
         return randint(0, self.width - 1)
 
@@ -77,7 +90,7 @@ class Simulation(object):
         return self.random_x(), self.random_y()
 
     def random_location(self):
-        return Location(*self.random_xy())
+        return self.locations[self.random_xy()]
 
 
 
@@ -203,7 +216,8 @@ class Simulation(object):
 
         for x in range(0, self.width):
             for y in range(0, self.height):
-                object_instance = object_class(Location(x, y))
+                location = self.locations[x, y]
+                object_instance = object_class(location)
                 chosen_state = choice(possible_state_list)
                 try:
                     # States with params

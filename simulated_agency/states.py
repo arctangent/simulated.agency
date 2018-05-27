@@ -3,8 +3,6 @@ import abc
 
 from random import randint, choice
 
-from .location import Location
-
 
 class State(abc.ABC):
     '''
