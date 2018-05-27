@@ -311,7 +311,7 @@ class Simulation(object):
 
             self.canvas.after(20, loop)
 
-        # Execute our siulation loop
+        # Execute our simulation loop
         loop()
 
         # Handle GUI events etc.
