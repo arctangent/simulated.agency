@@ -40,7 +40,6 @@ class Stateful(object):
     '''
 
     simulation = None
-    state_machine = None
     objects = []
     # Used for drawing
     size = 1
@@ -60,7 +59,13 @@ class Stateful(object):
             self.add_state(initial_state(self, **kwargs))
 
     def destroy(self):
-        Stateful.objects.remove(self)
+        # The object may have been destroyed already
+        # this turn, so we proceed carefully
+        try:
+            Stateful.objects.remove(self)
+            del self
+        except:
+            pass
 
     def execute(self):
         if self._state_stack.is_empty():
@@ -134,8 +139,13 @@ class Locatable(Stateful):
         return 'Locatable %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
         
     def destroy(self):
+        # The object may have been destroyed already
+        # this turn, so we proceed carefully
+        try:
+            self.location.contents.remove(self)
+        except:
+            pass
         # We need to delete the object last
-        self.location.contents.remove(self)
         super().destroy()
      
 
@@ -175,6 +185,9 @@ class Mobile(Locatable):
 
     def move_towards_location(self, location):
         self.move_towards(location.x, location.y)
+
+    def move_towards_target(self, target):
+        self.move_towards(target.location.x, target.location.y)
 
     def move_towards(self, target_x, target_y):
         '''
