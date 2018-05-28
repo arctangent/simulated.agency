@@ -57,8 +57,6 @@ class Simulation(object):
         # GUI
         self.window = Tk()
         self.window.resizable(False, False)
-        # GUI - State
-        self.paused = False
         # GUI - Canvas
         self.canvas = Canvas(self.window, width=self.canvas_width, height=self.canvas_height, bg='black', bd=0, highlightthickness=0)
         self.canvas.pack()
