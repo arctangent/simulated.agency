@@ -50,7 +50,7 @@ class Stateful(object):
         # Track agent age
         self.age = 0
         # Init
-        Stateful.objects.append(self)
+        self.objects.append(self)
         self._state_stack = Stack()
         # Default state
         self.default_state = MoveRandomly(self)
@@ -62,7 +62,7 @@ class Stateful(object):
         # The object may have been destroyed already
         # this turn, so we proceed carefully
         try:
-            Stateful.objects.remove(self)
+            self.objects.remove(self)
             del self
         except:
             pass
