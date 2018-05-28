@@ -139,20 +139,20 @@ class Locatable(Stateful):
         super().destroy()
      
 
-class Agent(Locatable):
+class Mobile(Locatable):
     '''
-    Represents a type of agent with a changeable location.
+    Represents a type of agent which can change its location.
     '''
 
     def __init__(self, initial_location, initial_state=None, **kwargs):
         super().__init__(initial_location, initial_state, **kwargs)
 
     def __repr__(self):
-        return 'Agent with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
+        return 'Mobile with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
 
     def move_to_location(self, new_loc):
         '''
-        Move the Agent to a specified adjacent location.
+        Move the agent to a specified adjacent location.
         '''
         
         new_location = self.simulation.locations[new_loc.x, new_loc.y]

@@ -1,6 +1,6 @@
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.agents import Agent as Walker
+from simulated_agency.agents import Mobile as Walker
 from simulated_agency.states import *
  
 

@@ -2,7 +2,7 @@
 from random import randint
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.agents import Agent as ForgetfulWalker
+from simulated_agency.agents import Mobile as ForgetfulWalker
 from simulated_agency.states import *
  
 
