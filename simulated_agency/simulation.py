@@ -4,7 +4,6 @@ import sys
 from random import randint, choice, shuffle
 from time import time
 from tkinter import *
-from tkinter import messagebox
 
 # Linux doesn't have ImageGrab but we can use pyscreenshot instead
 try:
