@@ -1,6 +1,6 @@
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.agents import Cell
+from simulated_agency.agents import Locatable as Cell
 from simulated_agency.states import State
 
 

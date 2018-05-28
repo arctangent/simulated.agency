@@ -111,9 +111,9 @@ class Stateful(object):
         return self._state_stack.peek().colour
 
 
-class Cell(Stateful):
+class Locatable(Stateful):
     '''
-    Represents a type of agent which has an unchangeable location.
+    Represents a type of agent which has a location.
     '''
 
     def __new__(cls, initial_location, initial_state=None, **kwargs):
@@ -131,7 +131,7 @@ class Cell(Stateful):
         self.location.contents.append(self)
 
     def __repr__(self):
-        return 'Cell %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
+        return 'Locatable %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
         
     def destroy(self):
         # We need to delete the object last
@@ -139,7 +139,7 @@ class Cell(Stateful):
         super().destroy()
      
 
-class Agent(Cell):
+class Agent(Locatable):
     '''
     Represents a type of agent with a changeable location.
     '''

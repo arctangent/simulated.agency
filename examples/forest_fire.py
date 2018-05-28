@@ -2,7 +2,7 @@
 from random import randint, choice
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.agents import Cell as Tree
+from simulated_agency.agents import Locatable as Tree
 from simulated_agency import glyphs
 from simulated_agency.states import State
 
