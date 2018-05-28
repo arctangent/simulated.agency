@@ -16,7 +16,7 @@ ForgetfulWalker.simulation = simulation
 target_location = simulation.random_location()
 
 # Add some walkers to the simulation
-simulation.seed(ForgetfulWalker, 0.1, MoveToLocation, location=target_location, timer=randint(10,30))
+simulation.seed(ForgetfulWalker, 0.1, MoveTowardsLocation, location=target_location, timer=randint(10,30))
 
 # Define a function to run at the start of every loop.
 # You only need to do this if you want to introduce
@@ -45,11 +45,11 @@ def update_agent_target(walker, maybe_move_target_return_vars):
     if change_target:
         walker.flush_state_stack()
         # Note that stack is populated from bottom to top, so the next three lines
-        # instruct a walker to (1) Wait a short while, (2) MoveToLocation for a while,
+        # instruct a walker to (1) Wait a short while, (2) MoveTowardsLocation for a while,
         # and then (3) forget what they are doing and MoveRandomly (until this code
         # branch is executed again by the target changing).
         walker.add_state(MoveRandomly(walker))
-        walker.add_state(MoveToLocation(walker, location=target_location, timer=randint(10,30)))
+        walker.add_state(MoveTowardsLocation(walker, location=target_location, timer=randint(10,30)))
         walker.add_state(Wait(walker, timer=randint(1, 10)))
 
 # Run the simulation
