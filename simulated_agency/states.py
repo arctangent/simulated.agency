@@ -59,6 +59,7 @@ class Dead(State):
 
     name = 'DEAD'
     colour = 'red'
+    glyph = 'X'
 
     def handle(self):
         super().handle()
