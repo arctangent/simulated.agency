@@ -57,48 +57,6 @@ class Location(object):
     def has_space(self):
         has_space = not self.is_full()
         return has_space
-    
-    def _wrap(self, val, min, max):
-        '''
-        Utility function to help with edge wrapping.
-        '''
-        
-        if val < min:
-            return 1 + max + val
-        elif val > max:
-            return val - max - 1
-        else:
-            return val
-        
-    def _wrap_width(self, val):
-        '''
-        Wrap a value within Simulation width
-        '''
-
-        if self.simulation.wrap_x:
-            return self._wrap(val, 0, self.simulation.width - 1)
-        else:
-            if val < 0:
-                return 0
-            elif val > self.simulation.width - 1:
-                return self.simulation.width - 1
-            else:
-                return val
-    
-    def _wrap_height(self, val):
-        '''
-        Wrap a value within Simulation height
-        '''
-
-        if self.simulation.wrap_y:
-            return self._wrap(val, 0, self.simulation.height - 1)
-        else:
-            if val < 0:
-                return 0
-            elif val > self.simulation.height - 1:
-                return self.simulation.height - 1
-            else:
-                return val
    
     #
     # Utility methods to make movement simpler to code.
@@ -110,7 +68,7 @@ class Location(object):
         if self._up:
             return self._up
         else:
-            y = self._wrap_height(self.y - 1)
+            y = self.simulation.normalise_height(self.y - 1)
             self._up = self.simulation.locations[self.x, y]
             return self._up
     
@@ -118,7 +76,7 @@ class Location(object):
         if self._down:
             return self._down
         else:        
-            y = self._wrap_height(self.y + 1)
+            y = self.simulation.normalise_height(self.y + 1)
             self._down = self.simulation.locations[self.x, y]
             return self._down
         
@@ -126,7 +84,7 @@ class Location(object):
         if self._left:
             return self._left
         else:    
-            x = self._wrap_width(self.x - 1)
+            x = self.simulation.normalise_width(self.x - 1)
             self._left = self.simulation.locations[x, self.y]
             return self._left
     
@@ -134,7 +92,7 @@ class Location(object):
         if self._right:
             return self._right
         else:        
-            x = self._wrap_width(self.x + 1)
+            x = self.simulation.normalise_width(self.x + 1)
             self._right = self.simulation.locations[x, self.y]
             return self._right
 
