@@ -14,7 +14,6 @@ class State(abc.ABC):
     colour = None
     timer = None
     required_params = []
-    context = {}
     # Used for drawing
     glyph = glyphs.BLACK_SQUARE
     size = 1
@@ -30,6 +29,7 @@ class State(abc.ABC):
         if not all(key in kwargs for key in self.required_params):
             raise Exception('Not all required data exist in state context')
         # Update state context
+        self.context = {}
         self.context.update(**kwargs)
 
     def __repr__(self):

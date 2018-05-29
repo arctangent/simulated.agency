@@ -40,14 +40,10 @@ class ChooseTargetToFollow(State):
 
     def handle(self):
         target_list = self.context['target_list']
+        # Wolves will only chase Sheep that are alive
+        live_target_list = [x for x in target_list if not x.is_in_state(Dead)]
         # Choose target
-        while True:
-            # Ensure we choose a live target
-            target = choice(target_list)
-            if not target.is_in_state(Dead):
-                # FIXME: All wolves chase the same sheep!
-                print('Wolf %s chooses Sheep %s' % (id(self.agent), id(target)))
-                break
+        target = choice(live_target_list)
         # Assign the state
         # When we have done moving towards the target we will kill it
         self.agent.add_state(KillTarget(self.agent, target=target))
@@ -67,7 +63,7 @@ Sheep.simulation = simulation
 Wolves.simulation = simulation
 
 # Add some sheep to the simulation
-simulation.seed(Sheep, 100, MoveRandomly)
+simulation.seed(Sheep, 0.25, MoveRandomly)
 
 # Add some wolves to the simulation
 simulation.seed(Wolves, 5, ChooseTargetToFollow, target_list=Sheep.objects)
