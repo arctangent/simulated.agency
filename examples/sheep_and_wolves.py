@@ -36,10 +36,10 @@ class ChooseTargetToFollow(State):
 
     name = 'CHOOSE_TARGET_TO_FOLLOW'
     colour = 'yellow'
-    required_params = ['target_list']
+    required_params = ['prey']
 
     def handle(self):
-        target_list = self.context['target_list']
+        target_list = self.context['prey'].objects
         # Wolves will only chase Sheep that are alive
         live_target_list = [x for x in target_list if not x.is_in_state(Dead)]
         # Choose target
@@ -66,7 +66,7 @@ Wolves.simulation = simulation
 simulation.seed(Sheep, 0.25, AvoidType, enemy=Wolves)
 
 # Add some wolves to the simulation
-simulation.seed(Wolves, 1, ChooseTargetToFollow, target_list=Sheep.objects)
+simulation.seed(Wolves, 5, ChooseTargetToFollow, prey=Sheep)
 
 # Run the simulation
 simulation.execute([Wolves, Sheep])
