@@ -1,5 +1,5 @@
 
-from random import choice, choices
+from random import choice
 
 from simulated_agency.simulation import Simulation
 from simulated_agency.agents import Mobile
