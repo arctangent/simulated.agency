@@ -32,15 +32,33 @@ class Stack(object):
         self.items = []
 
 
+class HasOwnObjectList(type):
+    '''
+    Metaclass to ensure that each class derived from
+    the Stateful class has it's own copy of an
+    `objects` list. Otherwise the derived classes would
+    share the same list, which isn't what you'd want.
 
-class Stateful(object):
+    Example:
+        class Sheep(Mobile): pass
+        class Wolves(Mobile): pass
+
+    Now when you create Sheep they appear in Sheep.objects but
+    they do not appear in Wolves.objects, as you would expect.    
+    '''
+
+    def __init__(cls, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        cls.objects = []
+
+
+class Stateful(object, metaclass=HasOwnObjectList):
     '''
     Represents something which can be created and destroyed,
     and which can also have a state and transition between states.
     '''
 
     simulation = None
-    objects = []
     # Used for drawing
     size = 1
 

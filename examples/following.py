@@ -58,20 +58,9 @@ class ChooseTargetToFollow(State):
 # Initialise simulation
 simulation = Simulation(cell_size=20, name='Following')
 
-
-
 # Use same base model for two types of object
-
-# FIXME: There must be a better way than this!
-
-class Sheep(Mobile):
-    objects = []
-
-class Wolves(Mobile):
-    objects = []
-
-
-
+class Sheep(Mobile): pass
+class Wolves(Mobile): pass
 
 # Bind models to simulation
 Sheep.simulation = simulation
@@ -81,11 +70,7 @@ Wolves.simulation = simulation
 simulation.seed(Sheep, 100, MoveRandomly)
 
 # Add some wolves to the simulation
-simulation.seed(Wolves, 5, None) #, ChooseTargetToFollow, target_list=Sheep.objects)
-for wolf in Wolves.objects:
-    wolf.replace_state(ChooseTargetToFollow(wolf, target_list=Sheep.objects))
-
-#import pdb; pdb.set_trace()
+simulation.seed(Wolves, 5, ChooseTargetToFollow, target_list=Sheep.objects)
 
 # Run the simulation
 simulation.execute([Wolves, Sheep])
