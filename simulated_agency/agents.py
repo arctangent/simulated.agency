@@ -207,6 +207,32 @@ class Mobile(Locatable):
     def move_towards_target(self, target):
         self.move_towards(target.location.x, target.location.y)
 
+    def move_away_from_target(self, target):
+        '''
+        Move in a direction that prevents the target being
+        able to move into you next turn.
+        '''
+        location = self.location
+        allowed_moves = [location.up(), location.down(), location.left(), location.right()]
+
+        # We use a 'knockout' technique to find the safe locations.
+        # Example: An enemy in any square above us means that we do
+        # not want to move upwards. Similarly with the other directions
+
+        if target.location in [location.up(), location.up().left(), location.up().right()]:
+            allowed_moves.remove(location.up())
+        elif target.location in [location.down(), location.down().left(), location.down().right()]:
+            allowed_moves.remove(location.down())
+        elif target.location in [location.left(), location.left().up(), location.left().down()]:
+            allowed_moves.remove(location.left())
+        elif target.location in [location.right(), location.right().up(), location.right().down()]:
+            allowed_moves.remove(location.right())
+
+        # Choose randomly from what's left
+        new_location = choice(allowed_moves)
+        self.move_to_location(new_location)
+            
+
     def move_towards(self, target_x, target_y):
         '''
         Move stochstically in the direction of the target coordinates

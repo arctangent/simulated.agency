@@ -133,3 +133,32 @@ class MoveTowardsTarget(State):
             return
         # Move towards target
         self.agent.move_towards_target(target)
+
+
+class AvoidType(State):
+    '''
+    Avoid all members of a particular class.
+    Example: sheep.add_state(AvoidType(sheep, Wolves))
+
+    FIXME: For simplicity we just pick one neighbouring
+           enemy and try to avoid only it
+    '''
+
+    name = 'AVOID_TYPE'
+    colour = 'green'
+    required_params = ['enemy']
+
+    def handle(self):
+        super().handle()
+        # Is there a member of the specified class nearby?
+        enemy_type = self.context['enemy']
+        agent = self.agent
+        location = agent.location
+        # Enumerate neighbouring enemies
+        enemies = [x for x in location.neighbours() if type(x) is enemy_type]
+        if enemies:
+            # Choose one to avoid
+            enemy_to_avoid = choice(enemies)
+            agent.move_away_from_target(enemy_to_avoid)
+        else:
+            agent.move_randomly()
