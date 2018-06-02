@@ -30,11 +30,10 @@ class Mobile(Locatable):
             return
         
         # Remove from current location
-        location = self.location
-        location.contents.remove(self)
+        self.location.contents.remove(self)
 
         # Add to new location
-        location = new_location
+        self.location = new_location
         new_location.contents.append(self)
 
     def move_randomly(self):
