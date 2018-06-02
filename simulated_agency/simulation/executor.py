@@ -1,5 +1,6 @@
 
 from random import shuffle
+import sys
 
 
 class Executor(object):
@@ -13,7 +14,11 @@ class Executor(object):
         self.simulation.execute = self.execute
 
 
-    def execute(self, agent_class_or_class_list, before_each_loop=None, before_each_agent=None, synchronous=False):
+    def execute(
+        self, agent_class_or_class_list,
+        before_each_loop=None, before_each_agent=None,
+        synchronous=False, timer=None
+    ):
         '''
         Run the simulation's loop for the agent_classes listed.
         
@@ -28,6 +33,8 @@ class Executor(object):
 
         The agent_classes param can be either a single class or a list of classes.
         '''
+
+        self.timer = timer
         
         # Get a list of all the objects to be executed/drawn
         if isinstance(agent_class_or_class_list, list):
@@ -40,6 +47,14 @@ class Executor(object):
 
             # Increment simulation age
             self.simulation.age += 1
+
+            # Decrement simulation timer
+            if self.timer:
+                self.timer -= 1
+                if self.timer == 0:
+                    self.simulation.window.destroy()
+                    print('Timer expired')
+                    sys.exit()
 
             # Clear the canvas
             self.simulation.canvas.delete('all')
