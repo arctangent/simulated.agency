@@ -7,7 +7,7 @@ from simulated_agency.states import *
  
 
 # Initialise simulation
-simulation = Simulation(cell_size=8, name='DirectedWalk')
+simulation = Simulation(cell_size=40, name='DirectedWalk')
 
 # Bind models to simulation
 Walker.simulation = simulation

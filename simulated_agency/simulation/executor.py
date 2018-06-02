@@ -43,7 +43,12 @@ class Executor(object):
         else:
             agent_list = agent_class_or_class_list.objects
 
-        # Do an initial draw of all agents
+        # Do an initial draw of all locations and all agents
+        if draw_locations:
+            # Draw all the locations which have a colour
+            for location in self.simulation.locations.values():
+                if location.colour and location.colour != self.simulation.background_colour:
+                    self.simulation.draw_location(location)
         for agent in agent_list:
             self.simulation.draw_agent(agent)
        
@@ -97,8 +102,11 @@ class Executor(object):
                 for agent in agent_list:
                     # Update to current state
                     agent.replace_state_instance(agent.state_after)
-                    # Draw
-                    self.simulation.draw_agent(agent)
+                    # Draw them
+                    # If we don't draw locations then we can skip
+                    # drawing agents too if we know they haven't changed.
+                    if not draw_locations and agent.dirty:
+                        self.simulation.draw_agent(agent)
 
             else:
 
@@ -112,7 +120,10 @@ class Executor(object):
                     # Tell the agent to act
                     agent.execute()
                     # Draw them
-                    self.simulation.draw_agent(agent)
+                    # If we don't draw locations then we can skip
+                    # drawing agents too if we know they haven't changed.
+                    if not draw_locations and agent.dirty:
+                        self.simulation.draw_agent(agent)
 
             # Save images
             if self.simulation.record_video:

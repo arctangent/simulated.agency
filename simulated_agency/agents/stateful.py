@@ -27,6 +27,8 @@ class Stateful(object, metaclass=HasOwnObjectList):
         # Initial state
         if initial_state:
             self.add_state(initial_state, **kwargs)
+        # Agents are always dirty (i.e. need drawing) unless we say otherwise
+        self.dirty = True
 
     def destroy(self):
         # The object may have been destroyed already

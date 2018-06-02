@@ -25,10 +25,15 @@ class Alive(State):
 
         agent = self.agent
 
+        # Never needs to be drawn again after the
+        # initial screen draw unless it changes state
+        agent.dirty = False
+
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
         
         if neighbour_count not in [2, 3]:
             agent.replace_state(Dead)
+            agent.dirty = True
 
 
 class Dead(State):
@@ -49,15 +54,20 @@ class Dead(State):
 
         agent = self.agent
 
+        # Never needs to be drawn again after the
+        # initial screen draw unless it changes state
+        agent.dirty = False
+
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
         
         if neighbour_count == 3:
             agent.replace_state(Alive)
+            agent.dirty = True
 
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=20, name='GameOfLife')
+simulation = Simulation(cell_size=16, name='GameOfLife')
 
 # Bind models to simulation
 Cell.simulation = simulation
