@@ -167,8 +167,8 @@ class Simulation(object):
         # Can we draw a unicode glyph?
         #
 
-        glyph = thing.current_state().glyph
-        glyph_size = thing.current_state().size
+        glyph = thing.current_state_instance().glyph
+        glyph_size = thing.current_state_instance().size
         if glyph:
             # Establish location
             x = thing.location.x_center
@@ -289,10 +289,10 @@ class Simulation(object):
                 try:
                     # States with params
                     initial_state_class, initial_state_params = chosen_state
-                    object_instance.add_state(initial_state_class(object_instance, **initial_state_params))
+                    object_instance.add_state(initial_state_class, **initial_state_params)
                 except:
                     # Unadorned states
-                    object_instance.add_state(chosen_state(object_instance))
+                    object_instance.add_state(chosen_state)
 
     def execute(self, agent_class_or_class_list, before_each_loop=None, before_each_agent=None, synchronous=False):
         '''
@@ -348,18 +348,18 @@ class Simulation(object):
                     if before_each_agent:
                         before_each_agent(agent, before_each_loop_vars)
                     # Cache the current state
-                    agent.state_before = agent.current_state()
+                    agent.state_before = agent.current_state_instance()
                     # Tell the agent to act
                     agent.execute()
                     # Cache the next agent state
-                    agent.state_after = agent.current_state()
+                    agent.state_after = agent.current_state_instance()
                     # Restore the current agent state
-                    agent.replace_state(agent.state_before)
+                    agent.replace_state_instance(agent.state_before)
 
                 # Update and then draw them
                 for agent in agent_list:
                     # Update to current state
-                    agent.replace_state(agent.state_after)
+                    agent.replace_state_instance(agent.state_after)
                     # Draw
                     self.draw_agent(agent)
 

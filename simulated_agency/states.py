@@ -138,7 +138,7 @@ class MoveTowardsTarget(State):
 class AvoidType(State):
     '''
     Avoid all members of a particular class.
-    Example: sheep.add_state(AvoidType(sheep, Wolves))
+    Example: sheep.add_state(AvoidType, enemy=Wolves)
 
     FIXME: For simplicity we just pick one neighbouring
            enemy and try to avoid only it

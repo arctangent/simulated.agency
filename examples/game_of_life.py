@@ -28,7 +28,7 @@ class Alive(State):
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
         
         if neighbour_count not in [2, 3]:
-            agent.replace_state(Dead(agent))
+            agent.replace_state(Dead)
 
 
 class Dead(State):
@@ -52,7 +52,7 @@ class Dead(State):
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
         
         if neighbour_count == 3:
-            agent.replace_state(Alive(agent))
+            agent.replace_state(Alive)
 
 
 

@@ -20,7 +20,7 @@ class KillTarget(State):
     def handle(self):
         target = self.context['target']
         if target in self.agent.location.neighbours():
-            target.replace_state(Dead(target))
+            target.replace_state(Dead)
         self.agent.remove_state()
 
 
@@ -46,9 +46,9 @@ class ChooseTargetToFollow(State):
         target = choice(live_target_list)
         # Assign the state
         # When we have done moving towards the target we will kill it
-        self.agent.add_state(KillTarget(self.agent, target=target))
+        self.agent.add_state(KillTarget, target=target)
         # Remember, the last state added is the first to execute
-        self.agent.add_state(MoveTowardsTarget(self.agent, target=target))
+        self.agent.add_state(MoveTowardsTarget, target=target)
 
 
 # Initialise simulation

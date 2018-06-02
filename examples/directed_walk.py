@@ -43,7 +43,7 @@ def update_agent(walker, maybe_move_target_return_vars):
     change_target = maybe_move_target_return_vars['change_target']
     target_location = maybe_move_target_return_vars['target_location']
     if change_target:
-        walker.replace_state(MoveTowardsLocation(walker, location=target_location))
+        walker.replace_state(MoveTowardsLocation, location=target_location)
             
 # Run the simulation
 simulation.execute(Walker, before_each_loop=maybe_move_target, before_each_agent=update_agent)

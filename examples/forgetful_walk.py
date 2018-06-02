@@ -48,9 +48,9 @@ def update_agent_target(walker, maybe_move_target_return_vars):
         # instruct a walker to (1) Wait a short while, (2) MoveTowardsLocation for a while,
         # and then (3) forget what they are doing and MoveRandomly (until this code
         # branch is executed again by the target changing).
-        walker.add_state(MoveRandomly(walker))
-        walker.add_state(MoveTowardsLocation(walker, location=target_location, timer=randint(10,30)))
-        walker.add_state(Wait(walker, timer=randint(1, 10)))
+        walker.add_state(MoveRandomly)
+        walker.add_state(MoveTowardsLocation, location=target_location, timer=randint(10,30))
+        walker.add_state(Wait, timer=randint(1, 10))
 
 # Run the simulation
 simulation.execute(ForgetfulWalker, before_each_loop=maybe_move_target, before_each_agent=update_agent_target)

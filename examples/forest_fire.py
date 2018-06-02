@@ -41,7 +41,7 @@ class NotOnFire(State):
         if dice_roll == 1:
             # Oh no! The tree was struck by lightning.
             # It will burn for a variable amount of time.
-            tree.replace_state(OnFire(tree, timer=randint(6,10)))
+            tree.replace_state(OnFire, timer=randint(6,10))
 
         elif dice_roll <= 100:
             # Grow tree a bit
@@ -102,7 +102,7 @@ class OnFire(State):
                     tree_to_burn = target.contents[0]
                     if not tree_to_burn.is_in_state(OnFire):
                         # The tree_to_burn will burn for a variable amount of time
-                        tree_to_burn.replace_state(OnFire(tree_to_burn, timer=randint(6, 10)))
+                        tree_to_burn.replace_state(OnFire, timer=randint(6, 10))
 
     def handle_timeout(self):
         ''' When tree is finished burning we should remove it from the simulation '''
