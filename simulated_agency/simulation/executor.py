@@ -36,6 +36,17 @@ class Executor(object):
         '''
 
         self.timer = timer
+        # Localise names for faster access, because we
+        # do a lot of this inside the simulation loop
+        simulation = self.simulation
+        locations = simulation.locations
+        background_colour = simulation.background_colour
+        draw_location = simulation.draw_location
+        draw_agent = simulation.draw_agent
+        record_video = simulation.record_video
+        save_image = simulation.save_image
+        name = simulation.name
+        canvas = simulation.canvas
         
         # Get a list of all the objects to be executed/drawn
         if isinstance(agent_class_or_class_list, list):
@@ -46,23 +57,23 @@ class Executor(object):
         # Do an initial draw of all locations and all agents
         if draw_locations:
             # Draw all the locations which have a colour
-            for location in self.simulation.locations.values():
-                if location.colour and location.colour != self.simulation.background_colour:
-                    self.simulation.draw_location(location)
+            for location in locations.values():
+                if location.colour and location.colour != background_colour:
+                    draw_location(location)
         for agent in agent_list:
-            self.simulation.draw_agent(agent)
+            draw_agent(agent)
        
         # Define our simulation loop
         def loop():
 
             # Increment simulation age
-            self.simulation.age += 1
+            simulation.age += 1
 
             # Decrement simulation timer
             if self.timer:
                 self.timer -= 1
                 if self.timer == 0:
-                    self.simulation.window.destroy()
+                    simulation.window.destroy()
                     print('Timer expired')
                     sys.exit()
 
@@ -74,9 +85,9 @@ class Executor(object):
 
             if draw_locations:
                 # Draw all the locations which have a colour
-                for location in self.simulation.locations.values():
-                    if location.colour and location.colour != self.simulation.background_colour:
-                        self.simulation.draw_location(location)
+                for location in locations.values():
+                    if location.colour and location.colour != background_colour:
+                        draw_location(location)
 
             # Go through the list of agents and tell each of them to do something
              
@@ -106,7 +117,7 @@ class Executor(object):
                     # If we don't draw locations then we can skip
                     # drawing agents too if we know they haven't changed.
                     if not draw_locations and agent.dirty:
-                        self.simulation.draw_agent(agent)
+                        draw_agent(agent)
 
             else:
 
@@ -123,14 +134,14 @@ class Executor(object):
                     # If we don't draw locations then we can skip
                     # drawing agents too if we know they haven't changed.
                     if not draw_locations and agent.dirty:
-                        self.simulation.draw_agent(agent)
+                        draw_agent(agent)
 
             # Save images
-            if self.simulation.record_video:
-                self.simulation.save_image(self.simulation.name)
+            if record_video:
+                save_image(name)
 
             # Continue simulation loop
-            self.simulation.canvas.after(20, loop)
+            canvas.after(20, loop)
 
         # Execute our simulation loop
         loop()

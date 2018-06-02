@@ -47,12 +47,14 @@ class Geometry(object):
         either by wrapping or constraining
         '''
 
-        if self.simulation.wrap_x:
+        simulation = self.simulation
+
+        if simulation.wrap_x:
             # Wrap
-            return self._wrap(val, 0, self.simulation.width - 1)
+            return self._wrap(val, 0, simulation.width - 1)
         else:
             # Constrain
-            return self._constrain(val, 0, self.simulation.width - 1)
+            return self._constrain(val, 0, simulation.width - 1)
 
     
     def normalise_height(self, val):
@@ -61,12 +63,14 @@ class Geometry(object):
         either by wrapping or constraining
         '''
 
-        if self.simulation.wrap_y:
+        simulation = self.simulation
+
+        if simulation.wrap_y:
             # Wrap
-            return self._wrap(val, 0, self.simulation.height - 1)
+            return self._wrap(val, 0, simulation.height - 1)
         else:
             # Constrain
-            return self._constrain(val, 0, self.simulation.height - 1)
+            return self._constrain(val, 0, simulation.height - 1)
 
 
     def random_x(self):

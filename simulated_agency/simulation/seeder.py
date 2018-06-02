@@ -37,9 +37,11 @@ class Seeder(object):
         Returns the number of agents successfully placed.
         '''
 
+        simulation = self.simulation
+
         # How many objects do we need to place?
         if 0 < num_or_density < 1:
-            number_to_place = int(num_or_density * self.simulation.width * self.simulation.height)
+            number_to_place = int(num_or_density * simulation.width * simulation.height)
         elif num_or_density >= 1:
             number_to_place = num_or_density
         else:
@@ -50,7 +52,7 @@ class Seeder(object):
             # Find a location
             location_found = False
             while not location_found:
-                location = self.simulation.random_location()
+                location = simulation.random_location()
                 if not location.is_full():
                     location_found = True
             # Create the object
@@ -73,9 +75,11 @@ class Seeder(object):
             simulation.seed_all(MyState, [StateOne, [StateTwo, {timer:1}], StateThree]
         '''
 
-        for x in range(0, self.simulation.width):
-            for y in range(0, self.simulation.height):
-                location = self.simulation.locations[x, y]
+        simulation = self.simulation
+
+        for x in range(0, simulation.width):
+            for y in range(0, simulation.height):
+                location = simulation.locations[x, y]
                 object_instance = object_class(location)
                 chosen_state = choice(possible_state_list)
                 try:
@@ -92,8 +96,10 @@ class Seeder(object):
         Note: Does not take into account screen wrapping.
         '''
 
+        locations = self.simulation.locations
+
         for x in range(x_start, x_start + width):
             for y in range(y_start, y_start + height):
-                location = self.simulation.locations[x, y]
+                location = locations[x, y]
                 location.capacity = 0
                 location.colour = "yellow"
