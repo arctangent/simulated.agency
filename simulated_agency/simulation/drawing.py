@@ -1,4 +1,7 @@
 
+from ..agents import Mobile
+
+
 class Painter(object):
     '''
     Provides object drawing functionality
@@ -10,7 +13,6 @@ class Painter(object):
         self.simulation.draw_agent = self.draw_agent
         self.simulation.draw_location = self.draw_location
 
-
     def draw_agent(self, thing, fill=None):
         '''
         A very simple way to draw something
@@ -19,17 +21,28 @@ class Painter(object):
         # Colour to draw
         fill = fill or thing.colour()
 
+        # Glyph shape and size
         glyph = thing.current_state_instance().glyph
         glyph_size = thing.current_state_instance().size
-        if glyph:
-            # Establish location
-            x = thing.location.x_center
-            y = thing.location.y_center
-            # Establish size
-            size = int(thing.size * glyph_size * self.simulation.cell_size)
-            # Draw the glyph
-            self.simulation.canvas.create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
-            return
+
+        # Establish location
+        x = thing.location.x_center
+        y = thing.location.y_center
+
+        # Establish size to draw
+        size = int(thing.size * glyph_size * self.simulation.cell_size)
+        
+        # Draw the glyph
+        canvas = self.simulation.canvas
+        if not hasattr(thing, 'canvas_id'):
+            # Create the canvas element for the first time
+            thing.canvas_id = canvas.create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
+        else:
+            # Update the canvas element
+            canvas.itemconfig(thing.canvas_id, fill=fill, font='Helvetica %s' % size, text=glyph)
+            # If the thing can move, then we need to update it's canvas coordinates
+            if isinstance(thing, Mobile):
+                canvas.coords(thing.canvas_id, x, y)
 
     def draw_location(self, location):
         '''
@@ -41,7 +54,13 @@ class Painter(object):
         border_width = 0
 
         # Draw a rectangle
-        self.simulation.canvas.create_rectangle(
-            location.x_left, location.y_top, location.x_right, location.y_bottom,
-            fill=fill, width=border_width
-        )
+        canvas = self.simulation.canvas
+        if not hasattr(location, 'canvas_id'):
+            # Create the canvas element for the first time
+            canvas.create_rectangle(
+                location.x_left, location.y_top, location.x_right, location.y_bottom,
+                fill=fill, width=border_width
+            )
+        else:
+            # Update the canvas element
+            canvas.itemconfig(location.canvas_id, fill=fill)

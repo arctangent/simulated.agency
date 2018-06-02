@@ -14,7 +14,7 @@ Walker.simulation = simulation
 simulation.seed(Walker, 0.3, MoveRandomly)
 
 # Run the simulation
-simulation.execute(Walker)
+simulation.execute(Walker, draw_locations=False)
 
 # Handle GUI events etc
 simulation.window.mainloop()

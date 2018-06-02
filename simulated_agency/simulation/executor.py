@@ -17,7 +17,8 @@ class Executor(object):
     def execute(
         self, agent_class_or_class_list,
         before_each_loop=None, before_each_agent=None,
-        synchronous=False, timer=None
+        synchronous=False, timer=None,
+        draw_locations=True
     ):
         '''
         Run the simulation's loop for the agent_classes listed.
@@ -41,6 +42,10 @@ class Executor(object):
             agent_list = [a for agent_class in agent_class_or_class_list for a in agent_class.objects]
         else:
             agent_list = agent_class_or_class_list.objects
+
+        # Do an initial draw of all agents
+        for agent in agent_list:
+            self.simulation.draw_agent(agent)
        
         # Define our simulation loop
         def loop():
@@ -56,19 +61,17 @@ class Executor(object):
                     print('Timer expired')
                     sys.exit()
 
-            # Clear the canvas
-            self.simulation.canvas.delete('all')
-
             # Execute user-defined function
             if before_each_loop:
                 # We capture any emitted variables for use
                 # in the before_each_agent section
                 before_each_loop_vars = before_each_loop()
 
-            # Draw all the locations which have a colour
-            for location in self.simulation.locations.values():
-                if location.colour:
-                    self.simulation.draw_location(location)
+            if draw_locations:
+                # Draw all the locations which have a colour
+                for location in self.simulation.locations.values():
+                    if location.colour and location.colour != self.simulation.background_colour:
+                        self.simulation.draw_location(location)
 
             # Go through the list of agents and tell each of them to do something
              

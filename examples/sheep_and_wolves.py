@@ -69,7 +69,7 @@ simulation.seed(Sheep, 0.25, AvoidType, enemy=Wolves)
 simulation.seed(Wolves, 5, ChooseTargetToFollow, prey=Sheep)
 
 # Run the simulation
-simulation.execute([Wolves, Sheep])
+simulation.execute([Wolves, Sheep], draw_locations=False)
 
 # Handle GUI events etc
 simulation.window.mainloop()

@@ -53,7 +53,7 @@ def update_agent_target(walker, maybe_move_target_return_vars):
         walker.add_state(Wait, timer=randint(1, 10))
 
 # Run the simulation
-simulation.execute(ForgetfulWalker, before_each_loop=maybe_move_target, before_each_agent=update_agent_target)
+simulation.execute(ForgetfulWalker, before_each_loop=maybe_move_target, before_each_agent=update_agent_target, draw_locations=False)
 
 # Handle GUI events etc
 simulation.window.mainloop()

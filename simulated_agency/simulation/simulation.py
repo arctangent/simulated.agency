@@ -43,6 +43,7 @@ class Simulation(object):
         self.canvas_width = width or 800
         self.canvas_height = height or 800
         self.cell_size = cell_size or 8
+        self.background_colour = 'black'
         
         # Computed properties
         self.set_cell_size(cell_size)
@@ -69,7 +70,7 @@ class Simulation(object):
         self.window = Tk()
         self.window.resizable(False, False)
         # GUI - Canvas
-        self.canvas = Canvas(self.window, width=self.canvas_width, height=self.canvas_height, bg='black', bd=0, highlightthickness=0)
+        self.canvas = Canvas(self.window, width=self.canvas_width, height=self.canvas_height, bg=self.background_colour, bd=0, highlightthickness=0)
         self.canvas.pack()
 
         # Sane program termination

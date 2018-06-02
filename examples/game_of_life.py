@@ -70,7 +70,7 @@ simulation.seed_all(Cell, [Alive, Dead])
         
 # Run the simulation
 # Setting the synchronous flag updates all cells simultaneosly
-simulation.execute(Cell, synchronous=True)
+simulation.execute(Cell, synchronous=True, draw_locations=False)
 
 # Handle GUI events etc
 simulation.window.mainloop()

@@ -46,7 +46,7 @@ def update_agent(walker, maybe_move_target_return_vars):
         walker.replace_state(MoveTowardsLocation, location=target_location)
             
 # Run the simulation
-simulation.execute(Walker, before_each_loop=maybe_move_target, before_each_agent=update_agent)
+simulation.execute(Walker, before_each_loop=maybe_move_target, before_each_agent=update_agent, draw_locations=False)
 
 # Handle GUI events etc
 simulation.window.mainloop()

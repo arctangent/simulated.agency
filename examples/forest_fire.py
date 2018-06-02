@@ -122,7 +122,7 @@ Tree.simulation = simulation
 simulation.seed(Tree, 0.3, NotOnFire)
 
 # Run the simulation
-simulation.execute(Tree)
+simulation.execute(Tree, draw_locations=False)
 
 # Handle GUI events etc
 simulation.window.mainloop()
