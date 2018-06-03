@@ -47,6 +47,3 @@ def update_agent(walker, maybe_move_target_return_vars):
             
 # Run the simulation
 simulation.execute(Walker, before_each_loop=maybe_move_target, before_each_agent=update_agent, draw_locations=False)
-
-# Handle GUI events etc
-simulation.window.mainloop()

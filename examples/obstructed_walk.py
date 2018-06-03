@@ -18,6 +18,3 @@ simulation.seed(Walker, 0.3, MoveRandomly)
 
 # Run the simulation
 simulation.execute(Walker)
-
-# Handle GUI events etc
-simulation.window.mainloop()

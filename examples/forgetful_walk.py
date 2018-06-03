@@ -7,7 +7,7 @@ from simulated_agency.states import *
  
 
 # Initialise simulation
-simulation = Simulation(cell_size=8, name='ForgetfulWalk')
+simulation = Simulation(cell_size=20, name='ForgetfulWalk')
 
 # Bind models to simulation
 ForgetfulWalker.simulation = simulation
@@ -54,6 +54,3 @@ def update_agent_target(walker, maybe_move_target_return_vars):
 
 # Run the simulation
 simulation.execute(ForgetfulWalker, before_each_loop=maybe_move_target, before_each_agent=update_agent_target, draw_locations=False)
-
-# Handle GUI events etc
-simulation.window.mainloop()

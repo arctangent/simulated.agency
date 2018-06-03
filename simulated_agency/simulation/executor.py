@@ -116,7 +116,9 @@ class Executor(object):
                     # Draw them
                     # If we don't draw locations then we can skip
                     # drawing agents too if we know they haven't changed.
-                    if not draw_locations and agent.dirty:
+                    if draw_locations:
+                        draw_agent(agent)
+                    elif agent.dirty:
                         draw_agent(agent)
 
             else:
@@ -133,7 +135,9 @@ class Executor(object):
                     # Draw them
                     # If we don't draw locations then we can skip
                     # drawing agents too if we know they haven't changed.
-                    if not draw_locations and agent.dirty:
+                    if draw_locations:
+                        draw_agent(agent)
+                    elif agent.dirty:
                         draw_agent(agent)
 
             # Save images
@@ -141,7 +145,7 @@ class Executor(object):
                 save_image(name)
 
             # Continue simulation loop
-            canvas.after(20, loop)
+            canvas.after(5, loop)
 
         # Execute our simulation loop
         loop()
