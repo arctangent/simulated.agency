@@ -11,6 +11,12 @@ class Mobile(Locatable):
     Represents a type of agent which can change its location.
     '''
 
+    # Memoisation
+    # Note that we are happy to share these dicts with any child classes
+    # (unlike the "objects" attribute of Stateful)
+    wrapped_dx = {}
+    wrapped_dy = {}
+
     def __init__(self, initial_location, initial_state=None, **kwargs):
         super().__init__(initial_location, initial_state, **kwargs)
 
@@ -79,22 +85,49 @@ class Mobile(Locatable):
 
         # Shorthand references
         simulation = self.simulation
+        width = simulation.width
+        height = simulation.height
+        half_width = width / 2
+        half_height = height / 2
 
         # Compute naive, non-wrapping distance
         dx = target_x - self.location.x
         dy = target_y - self.location.y
         
         # Adjust for screen wrap
-        # Note that dx and dy could be negative
-        if simulation.wrap_x:
-            if abs(dx) > (simulation.width / 2):
-                dx = ((dx + (simulation.width * 3/2)) % simulation.width) - (simulation.width / 2)
-        if simulation.wrap_y:
-            if abs(dy) > (simulation.height / 2):
-                dy = ((dy + (simulation.height * 3/2)) % simulation.height) - (simulation.height / 2)
+        # We memoise these calculations for speed
+
+        try:
+            dx = self.wrapped_dx[dx] 
+        except:
+            if not simulation.wrap_x:
+                self.wrapped_dx[dx] = dx
+            else:
+                new_dx = dx
+                if dx > half_width:
+                    new_dx = dx - width
+                elif -1 * dx > half_width:
+                    new_dx = dx + width
+                self.wrapped_dx[dx] = new_dx        
+                dx = new_dx
+        
+        try:
+            dy = self.wrapped_dy[dy]
+        except:
+            if not simulation.wrap_y:
+                self.wrapped_dy[dy] = dy
+            else:
+                new_dy = dy
+                if dy > half_height:
+                    new_dy = dy - height
+                elif -1 * dy > half_height:
+                    new_dy = dy + height
+                self.wrapped_dy[dy] = new_dy        
+                dy = new_dy
+
 
         # Decide which direction to move in depending
-        # on the magnituds of the component parts of the vector
+        # on the magnitudes of the component parts of the vector
         if dx == dy == 0:
             # We're at the location
             pass
