@@ -23,12 +23,10 @@ class Mobile(Locatable):
     def __repr__(self):
         return 'Mobile with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
 
-    def move_to_location(self, new_loc):
+    def move_to_location(self, new_location):
         '''
-        Move the agent to a specified adjacent location.
+        Move the agent to a specified location
         '''
-        
-        new_location = self.simulation.locations[new_loc.x, new_loc.y]
         
         # Check that proposed new location can accommodate us
         if not new_location.can_fit(self):
