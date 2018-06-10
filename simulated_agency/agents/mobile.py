@@ -145,11 +145,12 @@ class Mobile(Locatable):
                 self.move_to_location(self.location.left())
         else:
             # Decide stochastically which direction to move in
-            dx2 = dx * dx
-            dy2 = dy * dy
-            hypotenuse2 = dx2 + dy2
-            dice_roll = randint(1, hypotenuse2)
-            if dice_roll <= dx2:
+            abs_dx = abs(dx)
+            abs_dy = abs(dy)
+            distance = abs_dx + abs_dy
+            # Determine the direction to move
+            dice_roll = randint(1, distance)
+            if dice_roll <= abs_dx:
                 # Move in direction of dx
                 if dx > 0:
                     self.move_to_location(self.location.right())
