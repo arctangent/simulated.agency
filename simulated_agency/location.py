@@ -44,20 +44,18 @@ class Location(object):
     def __repr__(self):
         return 'Location(%s, %s)' % (self.x, self.y)
 
-    def occupancy(self):
+    def mass(self):
         '''
-        Define this to be the number of agents in the location,
-        i.e. no concept of 'mass' or 'size'.
+        How much mass is concentrated in this location?
         '''
-        return len(self.contents)
+        return sum([ a.mass for a in self.contents ])
 
-    def is_full(self):
-        return self.occupancy() == self.capacity
+    def can_fit(self, other):
+        '''
+        Can some other thing fit in this location?
+        '''
+        return (self.mass() + other.mass <= self.capacity)
 
-    def has_space(self):
-        has_space = not self.is_full()
-        return has_space
-   
     #
     # Utility methods to make movement simpler to code.
     # Note that we memoise the locations so that we only

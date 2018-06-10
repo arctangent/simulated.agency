@@ -7,17 +7,19 @@ class Locatable(Stateful):
     Represents a type of agent which has a location.
     '''
 
+    mass = 1
+
     def __new__(cls, initial_location, initial_state=None, **kwargs):
         # We should only create an instance of a thing
         # if the specified location has room for it
-        if initial_location.is_full():
+        if not initial_location.can_fit(cls):
             return None
 
         instance = super().__new__(cls)
         return instance
 
     def __init__(self, initial_location, initial_state=None, **kwargs):
-        super().__init__(initial_location, initial_state, **kwargs)      
+        super().__init__(initial_location, initial_state, **kwargs)     
         self.location = initial_location
         self.location.contents.append(self)
 

@@ -2,12 +2,17 @@
 from random import randint
 
 from simulated_agency.simulation import Simulation
-from simulated_agency.agents import Mobile as Walker
+from simulated_agency.agents import Mobile
 from simulated_agency.states import *
  
 
 # Initialise simulation
 simulation = Simulation(cell_size=10, name='DirectedWalk')
+
+# Create custom version of base agent model
+class Walker(Mobile):
+    # Allow two Walkers to occupy the same location
+    mass = 0.5
 
 # Bind models to simulation
 Walker.simulation = simulation

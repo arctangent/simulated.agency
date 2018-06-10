@@ -53,7 +53,7 @@ class Seeder(object):
             location_found = False
             while not location_found:
                 location = simulation.random_location()
-                if not location.is_full():
+                if location.can_fit(object_class):
                     location_found = True
             # Create the object
             object_class(location, state_class, **kwargs)

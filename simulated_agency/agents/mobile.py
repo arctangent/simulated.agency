@@ -30,8 +30,8 @@ class Mobile(Locatable):
         
         new_location = self.simulation.locations[new_loc.x, new_loc.y]
         
-        # Check that proposed new location is not full to capacity
-        if new_location.is_full():
+        # Check that proposed new location can accommodate us
+        if not new_location.can_fit(self):
             # Do nothing
             return
         
