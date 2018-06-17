@@ -123,7 +123,7 @@ class Location(object):
 
     def neighbourhood(self, include_self_location=True, recalculate=False):
         '''
-        Returns the neighbourhood of a given cell.
+        Returns a set containing the neighbourhood of a given cell.
         This can be calculated in several ways.
         '''
 
@@ -135,18 +135,18 @@ class Location(object):
 
         if strategy == 'von_neumann':
             # Von Neumann neighbourhood is the cell itself and the four adjacent cells
-            neighbourhood_list = [self, self.up(), self.down(), self.left(), self.right()]
+            neighbourhood_set = { self, self.up(), self.down(), self.left(), self.right() }
         elif strategy == 'moore':
             # Moore neighbourhood is the cell itself and the eight cells surrounding it
-            neighbourhood_list =  [
+            neighbourhood_set =  {
                 self.up().left(), self.up(), self.up().right(),
                 self.left(), self, self.right(),
                 self.down().left(), self.down(),  self.down().right()
-            ]
+            }
 
         if not include_self_location:
-            neighbourhood_list.remove(self)
+            neighbourhood_set.remove(self)
 
-        self._neighbourhood = neighbourhood_list
+        self._neighbourhood = neighbourhood_set
 
-        return neighbourhood_list
+        return neighbourhood_set
