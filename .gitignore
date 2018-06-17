@@ -3,3 +3,6 @@
 __pycache__
 .vscode
 mprofile*.dat
+.pytest_cache
+htmlcov
+.coverage

@@ -19,4 +19,7 @@ Additional requirements are to be installed by executing `pip install -r require
 ## Running the tests
 
 1. Change into the directory containing this README.md
-2. Execute `nosetests`, adding a `-v` flag for more detail
+2. Execute `python -m pytest`, adding a `-v` flag for more detail
+
+If you want to generate a coverage report then do this: `python -m pytest -v --cov=simulated_agency --cov-report=term`. Replace `term` with `html` to generate an HTML version of the coverage report identifying which code is not covered.
+ 
