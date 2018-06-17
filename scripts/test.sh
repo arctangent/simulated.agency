@@ -1,0 +1,1 @@
+python -m pytest -v --cov=simulated_agency --cov-report=html
