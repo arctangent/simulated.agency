@@ -14,9 +14,10 @@ class Stateful(object, metaclass=HasOwnObjectList):
     # Used for drawing
     size = 1
 
-    def __init__(self, initial_location, initial_state=None, **kwargs):
+    def __init__(self, initial_state=None, **kwargs):
         # Ensure simulation is set
-        assert self.simulation is not None, "Creatable objects must have 'simulation' property set!"
+        if self.simulation is None:
+            raise Exception("Creatable objects must have 'simulation' property set!")
         # Track agent age
         self.age = 0
         # Init
@@ -51,10 +52,6 @@ class Stateful(object, metaclass=HasOwnObjectList):
     def current_state_instance(self):
         ''' Return the top entry of the state stack '''
         return self._state_stack.peek()
-
-    def current_state_class(self):
-        ''' Return the class of the top entry of the state stack '''
-        return self.current_state_instance().__class__
 
     def replace_state(self, state_class, **kwargs):
         ''' Replace the top entry of the state stack with a new state '''

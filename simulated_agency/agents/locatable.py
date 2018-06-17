@@ -19,7 +19,7 @@ class Locatable(Stateful):
         return instance
 
     def __init__(self, initial_location, initial_state=None, **kwargs):
-        super().__init__(initial_location, initial_state, **kwargs)     
+        super().__init__(initial_state, **kwargs)     
         self.location = initial_location
         self.location.contents.append(self)
 

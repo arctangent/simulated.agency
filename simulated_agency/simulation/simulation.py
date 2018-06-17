@@ -42,7 +42,6 @@ class Simulation(object):
         # Constants - do not change these directly after simulation instantiation
         self.canvas_width = width or 800
         self.canvas_height = height or 800
-        self.cell_size = cell_size or 8
         self.background_colour = 'black'
         
         # Computed properties
@@ -82,10 +81,11 @@ class Simulation(object):
         # Keyboard - Quit
         self.window.bind('q', _quit)
 
-    def set_cell_size(self, cell_size=8):
+    def set_cell_size(self, cell_size):
         '''
         Call this method instead of changing cell_size directly
         '''
+        cell_size = cell_size or 8
         self.cell_size = cell_size
         self.width = int(self.canvas_width / self.cell_size)
         self.height = int(self.canvas_height / self.cell_size)
