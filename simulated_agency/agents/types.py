@@ -1,6 +1,4 @@
 
-
-
 class HasOwnObjectList(type):
     '''
     Metaclass to ensure that each class derived from
