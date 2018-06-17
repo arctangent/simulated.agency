@@ -36,4 +36,3 @@ class Locatable(Stateful):
             pass
         # We need to delete the object last
         super().destroy()
-     

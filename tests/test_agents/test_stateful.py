@@ -11,10 +11,6 @@ from simulated_agency.states import State
 
 
 #
-# Fixtures
-#
-
-#
 # Tests
 #
 
