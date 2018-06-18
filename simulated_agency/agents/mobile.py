@@ -1,6 +1,6 @@
 
 from collections import defaultdict
-from random import choice, randint
+from random import choice, choices, randint
 
 from ..states import State, MoveRandomly
 from .locatable import *
@@ -25,7 +25,7 @@ class Mobile(Locatable):
 
     def _relocate(self, new_location):
         '''
-        Internal method to perform a known-successfuk relocation.
+        Internal method to perform a known-successful relocation.
         Use move_to_location instead of calling this directly.
         '''
         # Remove from current location
@@ -34,73 +34,38 @@ class Mobile(Locatable):
         self.location = new_location
         new_location.contents.append(self)
 
-    def move_to_location(self, new_location, alternatives=[]):
+    def move_to_location(self, new_location, alt_moves=[], alt_moves_final=[]):
         '''
-        Move the agent to a specified location
+        Move the agent to a specified location,
+        substituting alt_moves if they are specified and valid
         '''
-        
-        # If we cannot move to the proposed new location
-        # then we try to find a sensible alternative
-        if not new_location.can_fit(self):
-            # Were any alternative moves supplied?
-            if alternatives:
-                viable_alternatives = [alt for alt in alternatives if alt.can_fit(self)]
-                if viable_alternatives:
-                    new_location = choice(viable_alternatives)
+
+        if new_location.can_fit(self):
+            # Perform the relocation
+            self._relocate(new_location)
+
+        # Were any alternative moves supplied?
+        if alt_moves:
+            viable_alt_moves = [alt for alt in alt_moves if alt.can_fit(self)]
+            if viable_alt_moves:
+                new_location = choice(viable_alt_moves)
+                self._relocate(new_location)
+            elif alt_moves_final:
+                # Select from the moves of last resort
+                viable_alt_moves_final = [alt for alt in alt_moves_final if alt.can_fit(self)]
+                if viable_alt_moves_final:
+                    new_location = choice(viable_alt_moves_final)
                     self._relocate(new_location)
-                else:
-                    # None of the specified alternatives
-                    # was available, so do nothing
-                    pass
-
-            # No alternatives specified, so we will do the best we can.
-            # Identify which axis we were trying to move on
-            if self.location.x - new_location.x == 0:
-                # Can't move up/down, but maybe left or right would work?
-                left = new_location.left()
-                right = new_location.right()
-                left_available = left.can_fit(self)
-                right_available = right.can_fit(self)
-                # Determine alternative location
-                if left_available and right_available:
-                    new_location = choice([self.location.left(), self.location.right()])
-                elif left_available:
-                    new_location = self.location.left()
-                elif right_available:
-                    new_location = self.location.right()
-                else:
-                    # We failed to find an alternative, so do nothing
-                    return
-            else:
-                # Attempted an left/right move
-                # Can't move left/right, but maybe up or down would work?
-                up = new_location.up()
-                down = new_location.down()
-                up_available = up.can_fit(self)
-                down_available = down.can_fit(self)
-                # Determine alternative location
-                if up_available and down_available:
-                    new_location = choice([self.location.up(), self.location.down()])
-                elif up_available:
-                    new_location = self.location.up()
-                elif down_available:
-                    new_location = self.location.down()
-                else:
-                    # We failed to find an alternative, so do nothing
-                    return 
-        
-        # Perform the relocation
-        self._relocate(new_location)
-
-    def move_randomly(self):
-        location = choice(self.location.neighbourhood())
-        self.move_to_location(location)
 
     def move_towards_location(self, location):
         self.move_towards(location.x, location.y)
 
     def move_towards_target(self, target):
         self.move_towards(target.location.x, target.location.y)
+
+    def move_randomly(self):
+        location = choice(tuple(self.location.neighbourhood()))
+        self.move_towards_location(location)
 
     def move_away_from_target(self, target):
         '''
@@ -125,13 +90,21 @@ class Mobile(Locatable):
 
         # Choose randomly from what's left
         new_location = choice(allowed_moves)
-        self.move_to_location(new_location)
+        self.move_towards_location(new_location)
             
 
     def move_towards(self, target_x, target_y):
         '''
         Move stochstically in the direction of the target coordinates
         '''
+
+        # Compute naive, non-wrapping distance
+        dx = target_x - self.location.x
+        dy = target_y - self.location.y
+
+        # Exit early if we are at the location
+        if dx == dy == 0:
+            return
 
         # Shorthand references
         simulation = self.simulation
@@ -145,10 +118,6 @@ class Mobile(Locatable):
         left = self.location.left()
         right = self.location.right()
 
-        # Compute naive, non-wrapping distance
-        dx = target_x - self.location.x
-        dy = target_y - self.location.y
-        
         # Adjust for screen wrap
         # We memoise these calculations for speed
 
@@ -180,61 +149,84 @@ class Mobile(Locatable):
                 self.wrapped_dy[dy] = new_dy        
                 dy = new_dy
 
-
+        #
         # Decide which direction to move in depending
         # on the magnitudes of the component parts of the vector
+        #
 
-        if dx == dy == 0:
-            # We're at the location
-            pass
-        elif dx == 0:
-            # Move in direction of dy
+        choices(
+            [ self.move_horizontal(dx, dy), self.move_vertical(dx, dy) ],
+            weights=[abs(dx), abs(dy)]    
+        )  
+
+    def move_horizontal(self, dx, dy):
+        '''
+        Move in direction of dx,
+        picking alt_moves based on dy
+        '''
+
+        # Shorthand references
+        move = self.move_to_location
+        up = self.location.up()
+        down = self.location.down()
+        left = self.location.left()
+        right = self.location.right()
+
+        if dx > 0:
+            # Try to move right...
             if dy > 0:
-                move(down)
+                # ... with second preference for moving down
+                move(right, alt_moves=[down], alt_moves_final=[up, left])
+            elif dy < 0:
+                # ... with second preference for moving up
+                move(right, alt_moves=[up], alt_moves_final=[down, left])
             else:
-                move(up)
-        elif dy == 0:
-            # Move in direction of dx
-            if dx > 0:
-                move(right)
-            else:
-                move(left)
+                # ... with second preference for moving up/down
+                move(right, alt_moves=[up, down], alt_moves_final=[left])
         else:
-            # Decide stochastically which direction to move in
-            abs_dx = abs(dx)
-            abs_dy = abs(dy)
-            distance = abs_dx + abs_dy
-            # Determine the direction to move
-            dice_roll = randint(1, distance)
-            if dice_roll <= abs_dx:
-                # Move in direction of dx
-                if dx > 0:
-                    if dy > 0:
-                        move(right, alternatives=[down])
-                    elif dy < 0:
-                        move(right, alternatives=[up])
-                    else:
-                        move(right)
-                else:
-                    if dy > 0:
-                        move(left, alternatives=[down])
-                    elif dy < 0:
-                        move(left, alternatives=[up])
-                    else:
-                        move(left)
+            # Try to move left...
+            if dy > 0:
+                # ... with second preference for moving down
+                move(left, alt_moves=[down], alt_moves_final=[up, right])
+            elif dy < 0:
+                # ... with second preference for moving up
+                move(left, alt_moves=[up], alt_moves_final=[down, right])
             else:
-                # Move in direction of dy
-                if dy > 0:
-                    if dx > 0:
-                        move(down, alternatives=[right])
-                    elif dx < 0:
-                        move(down, alternatives=[left])
-                    else:
-                        move(down)
-                else:
-                    if dx > 0:
-                        move(up, alternatives=[right])
-                    elif dx < 0:
-                        move(up, alternatives=[left])
-                    else:
-                        move(up)
+                # ... with second preference for moving up/down
+                move(left, alt_moves=[up, down], alt_moves_final=[right])
+
+    def move_vertical(self, dx, dy):
+        '''
+        Move in direction of dy,
+        picking alt_moves based on dx
+        '''
+        
+        # Shorthand references
+        move = self.move_to_location
+        up = self.location.up()
+        down = self.location.down()
+        left = self.location.left()
+        right = self.location.right()
+
+        if dy > 0:
+            # Try to move down...
+            if dx > 0:
+                # ... with second preference for moving right
+                move(down, alt_moves=[right], alt_moves_final=[up, left])
+            elif dx < 0:
+                # ... with second preference for moving left
+                move(down, alt_moves=[left], alt_moves_final=[up, right])
+            else:
+                # ... with second preference for moving left/right
+                move(down, alt_moves=[left, right], alt_moves_final=[up])
+        else:
+            # Try to move up...
+            if dx > 0:
+                # ... with second preference for moving right
+                move(up, alt_moves=[right], alt_moves_final=[down, left])
+            elif dx < 0:
+                # ... with second preference for moving left
+                move(up, alt_moves=[left], alt_moves_final=[down, right])
+            else:
+                # ... with second preference for moving left/right
+                move(up, alt_moves=[left, right], alt_moves_final=[down])        
