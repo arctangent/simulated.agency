@@ -74,21 +74,28 @@ class Mobile(Locatable):
         Move in a direction that prevents the target being
         able to move into you next turn.
         '''
+
+        # Shorthand references
+        up = self.location.up()
+        down = self.location.down()
+        left = self.location.left()
+        right = self.location.right()
         location = self.location
-        allowed_moves = [location.up(), location.down(), location.left(), location.right()]
 
         # We use a 'knockout' technique to find the safe locations.
         # Example: An enemy in any square above us means that we do
         # not want to move upwards. Similarly with the other directions
 
-        if target.location in [location.up(), location.up().left(), location.up().right()]:
-            allowed_moves.remove(location.up())
-        elif target.location in [location.down(), location.down().left(), location.down().right()]:
-            allowed_moves.remove(location.down())
-        elif target.location in [location.left(), location.left().up(), location.left().down()]:
-            allowed_moves.remove(location.left())
-        elif target.location in [location.right(), location.right().up(), location.right().down()]:
-            allowed_moves.remove(location.right())
+        allowed_moves = [up, down, left, right]
+
+        if target.location in [up, up.left(), up.right()]:
+            allowed_moves.remove(up)
+        elif target.location in [down, down.left(), down.right()]:
+            allowed_moves.remove(down)
+        elif target.location in [left, left.up(), left.down()]:
+            allowed_moves.remove(left)
+        elif target.location in [right, right.up(), right.down()]:
+            allowed_moves.remove(right)
 
         # Choose randomly from what's left
         new_location = choice(allowed_moves)
