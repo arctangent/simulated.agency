@@ -45,17 +45,19 @@ class Mobile(Locatable):
             self._relocate(new_location)
 
         # Were any alternative moves supplied?
+        # We allow None to be specified, which indicates a choice to stay in current location
         if alt_moves:
-            viable_alt_moves = [alt for alt in alt_moves if alt.can_fit(self)]
+            viable_alt_moves = [alt for alt in alt_moves if alt is None or alt.can_fit(self)]
             if viable_alt_moves:
                 new_location = choice(viable_alt_moves)
-                self._relocate(new_location)
             elif alt_moves_final:
                 # Select from the moves of last resort
-                viable_alt_moves_final = [alt for alt in alt_moves_final if alt.can_fit(self)]
+                viable_alt_moves_final = [alt for alt in alt_moves_final if alt is None or alt.can_fit(self)]
                 if viable_alt_moves_final:
                     new_location = choice(viable_alt_moves_final)
-                    self._relocate(new_location)
+            # None means stay put
+            if new_location is not None:
+                self._relocate(new_location)
 
     def move_towards_location(self, location):
         self.move_towards(location.x, location.y)
@@ -176,24 +178,24 @@ class Mobile(Locatable):
             # Try to move right...
             if dy > 0:
                 # ... with second preference for moving down
-                move(right, alt_moves=[down], alt_moves_final=[up, left])
+                move(right, alt_moves=[down], alt_moves_final=[up, None])
             elif dy < 0:
                 # ... with second preference for moving up
-                move(right, alt_moves=[up], alt_moves_final=[down, left])
+                move(right, alt_moves=[up], alt_moves_final=[down, None])
             else:
                 # ... with second preference for moving up/down
-                move(right, alt_moves=[up, down], alt_moves_final=[left])
+                move(right, alt_moves=[up, down, None])
         else:
             # Try to move left...
             if dy > 0:
                 # ... with second preference for moving down
-                move(left, alt_moves=[down], alt_moves_final=[up, right])
+                move(left, alt_moves=[down], alt_moves_final=[up, None])
             elif dy < 0:
                 # ... with second preference for moving up
-                move(left, alt_moves=[up], alt_moves_final=[down, right])
+                move(left, alt_moves=[up], alt_moves_final=[down, None])
             else:
                 # ... with second preference for moving up/down
-                move(left, alt_moves=[up, down], alt_moves_final=[right])
+                move(left, alt_moves=[up, down, None])
 
     def move_vertical(self, dx, dy):
         '''
@@ -212,21 +214,21 @@ class Mobile(Locatable):
             # Try to move down...
             if dx > 0:
                 # ... with second preference for moving right
-                move(down, alt_moves=[right], alt_moves_final=[up, left])
+                move(down, alt_moves=[right], alt_moves_final=[left, None])
             elif dx < 0:
                 # ... with second preference for moving left
-                move(down, alt_moves=[left], alt_moves_final=[up, right])
+                move(down, alt_moves=[left], alt_moves_final=[right, None])
             else:
                 # ... with second preference for moving left/right
-                move(down, alt_moves=[left, right], alt_moves_final=[up])
+                move(down, alt_moves=[left, right, None])
         else:
             # Try to move up...
             if dx > 0:
                 # ... with second preference for moving right
-                move(up, alt_moves=[right], alt_moves_final=[down, left])
+                move(up, alt_moves=[right], alt_moves_final=[left, None])
             elif dx < 0:
                 # ... with second preference for moving left
-                move(up, alt_moves=[left], alt_moves_final=[down, right])
+                move(up, alt_moves=[left], alt_moves_final=[right, None])
             else:
                 # ... with second preference for moving left/right
-                move(up, alt_moves=[left, right], alt_moves_final=[down])        
+                move(up, alt_moves=[left, right, None])        
