@@ -13,7 +13,6 @@ class Alive(State):
 
     name = 'ALIVE'
     colour = 'white'
-    uses_dirty = True
 
     def handle(self):
         '''
@@ -43,7 +42,6 @@ class Dead(State):
 
     name = 'DEAD'
     colour = 'black'
-    uses_dirty = True
 
     def handle(self):
         '''

@@ -6,3 +6,4 @@ mprofile*.dat
 .pytest_cache
 htmlcov
 .coverage
+*.lprof

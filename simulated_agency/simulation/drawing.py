@@ -12,12 +12,12 @@ class Painter(object):
         # Bind methods
         self.simulation.draw_agent = self.draw_agent
         self.simulation.draw_location = self.draw_location
-
+    
     def draw_agent(self, thing, fill=None):
         '''
         A very simple way to draw something
         '''
-
+        
         # Localise variables for faster lookup
         simulation = self.simulation
         canvas = simulation.canvas
@@ -45,7 +45,7 @@ class Painter(object):
             thing.canvas_id = create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
         else:
             # Update the canvas element
-            itemconfig(thing.canvas_id, fill=fill, font='Helvetica %s' % size, text=glyph)
+            itemconfig(thing.canvas_id, fill=fill) #, font='Helvetica %s' % size, text=glyph)
             # If the thing can move, then we need to update it's canvas coordinates
             if isinstance(thing, Mobile):
                 coords(thing.canvas_id, x, y)
