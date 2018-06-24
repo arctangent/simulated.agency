@@ -77,7 +77,7 @@ def test_move_to_location(Agent, locations):
         locations[9, 1],
         locations[8, 3]
     ]
-    agent_one.move_to_location(agent_two.location, alternatives=alternatives)
+    agent_one.move_to_location(agent_two.location, alt_moves=alternatives)
     assert agent_one.location in alternatives
 
     #
