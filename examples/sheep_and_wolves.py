@@ -44,8 +44,8 @@ class ChooseTargetToFollow(State):
         live_target_list = [x for x in target_list if not x.is_in_state(Dead)]
         # Choose target
         if live_target_list:
-            # Note that no effort is made to choose a nearby target...
-            target = choice(live_target_list)
+            # Choose the nearest live target
+            target = self.agent.nearest(live_target_list)
             # Assign the state
             # When we have done moving towards the target we will kill it
             self.agent.add_state(KillTarget, target=target)

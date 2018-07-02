@@ -1,7 +1,8 @@
 
 from collections import defaultdict
-from random import choice, choices, randint
+from random import choice, choices, randint, shuffle
 
+from ..location import Location
 from ..states import State, MoveRandomly
 from .locatable import *
 
@@ -16,6 +17,7 @@ class Mobile(Locatable):
     # (unlike the "objects" attribute of Stateful)
     wrapped_dx = {}
     wrapped_dy = {}
+    distances = {}
 
     def __init__(self, initial_location, initial_state=None, **kwargs):
         super().__init__(initial_location, initial_state, **kwargs)
@@ -72,6 +74,43 @@ class Mobile(Locatable):
 
         # Return the vector components
         return dx, dy
+
+    def distance_to(self, other):
+        '''
+        Returns a screen wrapping-aware distance
+        '''
+
+        # Other must be a location or have a location
+        if isinstance(other, Location):
+            target_x = other.x
+            target_y = other.y
+        elif hasattr(other, 'location'):
+            target_x = other.location.x
+            target_y = other.location.y
+        else:
+            raise Exception('Cannot calculate distance to unlocatable object') 
+
+        # Get vector to target
+        dx, dy = self.vector_to(target_x, target_y)
+
+        # Memoisation
+        try:
+            distance = self.distances[self.location, dx, dy]
+        except:
+            distance = (dx**2 + dy**2)**0.5
+            self.distances[self.location, dx, dy] = distance
+
+        return distance
+
+    def nearest(self, candidate_list):
+        '''
+        Returns the nearest of the candidates
+        '''
+
+        # Shuffle because min always returns first item
+        # in the set of all equally minimal items
+        shuffle(candidate_list)
+        return min(candidate_list, key=lambda x: self.distance_to(x))
 
     def _relocate(self, new_location):
         '''
