@@ -46,7 +46,7 @@ class Mobile(Locatable):
 
         # Were any alternative moves supplied?
         # We allow None to be specified, which indicates a choice to stay in current location
-        if alt_moves:
+        elif alt_moves:
             viable_alt_moves = [alt for alt in alt_moves if alt is None or alt.can_fit(self)]
             if viable_alt_moves:
                 new_location = choice(viable_alt_moves)
@@ -163,10 +163,17 @@ class Mobile(Locatable):
         # on the magnitudes of the component parts of the vector
         #
 
-        choices(
-            [ self.move_horizontal(dx, dy), self.move_vertical(dx, dy) ],
+        selections = choices(
+            [ self.move_horizontal, self.move_vertical ],
             weights=[abs(dx), abs(dy)]    
-        )  
+        )
+
+        # Note that random.choices returns a list
+        # (and assumes k=1 selections unless told otherwise)
+        move_to_make = selections[0]
+
+        # Actually make the move
+        move_to_make(dx, dy)
 
     def move_horizontal(self, dx, dy):
         '''

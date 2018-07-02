@@ -43,13 +43,17 @@ class ChooseTargetToFollow(State):
         # Wolves will only chase Sheep that are alive
         live_target_list = [x for x in target_list if not x.is_in_state(Dead)]
         # Choose target
-        target = choice(live_target_list)
-        # Assign the state
-        # When we have done moving towards the target we will kill it
-        self.agent.add_state(KillTarget, target=target)
-        # Remember, the last state added is the first to execute
-        self.agent.add_state(MoveTowardsTarget, target=target)
-
+        if live_target_list:
+            # Note that no effort is made to choose a nearby target...
+            target = choice(live_target_list)
+            # Assign the state
+            # When we have done moving towards the target we will kill it
+            self.agent.add_state(KillTarget, target=target)
+            # Remember, the last state added is the first to execute
+            self.agent.add_state(MoveTowardsTarget, target=target)
+        else:
+            # No sheep left to chase
+            self.agent.add_state(MoveRandomly)
 
 # Initialise simulation
 simulation = Simulation(cell_size=8, name='SheepAndWolves')
