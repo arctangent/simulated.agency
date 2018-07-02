@@ -23,6 +23,56 @@ class Mobile(Locatable):
     def __repr__(self):
         return 'Mobile with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
 
+    def vector_to(self, target_x, target_y):
+        '''
+        Returns a screen wrapping-aware shortest vector to target
+        '''
+
+        # Shorthand references
+        simulation = self.simulation
+        width = simulation.width
+        height = simulation.height
+        half_width = width / 2
+        half_height = height / 2
+
+        # Compute naive, non-wrapping distance
+        dx = target_x - self.location.x
+        dy = target_y - self.location.y
+
+        # Adjust for screen wrap
+        # We memoise these calculations for speed
+
+        try:
+            dx = self.wrapped_dx[dx] 
+        except:
+            if not simulation.wrap_x:
+                self.wrapped_dx[dx] = dx
+            else:
+                new_dx = dx
+                if dx > half_width:
+                    new_dx = dx - width
+                elif -1 * dx > half_width:
+                    new_dx = dx + width
+                self.wrapped_dx[dx] = new_dx        
+                dx = new_dx
+        
+        try:
+            dy = self.wrapped_dy[dy]
+        except:
+            if not simulation.wrap_y:
+                self.wrapped_dy[dy] = dy
+            else:
+                new_dy = dy
+                if dy > half_height:
+                    new_dy = dy - height
+                elif -1 * dy > half_height:
+                    new_dy = dy + height
+                self.wrapped_dy[dy] = new_dy        
+                dy = new_dy
+
+        # Return the vector components
+        return dx, dy
+
     def _relocate(self, new_location):
         '''
         Internal method to perform a known-successful relocation.
@@ -107,56 +157,11 @@ class Mobile(Locatable):
         Move stochstically in the direction of the target coordinates
         '''
 
-        # Compute naive, non-wrapping distance
-        dx = target_x - self.location.x
-        dy = target_y - self.location.y
+        dx, dy = self.vector_to(target_x, target_y)
 
         # Exit early if we are at the location
         if dx == dy == 0:
             return
-
-        # Shorthand references
-        simulation = self.simulation
-        width = simulation.width
-        height = simulation.height
-        half_width = width / 2
-        half_height = height / 2
-        move = self.move_to_location
-        up = self.location.up()
-        down = self.location.down()
-        left = self.location.left()
-        right = self.location.right()
-
-        # Adjust for screen wrap
-        # We memoise these calculations for speed
-
-        try:
-            dx = self.wrapped_dx[dx] 
-        except:
-            if not simulation.wrap_x:
-                self.wrapped_dx[dx] = dx
-            else:
-                new_dx = dx
-                if dx > half_width:
-                    new_dx = dx - width
-                elif -1 * dx > half_width:
-                    new_dx = dx + width
-                self.wrapped_dx[dx] = new_dx        
-                dx = new_dx
-        
-        try:
-            dy = self.wrapped_dy[dy]
-        except:
-            if not simulation.wrap_y:
-                self.wrapped_dy[dy] = dy
-            else:
-                new_dy = dy
-                if dy > half_height:
-                    new_dy = dy - height
-                elif -1 * dy > half_height:
-                    new_dy = dy + height
-                self.wrapped_dy[dy] = new_dy        
-                dy = new_dy
 
         #
         # Decide which direction to move in depending
