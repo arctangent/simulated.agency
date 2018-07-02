@@ -10,7 +10,7 @@ from simulated_agency.states import *
 simulation = Simulation(cell_size=20, name='ForgetfulWalk')
 
 # Bind models to simulation
-ForgetfulWalker.simulation = simulation
+simulation.bind(ForgetfulWalker)
 
 # Create a target location
 target_location = simulation.random_location()
@@ -53,4 +53,4 @@ def update_agent_target(walker, maybe_move_target_return_vars):
         walker.add_state(Wait, timer=randint(1, 10))
 
 # Run the simulation
-simulation.execute(ForgetfulWalker, before_each_loop=maybe_move_target, before_each_agent=update_agent_target, draw_locations=False)
+simulation.execute(before_each_loop=maybe_move_target, before_each_agent=update_agent_target, draw_locations=False)

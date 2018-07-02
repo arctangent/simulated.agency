@@ -68,7 +68,7 @@ class Dead(State):
 simulation = Simulation(cell_size=16, name='GameOfLife')
 
 # Bind models to simulation
-Cell.simulation = simulation
+simulation.bind(Cell)
 
 # Specify the appropriate neighbourhood model
 simulation.neighbourhood_strategy = 'moore'
@@ -78,4 +78,4 @@ simulation.seed_all(Cell, [Alive, Dead])
         
 # Run the simulation
 # Setting the synchronous flag updates all cells simultaneosly
-simulation.execute(Cell, synchronous=True, draw_locations=False)
+simulation.execute(synchronous=True, draw_locations=False)

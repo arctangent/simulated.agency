@@ -15,10 +15,8 @@ class Executor(object):
 
 
     def execute(
-        self, agent_class_or_class_list,
-        before_each_loop=None, before_each_agent=None,
-        synchronous=False, timer=None,
-        draw_locations=True
+        self, before_each_loop=None, before_each_agent=None,
+        synchronous=False, timer=None, draw_locations=True
     ):
         '''
         Run the simulation's loop for the agent_classes listed.
@@ -49,10 +47,9 @@ class Executor(object):
         canvas = simulation.canvas
         
         # Get a list of all the objects to be executed/drawn
-        if isinstance(agent_class_or_class_list, list):
-            agent_list = [a for agent_class in agent_class_or_class_list for a in agent_class.objects]
-        else:
-            agent_list = agent_class_or_class_list.objects
+        agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
+        if not agent_list:
+            raise Exception('No bound agent classes, so nothing to simulate!')
 
         # Do an initial draw of all locations and all agents
         if draw_locations:

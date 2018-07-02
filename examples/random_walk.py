@@ -8,10 +8,10 @@ from simulated_agency.states import *
 simulation = Simulation(cell_size=20, name='RandomWalk')
 
 # Bind models to simulation
-Walker.simulation = simulation
+simulation.bind(Walker)
 
 # Add some walkers to the simulation
 simulation.seed(Walker, 0.3, MoveRandomly)
 
 # Run the simulation
-simulation.execute(Walker, draw_locations=False)
+simulation.execute(draw_locations=False)

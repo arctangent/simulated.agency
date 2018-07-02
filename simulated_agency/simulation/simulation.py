@@ -39,6 +39,9 @@ class Simulation(object):
         # Locations
         self.locations = {}
 
+        # Bound agent classes
+        self.bound_agent_classes = []
+
         # Constants - do not change these directly after simulation instantiation
         self.canvas_width = width or 800
         self.canvas_height = height or 800
@@ -95,3 +98,17 @@ class Simulation(object):
         for x in range(0, self.width):
             for y in range(0, self.height):
                 self.locations[x, y] = Location(x, y)
+
+    def bind(self, *args):
+        '''
+        Agent classes should be bound to the simulation using this method
+
+        e.g. simulation.bind(Wolves, Sheep)
+        '''
+
+        for agent_class in args:
+            if agent_class not in self.bound_agent_classes:
+                # Add to the list of bound agent classes
+                self.bound_agent_classes.append(agent_class)
+                # Bind the class to the simulation
+                agent_class.simulation = self

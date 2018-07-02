@@ -116,10 +116,10 @@ class OnFire(State):
 simulation = Simulation(cell_size=40, name='ForestFire')
 
 # Bind models to simulation
-Tree.simulation = simulation
+simulation.bind(Tree)
 
 # Add some Trees to the simulation
 simulation.seed(Tree, 0.3, NotOnFire)
 
 # Run the simulation
-simulation.execute(Tree, draw_locations=False)
+simulation.execute(draw_locations=False)

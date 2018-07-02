@@ -52,21 +52,20 @@ class ChooseTargetToFollow(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=40, name='SheepAndWolves')
+simulation = Simulation(cell_size=8, name='SheepAndWolves')
 
 # Use same base model for two types of object
 class Sheep(Mobile): pass
 class Wolves(Mobile): pass
 
 # Bind models to simulation
-Sheep.simulation = simulation
-Wolves.simulation = simulation
+simulation.bind(Wolves, Sheep)
 
 # Add some sheep to the simulation
-simulation.seed(Sheep, 0.25, AvoidType, enemy=Wolves)
+simulation.seed(Sheep, 0.05, AvoidType, enemy=Wolves)
 
 # Add some wolves to the simulation
 simulation.seed(Wolves, 5, ChooseTargetToFollow, prey=Sheep)
 
 # Run the simulation
-simulation.execute([Wolves, Sheep], draw_locations=False)
+simulation.execute(draw_locations=False)
