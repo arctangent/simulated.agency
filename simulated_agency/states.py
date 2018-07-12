@@ -161,4 +161,5 @@ class AvoidType(State):
             enemy_to_avoid = choice(enemies)
             agent.move_away_from_target(enemy_to_avoid)
         else:
-            agent.move_randomly()
+            # Do nothing
+            pass
