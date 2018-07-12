@@ -160,8 +160,7 @@ class Mobile(Locatable):
 
     def move_away_from_target(self, target):
         '''
-        Move in a direction that prevents the target being
-        able to move into you next turn.
+        Move in a direction that increases the distance to/from the target.
         '''
 
         # Shorthand references
@@ -171,24 +170,24 @@ class Mobile(Locatable):
         right = self.location.right()
         location = self.location
 
-        # We use a 'knockout' technique to find the safe locations.
-        # Example: An enemy in any square above us means that we do
-        # not want to move upwards. Similarly with the other directions
+        # Distance to/from target
+        current_distance = self.distance_to(target)
 
-        allowed_moves = [up, down, left, right]
+        # Which locations could we move to?
+        locations = [up, down, left, right]
+        desirable_locations = [
+            l for l in locations
+            if l.can_fit(self)
+            and target.distance_to(l) > current_distance
+        ]
 
-        if target.location in [up, up.left(), up.right()]:
-            allowed_moves.remove(up)
-        elif target.location in [down, down.left(), down.right()]:
-            allowed_moves.remove(down)
-        elif target.location in [left, left.up(), left.down()]:
-            allowed_moves.remove(left)
-        elif target.location in [right, right.up(), right.down()]:
-            allowed_moves.remove(right)
-
-        # Choose randomly from what's left
-        new_location = choice(allowed_moves)
-        self.move_towards_location(new_location)
+        # Choose randomly from desirable locations
+        if desirable_locations:
+            new_location = choice(desirable_locations)
+            self.move_to_location(new_location)
+        else:
+            # There are no suitable moves
+            pass
             
 
     def move_towards(self, target_x, target_y):

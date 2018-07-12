@@ -140,26 +140,24 @@ class AvoidType(State):
     Avoid all members of a particular class.
     Example: sheep.add_state(AvoidType, enemy=Wolves)
 
-    FIXME: For simplicity we just pick one neighbouring
-           enemy and try to avoid only it
+    FIXME: For simplicity we just pick the nearest enemy
+           and take evasive action if it comes too close
     '''
 
     name = 'AVOID_TYPE'
     colour = 'green'
-    required_params = ['enemy']
+    required_params = ['enemy', 'comfort_zone']
 
     def handle(self):
         super().handle()
-        # Is there a member of the specified class nearby?
-        enemy_type = self.context['enemy']
+        enemy = self.context['enemy']
+        comfort_zone = self.context['comfort_zone']
         agent = self.agent
         location = agent.location
-        # Enumerate neighbouring enemies
-        enemies = [x for x in location.neighbours() if type(x) is enemy_type]
-        if enemies:
-            # Choose one to avoid
-            enemy_to_avoid = choice(enemies)
-            agent.move_away_from_target(enemy_to_avoid)
+        nearest_enemy = agent.nearest(enemy.objects)
+        # Only trigger avoidance within the comfort zone
+        if agent.distance_to(nearest_enemy) <= comfort_zone:
+            agent.move_away_from_target(nearest_enemy)
         else:
             # Do nothing
             pass

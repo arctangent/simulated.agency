@@ -66,10 +66,10 @@ class Wolves(Mobile): pass
 simulation.bind(Wolves, Sheep)
 
 # Add some sheep to the simulation
-simulation.seed(Sheep, 0.05, AvoidType, enemy=Wolves)
+simulation.seed(Sheep, 0.15, AvoidType, enemy=Wolves, comfort_zone=3)
 
 # Add some wolves to the simulation
-simulation.seed(Wolves, 5, ChooseTargetToFollow, prey=Sheep)
+simulation.seed(Wolves, 50, ChooseTargetToFollow, prey=Sheep)
 
 # Run the simulation
 simulation.execute(draw_locations=False)
