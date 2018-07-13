@@ -153,7 +153,6 @@ class AvoidType(State):
         enemy = self.context['enemy']
         comfort_zone = self.context['comfort_zone']
         agent = self.agent
-        location = agent.location
         nearest_enemy = agent.nearest(enemy.objects)
         # Only trigger avoidance within the comfort zone
         if agent.distance_to(nearest_enemy) <= comfort_zone:
