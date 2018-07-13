@@ -1,6 +1,6 @@
 
 from collections import defaultdict
-from random import choice, choices, randint, shuffle
+from random import choice, choices, randint
 
 from ..location import Location
 from ..states import State, MoveRandomly
@@ -12,105 +12,15 @@ class Mobile(Locatable):
     Represents a type of agent which can change its location.
     '''
 
-    # Memoisation
-    # Note that we are happy to share these dicts with any child classes
-    # (unlike the "objects" attribute of Stateful)
-    wrapped_dx = {}
-    wrapped_dy = {}
-    distances = {}
-
     def __init__(self, initial_location, initial_state=None, **kwargs):
         super().__init__(initial_location, initial_state, **kwargs)
 
     def __repr__(self):
         return 'Mobile with state %s at (%s, %s)' % (self._state_stack.peek(), self.location.x, self.location.y)
 
-    def vector_to(self, target_x, target_y):
-        '''
-        Returns a screen wrapping-aware shortest vector to target
-        '''
-
-        # Shorthand references
-        simulation = self.simulation
-        width = simulation.width
-        height = simulation.height
-        half_width = width / 2
-        half_height = height / 2
-
-        # Compute naive, non-wrapping distance
-        dx = target_x - self.location.x
-        dy = target_y - self.location.y
-
-        # Adjust for screen wrap
-        # We memoise these calculations for speed
-
-        try:
-            dx = self.wrapped_dx[dx] 
-        except:
-            if not simulation.wrap_x:
-                self.wrapped_dx[dx] = dx
-            else:
-                new_dx = dx
-                if dx > half_width:
-                    new_dx = dx - width
-                elif -1 * dx > half_width:
-                    new_dx = dx + width
-                self.wrapped_dx[dx] = new_dx        
-                dx = new_dx
-        
-        try:
-            dy = self.wrapped_dy[dy]
-        except:
-            if not simulation.wrap_y:
-                self.wrapped_dy[dy] = dy
-            else:
-                new_dy = dy
-                if dy > half_height:
-                    new_dy = dy - height
-                elif -1 * dy > half_height:
-                    new_dy = dy + height
-                self.wrapped_dy[dy] = new_dy        
-                dy = new_dy
-
-        # Return the vector components
-        return dx, dy
-
-    def distance_to(self, other):
-        '''
-        Returns a screen wrapping-aware distance
-        '''
-
-        # Other must be a location or have a location
-        if isinstance(other, Location):
-            target_x = other.x
-            target_y = other.y
-        elif hasattr(other, 'location'):
-            target_x = other.location.x
-            target_y = other.location.y
-        else:
-            raise Exception('Cannot calculate distance to unlocatable object') 
-
-        # Get vector to target
-        dx, dy = self.vector_to(target_x, target_y)
-
-        # Memoisation
-        try:
-            distance = self.distances[self.location, dx, dy]
-        except:
-            distance = (dx**2 + dy**2)**0.5
-            self.distances[self.location, dx, dy] = distance
-
-        return distance
-
-    def nearest(self, candidate_list):
-        '''
-        Returns the nearest of the candidates
-        '''
-
-        # Shuffle because min always returns first item
-        # in the set of all equally minimal items
-        shuffle(candidate_list)
-        return min(candidate_list, key=lambda x: self.distance_to(x))
+    #
+    # Movement functions
+    #
 
     def _relocate(self, new_location):
         '''

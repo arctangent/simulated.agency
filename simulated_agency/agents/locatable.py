@@ -36,3 +36,22 @@ class Locatable(Stateful):
             pass
         # We need to delete the object last
         super().destroy()
+
+    #
+    # Distance functions
+    #
+
+    def vector_to(self, target_x, target_y):
+        ''' Returns a screen wrapping-aware shortest vector to target
+        '''
+        return self.simulation.vector_between(self.location.x, self.location.y, target_x, target_y)
+
+    def distance_to(self, other):
+        ''' Returns a screen wrapping-aware distance
+        '''
+        return self.simulation.distance_between(self, other)
+
+    def nearest(self, candidate_list):
+        ''' Returns the nearest of the candidates
+        '''
+        return self.simulation.nearest(self, candidate_list)
