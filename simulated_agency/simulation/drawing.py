@@ -45,7 +45,7 @@ class Painter(object):
             thing.canvas_id = create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
         else:
             # Update the canvas element
-            itemconfig(thing.canvas_id, fill=fill) #, font='Helvetica %s' % size, text=glyph)
+            itemconfig(thing.canvas_id, fill=fill, font='Helvetica %s' % size, text=glyph)
             # If the thing can move, then we need to update it's canvas coordinates
             if isinstance(thing, Mobile):
                 coords(thing.canvas_id, x, y)

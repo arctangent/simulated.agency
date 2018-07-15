@@ -74,6 +74,13 @@ class Executor(object):
                     print('Timer expired')
                     sys.exit()
 
+            # Get a list of all the objects to be executed/drawn
+            # NOTE: We do this every loop because some agents
+            #       may have been born or died since last turn
+            agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
+            if not agent_list:
+                raise Exception('No bound agent classes, so nothing to simulate!')
+
             # Execute user-defined function
             if before_each_loop:
                 # We capture any emitted variables for use

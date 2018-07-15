@@ -17,13 +17,12 @@ class NotOnFire(State):
     name = 'NOT_ON_FIRE'
     colour = 'green'
     glyph = glyphs.BLACK_UP_POINTING_TRIANGLE
-    size = 0.4
 
     def __init__(self, agent, **kwargs):
         ''' Initialise '''
         super().__init__(agent, **kwargs)
         # Trees start small
-        self.size = 0.4
+        self.agent.size = 0.4
 
     def handle(self):
         '''
@@ -35,24 +34,28 @@ class NotOnFire(State):
         super().handle()
 
         tree = self.agent
-        
-        dice_roll = randint(1, 1000)
 
-        if dice_roll == 1:
+        # Grow tree a bit (up to max size)
+        if tree.size <= 0.8:
+            tree.size += 0.01
+        
+        # Did lightning strike?
+        if randint(1, 100) == 1:
             # Oh no! The tree was struck by lightning.
             # It will burn for a variable amount of time.
             tree.replace_state(OnFire, timer=randint(6,10))
+            return
 
-        elif dice_roll <= 100:
-            # Grow tree a bit
-            self.agent.size += 0.25
+        # Did the tree spawn another tree?
+        if randint(1, 10) == 1:
             # Trees aren't fertile until they are 3
-            if self.agent.age < 3:
+            if tree.age < 3:
                 return
             # Pick a direction to try to spread in
-            location = choice(tree.location.neighbourhood())
-            # If that location is empty, put a new tree there
+            location = choice(tuple(tree.location.neighbourhood()))
+            # If that location is empty, spawn a new tree there
             Tree(location, NotOnFire)
+
             
 
 
@@ -64,7 +67,6 @@ class OnFire(State):
     name = 'ON_FIRE'
     colour = 'red'
     glyph = glyphs.BLACK_UP_POINTING_TRIANGLE
-    size = 0.4
     required_params = ['timer']
 
     def handle(self):
@@ -93,23 +95,16 @@ class OnFire(State):
         # Red burning trees are able to spread fire
         self.colour = "red"
 
-        # See if the fire spreads
-        for target in tree.location.neighbourhood():
-            dice_roll = randint(1, 100)
-            if dice_roll <= 25:
-                # If that location has a tree, set it on fire if it isn't already on fire
-                if target.contents:
-                    tree_to_burn = target.contents[0]
-                    if not tree_to_burn.is_in_state(OnFire):
-                        # The tree_to_burn will burn for a variable amount of time
-                        tree_to_burn.replace_state(OnFire, timer=randint(6, 10))
+        # See if the fire spreads to neighbouring trees that are not on fire already
+        for target in [t for t in tree.location.neighbours() if not t.is_in_state(OnFire)]:
+            if randint(1, 4) == 1:
+                # The tree_to_burn will burn for a variable amount of time
+                target.replace_state(OnFire, timer=randint(6, 10))
 
     def handle_timeout(self):
         ''' When tree is finished burning we should remove it from the simulation '''
         tree = self.agent
         tree.destroy()
-
-
 
 
 # Initialise simulation
@@ -119,7 +114,7 @@ simulation = Simulation(cell_size=40, name='ForestFire')
 simulation.bind(Tree)
 
 # Add some Trees to the simulation
-simulation.seed(Tree, 0.3, NotOnFire)
+simulation.seed(Tree, 0.15, NotOnFire)
 
 # Run the simulation
 simulation.execute(draw_locations=False)
