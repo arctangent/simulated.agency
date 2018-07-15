@@ -9,13 +9,6 @@ class Geometry(object):
     Provides simulation-level geometry
     '''
 
-    # Memoisation
-    # Note that we are happy to share these dicts with any child classes
-    # (unlike the "objects" attribute of Stateful)
-    wrapped_dx = {}
-    wrapped_dy = {}
-    distances = {}
-
     def __init__(self, simulation):
         self.simulation = simulation
         # Bind methods
@@ -139,35 +132,18 @@ class Geometry(object):
         dy = y2 - y1
 
         # Adjust for screen wrap
-        # We memoise these calculations for speed
 
-        try:
-            dx = self.wrapped_dx[dx] 
-        except:
-            if not simulation.wrap_x:
-                self.wrapped_dx[dx] = dx
-            else:
-                new_dx = dx
-                if dx > half_width:
-                    new_dx = dx - width
-                elif -1 * dx > half_width:
-                    new_dx = dx + width
-                self.wrapped_dx[dx] = new_dx        
-                dx = new_dx
+        if simulation.wrap_x:
+            if dx > half_width:
+                dx = dx - width
+            elif -1 * dx > half_width:
+                dx = dx + width     
         
-        try:
-            dy = self.wrapped_dy[dy]
-        except:
-            if not simulation.wrap_y:
-                self.wrapped_dy[dy] = dy
-            else:
-                new_dy = dy
-                if dy > half_height:
-                    new_dy = dy - height
-                elif -1 * dy > half_height:
-                    new_dy = dy + height
-                self.wrapped_dy[dy] = new_dy        
-                dy = new_dy
+        if simulation.wrap_y:
+            if dy > half_height:
+                dy = dy - height
+            elif -1 * dy > half_height:
+                dy = dy + height     
 
         # Return the vector components
         return dx, dy
@@ -200,11 +176,4 @@ class Geometry(object):
         # Get vector between things
         dx, dy = self.vector_between(x1, y1, x2, y2)
 
-        # Memoisation
-        try:
-            distance = self.distances[x1, y1, x2, y2]
-        except:
-            distance = (dx**2 + dy**2)**0.5
-            self.distances[x1, y1, x2, y2] = distance
-
-        return distance
+        return (dx**2 + dy**2)**0.5

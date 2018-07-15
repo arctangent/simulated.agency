@@ -22,14 +22,6 @@ def locations(simulation):
     return simulation.locations
 
 @pytest.fixture
-def location_33(simulation):
-    return simulation.locations[3, 3]
-
-@pytest.fixture
-def location_57(simulation):
-    return simulation.locations[5, 7]
-
-@pytest.fixture
 def Agent(simulation):
     class Agent(Mobile):
         simulation = simulation

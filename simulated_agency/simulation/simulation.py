@@ -61,12 +61,12 @@ class Simulation(object):
         # Track simulation age
         self.age = 0
 
-        # Delegate functionality
-        seeder = Seeder(self)
-        geometry = Geometry(self)
-        executor = Executor(self)
-        painter = Painter(self)
-        video_recorder = VideoRecorder(self)
+        # Delegate functionality - bind methods
+        Seeder(self)
+        Geometry(self)
+        Executor(self)
+        Painter(self)
+        VideoRecorder(self)
 
         # GUI
         self.window = Tk()
