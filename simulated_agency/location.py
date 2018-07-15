@@ -87,8 +87,7 @@ class Location(object):
     # Definition of neighbours and neighbourhoods
     #
 
-    @cache(maxsize=None)
-    def neighbours(self, include_self=False, include_self_location=False, recalculate=False):
+    def neighbours(self, include_self=False, include_self_location=False):
         '''
         Returns the neighbours of a given cell.
         This is a aggregate list of the contents of its neighbourhood, less itself.
@@ -107,7 +106,7 @@ class Location(object):
         return neighbours_list
 
     @cache(maxsize=None)
-    def neighbourhood(self, include_self_location=True, recalculate=False):
+    def neighbourhood(self, include_self_location=True):
         '''
         Returns a set containing the neighbourhood of a given cell.
         This can be calculated in several ways.
