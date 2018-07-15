@@ -58,10 +58,22 @@ class Mobile(Locatable):
             if new_location is not None:
                 self._relocate(new_location)
 
-    def move_towards_location(self, location):
+    def move_towards_location(self, location, adjacent_ok=False):
+
+        # If it is OK to stop when adjacent then do so
+        if adjacent_ok:
+            if self.location in location.neighbourhood():
+                return
+
         self.move_towards(location.x, location.y)
 
-    def move_towards_target(self, target):
+    def move_towards_target(self, target, adjacent_ok=False):
+
+        # If it is OK to stop when adjacent then do so
+        if adjacent_ok:
+            if self.location in target.location.neighbourhood():
+                return
+        
         self.move_towards(target.location.x, target.location.y)
 
     def move_randomly(self):
@@ -100,7 +112,7 @@ class Mobile(Locatable):
             pass
             
 
-    def move_towards(self, target_x, target_y):
+    def move_towards(self, target_x, target_y, adjacent_ok=False):
         '''
         Move stochstically in the direction of the target coordinates
         '''

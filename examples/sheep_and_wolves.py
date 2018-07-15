@@ -21,10 +21,20 @@ class WolfChasingTarget(State):
         super().handle()
         target = self.context['target']
         agent = self.agent
-        agent.move_towards_target(target)
-        if target in self.agent.location.neighbours():
+        agent.move_towards_target(target, adjacent_ok=True)
+        # Can it kill the sheep it is chasing?
+        neighbours = agent.location.neighbours()
+        if target in neighbours:
             target.replace_state(Dead)
             agent.replace_state(WolfSelectingTarget)
+        # Are there any targets of opportunity available?
+        else:
+            careless_sheep = [s for s in neighbours if isinstance(s, Sheep)]
+            if careless_sheep:
+                target = choice(careless_sheep)
+                target.replace_state(Dead)
+                agent.replace_state(WolfSelectingTarget)
+
 
 
 class WolfSelectingTarget(State):
@@ -57,7 +67,7 @@ class SheepGrazing(State):
     But mainly they are recovering their energy.
     '''
     
-    name =  'SHEEP_GRAZING'
+    name = 'SHEEP_GRAZING'
     colour = 'green'
 
     def handle(self):
@@ -99,7 +109,7 @@ class SheepFleeing(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=16, name='SheepAndWolves')
+simulation = Simulation(cell_size=20, name='SheepAndWolves')
 
 # Use same base model for two types of object
 class Sheep(Mobile): energy = 5
@@ -112,7 +122,7 @@ simulation.bind(Wolf, Sheep)
 simulation.seed(Sheep, 0.15, SheepGrazing)
 
 # Add some wolves to the simulation
-simulation.seed(Wolf, 15, WolfSelectingTarget)
+simulation.seed(Wolf, 20, WolfSelectingTarget)
 
 # Run the simulation
 simulation.execute(draw_locations=False)
