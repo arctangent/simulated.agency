@@ -1,5 +1,6 @@
 
 from collections import defaultdict
+from functools import lru_cache as cache
     
 class Location(object):
     '''
@@ -62,52 +63,38 @@ class Location(object):
     # have to calculate them once.
     #
     
+    @cache(maxsize=None)
     def up(self):
-        if self._up:
-            return self._up
-        else:
-            y = self.simulation.normalise_height(self.y - 1)
-            self._up = self.simulation.locations[self.x, y]
-            return self._up
+        y = self.simulation.normalise_height(self.y - 1)
+        return self.simulation.locations[self.x, y]
     
+    @cache(maxsize=None)
     def down(self):
-        if self._down:
-            return self._down
-        else:        
-            y = self.simulation.normalise_height(self.y + 1)
-            self._down = self.simulation.locations[self.x, y]
-            return self._down
-        
+        y = self.simulation.normalise_height(self.y + 1)
+        return self.simulation.locations[self.x, y]
+
+    @cache(maxsize=None)    
     def left(self):
-        if self._left:
-            return self._left
-        else:    
-            x = self.simulation.normalise_width(self.x - 1)
-            self._left = self.simulation.locations[x, self.y]
-            return self._left
+        x = self.simulation.normalise_width(self.x - 1)
+        return self.simulation.locations[x, self.y]
     
-    def right(self):
-        if self._right:
-            return self._right
-        else:        
-            x = self.simulation.normalise_width(self.x + 1)
-            self._right = self.simulation.locations[x, self.y]
-            return self._right
+    @cache(maxsize=None)
+    def right(self):   
+        x = self.simulation.normalise_width(self.x + 1)
+        return self.simulation.locations[x, self.y]
 
     #
     # Definition of neighbours and neighbourhoods
     #
 
+    @cache(maxsize=None)
     def neighbours(self, include_self=False, include_self_location=False, recalculate=False):
         '''
         Returns the neighbours of a given cell.
         This is a aggregate list of the contents of its neighbourhood, less itself.
         Note that this will include any other agents in the same location as us.
         '''
-
-        if self._neighbours and not recalculate:
-            return self._neighbours
-        
+    
         neighbours_list = [
             neighbour
             for cell in self.neighbourhood(include_self_location=include_self_location)
@@ -116,19 +103,15 @@ class Location(object):
 
         if not include_self and include_self_location:
             neighbours_list.remove(self)
-        
-        self._neighbours = neighbours_list
 
         return neighbours_list
 
+    @cache(maxsize=None)
     def neighbourhood(self, include_self_location=True, recalculate=False):
         '''
         Returns a set containing the neighbourhood of a given cell.
         This can be calculated in several ways.
         '''
-
-        if self._neighbourhood and not recalculate:
-            return self._neighbourhood
         
         # Strategy pattern
         strategy = self.simulation.neighbourhood_strategy
@@ -146,8 +129,6 @@ class Location(object):
 
         if not include_self_location:
             neighbourhood_set.remove(self)
-
-        self._neighbourhood = neighbourhood_set
 
         return neighbourhood_set
 

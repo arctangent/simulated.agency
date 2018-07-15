@@ -1,4 +1,5 @@
 
+from functools import lru_cache as cache
 from random import randint, shuffle
 
 from ..location import Location
@@ -26,6 +27,7 @@ class Geometry(object):
     # Internal methods
     #
 
+    @cache(maxsize=None)
     def _wrap(self, val, min_val, max_val):
         '''
         Utility function to help with wrapping edges.
@@ -38,6 +40,7 @@ class Geometry(object):
         else:
             return val
 
+    @cache(maxsize=None)
     def _constrain(self, val, min_val, max_val):
         '''
         Utility function to help with non-wrapping edges.
@@ -54,6 +57,7 @@ class Geometry(object):
     # Normalisation
     #
    
+    @cache(maxsize=None)
     def normalise_width(self, val):
         '''
         Ensure a value remains within Simulation width
@@ -69,6 +73,7 @@ class Geometry(object):
             # Constrain
             return self._constrain(val, 0, simulation.width - 1)
 
+    @cache(maxsize=None)
     def normalise_height(self, val):
         '''
         Ensure a value remains within Simulation height
@@ -114,6 +119,7 @@ class Geometry(object):
         shuffle(candidate_list)
         return min(candidate_list, key=lambda x: thing.distance_to(x))
 
+    @cache(maxsize=None)
     def vector_between(self, x1, y1, x2, y2):
         '''
         Returns a screen wrapping-aware shortest vector
@@ -176,4 +182,8 @@ class Geometry(object):
         # Get vector between things
         dx, dy = self.vector_between(x1, y1, x2, y2)
 
+        return self._hypotenuse(dx, dy)
+
+    @cache(maxsize=None)
+    def _hypotenuse(self, dx, dy):
         return (dx**2 + dy**2)**0.5
