@@ -182,8 +182,6 @@ class Geometry(object):
         # Get vector between things
         dx, dy = self.vector_between(x1, y1, x2, y2)
 
-        return self._hypotenuse(dx, dy)
-
-    @cache(maxsize=None)
-    def _hypotenuse(self, dx, dy):
-        return (dx**2 + dy**2)**0.5
+        # Since things may only move in four directions,
+        # we must return the Manhattan distance
+        return abs(dx) + abs(dy)

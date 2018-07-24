@@ -87,7 +87,7 @@ class Location(object):
     # Definition of neighbours and neighbourhoods
     #
 
-    def neighbours(self, include_self=False, include_self_location=False):
+    def neighbours(self, radius=1, include_self=False, include_self_location=False):
         '''
         Returns the neighbours of a given cell.
         This is a aggregate list of the contents of its neighbourhood, less itself.
@@ -96,7 +96,7 @@ class Location(object):
     
         neighbours_list = [
             neighbour
-            for cell in self.neighbourhood(include_self_location=include_self_location)
+            for cell in self.neighbourhood(radius=radius, include_self_location=include_self_location)
             for neighbour in cell.contents
         ]
 
@@ -106,25 +106,36 @@ class Location(object):
         return neighbours_list
 
     @cache(maxsize=None)
-    def neighbourhood(self, include_self_location=True):
+    def neighbourhood(self, radius=1, include_self_location=True):
         '''
         Returns a set containing the neighbourhood of a given cell.
         This can be calculated in several ways.
         '''
+
+        # Sanity check
+        if (radius < 1) or (int(radius) != radius):
+            raise Exception("Radius must be a positive integer")
         
         # Strategy pattern
         strategy = self.simulation.neighbourhood_strategy
 
+        neighbourhood_set = set()
+
         if strategy == 'von_neumann':
-            # Von Neumann neighbourhood is the cell itself and the four adjacent cells
-            neighbourhood_set = { self, self.up(), self.down(), self.left(), self.right() }
+            # Von Neumann neighbourhood for r==1 is the cell itself and the four adjacent cells
+            for dx in range(-1 * radius, radius + 1):
+                for dy in range(-1 * radius, radius + 1):
+                    if abs(dx) + abs(dy) <= radius:
+                        x = self.simulation.normalise_width(self.x + dx)
+                        y = self.simulation.normalise_height(self.y + dy)
+                        neighbourhood_set.add(self.simulation.locations[x, y])
         elif strategy == 'moore':
-            # Moore neighbourhood is the cell itself and the eight cells surrounding it
-            neighbourhood_set =  {
-                self.up().left(), self.up(), self.up().right(),
-                self.left(), self, self.right(),
-                self.down().left(), self.down(),  self.down().right()
-            }
+            # Moore neighbourhood for r==1 is the cell itself and the eight cells surrounding it
+            for dx in range(-1 * radius, radius + 1):
+                for dy in range(-1 * radius, radius + 1):
+                    x = self.simulation.normalise_width(self.x + dx)
+                    y = self.simulation.normalise_height(self.y + dy)
+                    neighbourhood_set.add(self.simulation.locations[x, y])
 
         if not include_self_location:
             neighbourhood_set.remove(self)
