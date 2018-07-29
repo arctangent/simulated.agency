@@ -109,15 +109,75 @@ class Geometry(object):
     # Distances
     #
 
-    def nearest(self, thing, candidate_list):
+    def nearest(self, thing, candidates, radius=None):
         '''
-        Returns the nearest of the candidates to thing
+        Returns the nearest of the candidates to thing.
+        It would be very slow to check the distance to all things in
+        the candidate_list, therefore we adopt a strategy of
+        calculating what radius of neighbourhood gives us a reasonable
+        chance of enclosing one of the things in the candidate list,
+        and then widening our search radius if necessary.
+        If radius is specified then this is taken as a fixed search
+        radius and we do not widen our search beyond this.
         '''
 
-        # Shuffle because min always returns first item
-        # in the set of all equally minimal items
-        shuffle(candidate_list)
-        return min(candidate_list, key=lambda x: thing.distance_to(x))
+        # User can pass an agent class or a list of agents
+        if hasattr(candidates, 'objects'):
+            candidate_list = candidates.objects
+        else:
+            candidate_list = candidates
+
+        # Helper function to naively return nearest
+        # from a list by brute force
+        def nearest_brute_force(candidate_list):
+            # If list is empty then return None
+            if not candidate_list:
+                return None
+            # Shuffle because min always returns first item
+            # in the set of all equally minimal items
+            candidate_list = list(candidate_list)
+            shuffle(candidate_list)
+            return min(candidate_list, key=lambda x: thing.distance_to(x))
+        
+        if radius:
+            # Use the supplied radius only
+            neighbours = thing.location.neighbours(radius=radius)
+            # Set intersection to find the ones we want
+            catchment = set(candidate_list) & set(neighbours)
+            return nearest_brute_force(catchment)
+
+        # How sparsely populated are the candidates?
+        density = len(candidate_list) / (self.simulation.width * self.simulation.height)
+
+        # Calculate a reasonable starting search radius.
+        # Note that the area covered scales with r^2 and so
+        # the radius which gives us an expected catchment
+        # of one thing is found by solving r^2 = 1 / density
+        r = int(density ** -0.5)
+
+        # If r is large then we might as well just brute force it
+        if r > min(self.simulation.width, self.simulation.height) / 2:
+            return nearest_brute_force(candidate_list)
+
+        neighbours = thing.location.neighbours(radius=r)
+        # Set intersection to find the ones we want
+        catchment = set(candidate_list) & set(neighbours)
+        
+        # If we got at least one, then figure out the nearest
+        if catchment:
+            return nearest_brute_force(catchment)
+
+        # None found in initial catchment area, so progressively
+        # widen our search until we get something
+        while True:
+            r = r + 1
+            neighbours = thing.location.neighbours(radius=r, border_only=True)
+            # Set intersection to find the ones we want
+            catchment = set(candidate_list) & set(neighbours)
+            if catchment:
+                break
+        return nearest_brute_force(catchment)
+
 
     @cache(maxsize=None)
     def vector_between(self, x1, y1, x2, y2):

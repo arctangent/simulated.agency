@@ -77,8 +77,8 @@ class SheepGrazing(State):
         if agent.energy < 5:
             agent.energy += 1
         # Is there a wolf nearby?
-        nearest_wolf = agent.nearest(Wolf.objects)
-        if agent.distance_to(nearest_wolf) <= 3:
+        nearest_wolf = agent.nearest(Wolf, radius=3)
+        if nearest_wolf:
             agent.replace_state(SheepFleeing, enemy=nearest_wolf)
             return
         # Occasionally move
@@ -105,11 +105,14 @@ class SheepFleeing(State):
             return
         # Flee
         enemy = self.context['enemy']
-        agent.move_away_from_target(enemy)
+        if agent.distance_to(enemy) < 3:
+            agent.move_away_from_target(enemy)
+        else:
+            agent.replace_state(SheepGrazing)
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=20, name='SheepAndWolves')
+simulation = Simulation(cell_size=16, name='SheepAndWolves')
 
 # Use same base model for two types of object
 class Sheep(Mobile): energy = 5

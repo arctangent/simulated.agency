@@ -87,7 +87,7 @@ class Location(object):
     # Definition of neighbours and neighbourhoods
     #
 
-    def neighbours(self, radius=1, include_self=False, include_self_location=False):
+    def neighbours(self, radius=1, border_only=False, include_self=False, include_self_location=False):
         '''
         Returns the neighbours of a given cell.
         This is a aggregate list of the contents of its neighbourhood, less itself.
@@ -96,7 +96,7 @@ class Location(object):
     
         neighbours_list = [
             neighbour
-            for cell in self.neighbourhood(radius=radius, include_self_location=include_self_location)
+            for cell in self.neighbourhood(radius=radius, border_only=border_only, include_self_location=include_self_location)
             for neighbour in cell.contents
         ]
 
@@ -151,7 +151,11 @@ class Location(object):
                     neighbourhood_set.add(self.simulation.locations[x, y])
 
         if not include_self_location:
-            neighbourhood_set.remove(self)
+            try:
+                neighbourhood_set.remove(self)
+            except:
+                # If we're doing border only it won't be in there
+                pass
 
         return neighbourhood_set
 

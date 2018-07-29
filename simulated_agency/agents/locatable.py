@@ -51,7 +51,7 @@ class Locatable(Stateful):
         '''
         return self.simulation.distance_between(self, other)
 
-    def nearest(self, candidate_list):
+    def nearest(self, candidate_list, radius=None):
         ''' Returns the nearest of the candidates
         '''
-        return self.simulation.nearest(self, candidate_list)
+        return self.simulation.nearest(self, candidate_list, radius=radius)
