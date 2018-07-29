@@ -106,10 +106,12 @@ class Location(object):
         return neighbours_list
 
     @cache(maxsize=None)
-    def neighbourhood(self, radius=1, include_self_location=True):
+    def neighbourhood(self, radius=1, border_only=False, include_self_location=True):
         '''
         Returns a set containing the neighbourhood of a given cell.
         This can be calculated in several ways.
+        If border_only is True then only the edge is returned,
+        allowing us to progressively explore a wider radius.
         '''
 
         # Sanity check
@@ -119,20 +121,31 @@ class Location(object):
         # Strategy pattern
         strategy = self.simulation.neighbourhood_strategy
 
-        neighbourhood_set = set()
+        # Helper function to define condtion for inclusion
+        # in the neighbourhood set
+        def include(dx, dy):
+            if strategy == 'von_neumann':
+                # Von Neumann neighbourhood for r==1 is
+                # the cell itself and the four adjacent cells
+                if border_only:
+                    return abs(dx) + abs(dy) == radius
+                else:
+                    return abs(dx) + abs(dy) <= radius
+            elif strategy == 'moore':
+                # Moore neighbourhood for r==1 is
+                # the cell itself and the eight cells surrounding it
+                if border_only:
+                    return (abs(dx) == radius) or (abs(dy) == radius)
+                else:
+                    return True
+                
+        # Build the neighbourhood set
 
-        if strategy == 'von_neumann':
-            # Von Neumann neighbourhood for r==1 is the cell itself and the four adjacent cells
-            for dx in range(-1 * radius, radius + 1):
-                for dy in range(-1 * radius, radius + 1):
-                    if abs(dx) + abs(dy) <= radius:
-                        x = self.simulation.normalise_width(self.x + dx)
-                        y = self.simulation.normalise_height(self.y + dy)
-                        neighbourhood_set.add(self.simulation.locations[x, y])
-        elif strategy == 'moore':
-            # Moore neighbourhood for r==1 is the cell itself and the eight cells surrounding it
-            for dx in range(-1 * radius, radius + 1):
-                for dy in range(-1 * radius, radius + 1):
+        neighbourhood_set = set()
+            
+        for dx in range(-1 * radius, radius + 1):
+            for dy in range(-1 * radius, radius + 1):
+                if include(dx, dy):
                     x = self.simulation.normalise_width(self.x + dx)
                     y = self.simulation.normalise_height(self.y + dy)
                     neighbourhood_set.add(self.simulation.locations[x, y])

@@ -184,3 +184,35 @@ def test_neighbourhood_von_neumann_no_wrap_r3(sim_no_wrap_xy):
                           l[4, 7], l[5, 7], l[6, 7],
                                    l[5, 8] 
     }
+
+
+def test_neighbourhood_von_neumann_border_only(sim_wrap):
+
+    sim_wrap.neighbourhood_strategy = 'von_neumann'
+    l = sim_wrap.locations
+
+    assert l[0, 0].neighbourhood(radius=3, border_only=True) == {
+                                l[0, 7],
+                        l[9, 8],          l[1, 8],
+                l[8, 9],                          l[2, 9],
+        l[7, 0],                                           l[3, 0],
+                l[8, 1],                          l[2, 1],
+                        l[9, 2],         l[1, 2],
+                                l[0, 3]
+    }
+
+
+def test_neighbourhood_moore_border_only(sim_wrap):
+
+    sim_wrap.neighbourhood_strategy = 'moore'
+    l = sim_wrap.locations
+    
+    assert l[0, 0].neighbourhood(radius=3, border_only=True) == {
+        l[7, 7], l[8, 7], l[9, 7], l[0, 7], l[1, 7], l[2, 7], l[3, 7],
+        l[7, 8],                                              l[3, 8],
+        l[7, 9],                                              l[3, 9],
+        l[7, 0],                                              l[3, 0],
+        l[7, 1],                                              l[3, 1],
+        l[7, 2],                                              l[3, 2],
+        l[7, 3], l[8, 3], l[9, 3], l[0, 3], l[1, 3], l[2, 3], l[3, 3]
+    }
