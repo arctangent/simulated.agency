@@ -5,16 +5,6 @@ from random import randint, choice, shuffle
 from time import time
 from tkinter import *
 
-# Linux doesn't have ImageGrab but we can use pyscreenshot instead
-try:
-    from PIL import ImageGrab
-except:
-    try:
-        import pyscreenshot as ImageGrab
-    except:
-        print("Can't do video!")
-
-
 from ..location import Location
 from .drawing import *
 from .executor import *

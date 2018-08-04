@@ -1,4 +1,14 @@
 
+# Linux doesn't have ImageGrab but we can use pyscreenshot instead
+try:
+    from PIL import ImageGrab
+except:
+    try:
+        import pyscreenshot as ImageGrab
+    except:
+        print("Can't do video!")
+
+
 class VideoRecorder(object):
     '''
     Provides object drawing functionality
