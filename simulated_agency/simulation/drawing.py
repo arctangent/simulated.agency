@@ -17,13 +17,6 @@ class Painter(object):
         '''
         A very simple way to draw something
         '''
-        
-        # Localise variables for faster lookup
-        simulation = self.simulation
-        canvas = simulation.canvas
-        create_text = canvas.create_text
-        itemconfig = canvas.itemconfig
-        coords = canvas.coords
 
         # Colour to draw
         fill = fill or thing.colour()
@@ -37,28 +30,24 @@ class Painter(object):
         y = thing.location.y_center
 
         # Establish size to draw
-        size = int(thing.size * glyph_size * simulation.cell_size)
+        size = int(thing.size * glyph_size * self.simulation.cell_size)
         
         # Draw the glyph
+        canvas = simulation.canvas
         if not hasattr(thing, 'canvas_id'):
             # Create the canvas element for the first time
-            thing.canvas_id = create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
+            thing.canvas_id = canvas.create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
         else:
             # Update the canvas element
-            itemconfig(thing.canvas_id, fill=fill, font='Helvetica %s' % size, text=glyph)
+            canvas.itemconfig(thing.canvas_id, fill=fill, font='Helvetica %s' % size, text=glyph)
             # If the thing can move, then we need to update it's canvas coordinates
             if isinstance(thing, Mobile):
-                coords(thing.canvas_id, x, y)
+                canvas.coords(thing.canvas_id, x, y)
 
     def draw_location(self, location):
         '''
         Draw a coloured rectangle
         '''
-
-        # Localise variables for faster lookup
-        canvas = self.simulation.canvas
-        create_rectangle = canvas.create_rectangle
-        itemconfig = canvas.itemconfig
         
         # Determine appropriate fill and border width
         fill = location.colour

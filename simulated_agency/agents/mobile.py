@@ -90,7 +90,6 @@ class Mobile(Locatable):
         down = self.location.down()
         left = self.location.left()
         right = self.location.right()
-        location = self.location
 
         # Distance to/from target
         current_distance = self.distance_to(target)

@@ -25,11 +25,11 @@ def test_simulation_requirement():
 
     # Without simulation unspecified
     with pytest.raises(Exception):
-        dummy = Agent()
+        Agent()
 
     # With simulation specified
     Agent.simulation = Simulation()
-    dummy = Agent()
+    Agent()
 
 
 def test_object_list():
