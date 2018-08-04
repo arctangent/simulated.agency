@@ -33,7 +33,7 @@ class Painter(object):
         size = int(thing.size * glyph_size * self.simulation.cell_size)
         
         # Draw the glyph
-        canvas = simulation.canvas
+        canvas = self.simulation.canvas
         if not hasattr(thing, 'canvas_id'):
             # Create the canvas element for the first time
             thing.canvas_id = canvas.create_text(x, y, fill=fill, font='Helvetica %s' % size, text=glyph)
