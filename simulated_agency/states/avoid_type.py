@@ -12,7 +12,7 @@ class AvoidType(State):
     '''
 
     name = 'AVOID_TYPE'
-    colour = 'green'
+    colour = 10 #'green'
     required_params = ['enemy', 'comfort_zone']
 
     def handle(self):

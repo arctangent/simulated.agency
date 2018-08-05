@@ -12,7 +12,7 @@ class Alive(State):
     '''
 
     name = 'ALIVE'
-    colour = 'white'
+    colour = 15 #'white'
 
     def handle(self):
         '''
@@ -41,7 +41,7 @@ class Dead(State):
     '''
 
     name = 'DEAD'
-    colour = 'black'
+    colour = 0 #'black'
 
     def handle(self):
         '''

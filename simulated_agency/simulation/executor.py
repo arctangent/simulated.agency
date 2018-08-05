@@ -20,8 +20,7 @@ class Executor(object):
         screen.print_at(
             thing.current_state_instance().glyph,
             thing.location.x, thing.location.y,
-            7
-            #thing.colour()
+            thing.colour()
         )
 
     def execute(

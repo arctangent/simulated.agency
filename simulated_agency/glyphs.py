@@ -4,4 +4,5 @@
 
 BLACK_UP_POINTING_TRIANGLE = '▲'    # \u25b2
 BLACK_SQUARE = '■'  # \u25a0
+X = 'X'
   

@@ -102,4 +102,4 @@ class Seeder(object):
             for y in range(y_start, y_start + height):
                 location = locations[x, y]
                 location.capacity = 0
-                location.colour = "yellow"
+                location.colour = 11 #"yellow"

@@ -14,7 +14,7 @@ class State(abc.ABC):
     timer = None
     required_params = []
     # Used for drawing
-    glyph = glyphs.BLACK_SQUARE
+    glyph = glyphs.X
 
     def __init__(self, agent, **kwargs):
         self.agent = agent

@@ -8,7 +8,7 @@ class Wait(State):
     '''
 
     name = 'WAITING'
-    colour = 'cyan'
+    colour = 51 #'cyan'
     required_params = ['timer']
 
     def handle(self):
