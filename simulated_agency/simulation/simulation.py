@@ -32,7 +32,7 @@ class Simulation(object):
 
         # Constants - do not change these directly after simulation instantiation
         self.width = width or 80
-        self.height = height or 80
+        self.height = height or 40
         self.background_colour = 0 #'black'
         
         # Computed properties

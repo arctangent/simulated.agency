@@ -1,6 +1,5 @@
 
-from asciimatics.screen import Screen
-
+import curses
 from random import shuffle
 import sys
 from time import sleep
@@ -16,11 +15,12 @@ class Executor(object):
         # Bind methods
         self.simulation.execute = self.execute
 
-    def draw_agent(self, screen, thing, fill=None):
-        screen.print_at(
+    def draw(self, screen, thing, fill=None):
+        screen.addstr(
+            # Note that y and x are provided "backwards"
+            thing.location.y, thing.location.x,
             thing.current_state_instance().glyph,
-            thing.location.x, thing.location.y,
-            thing.colour()
+            curses.color_pair(thing.colour()) #thing.colour()
         )
 
     def execute(
@@ -48,91 +48,97 @@ class Executor(object):
         simulation = self.simulation
         locations = simulation.locations
         background_colour = simulation.background_colour
-        draw_agent = self.draw_agent
+        draw = self.draw
         name = simulation.name
-        
-        # Get a list of all the objects to be executed/drawn
-        agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
-        if not agent_list:
-            raise Exception('No bound agent classes, so nothing to simulate!')
 
-        # FIXME: How do we do this now?
-        # Do an initial draw
-        #for agent in agent_list:
-        #    draw_agent(agent)
-       
-        # Define our simulation loop
         def loop(screen):
 
-            screen.clear()
+            # Init colours
+            curses.start_color()
+            curses.use_default_colors()
+            for i in range(0, curses.COLORS):
+                curses.init_pair(i, i, -1)
 
-            # Increment simulation age
-            simulation.age += 1
-
-            # Decrement simulation timer
-            if self.timer:
-                self.timer -= 1
-                if self.timer == 0:
-                    print('Timer expired')
-                    sys.exit(0)
-
-            # Get a list of all the objects to be executed/drawn
-            # NOTE: We do this every loop because some agents
-            #       may have been born or died since last turn
+            # Do an initial draw
             agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
-            if not agent_list:
-                raise Exception('No bound agent classes, so nothing to simulate!')
-
-            # Execute user-defined function
-            if before_each_loop:
-                # We capture any emitted variables for use
-                # in the before_each_agent section
-                before_each_loop_vars = before_each_loop()
-
-            # Go through the list of agents and tell each of them to do something
-             
-            if synchronous:
-                
-                # Figure out what the agents' future state will be
-                for agent in agent_list:
-                    # Increment agent age
-                    agent.age += 1
-                    # Execute user-defined function
-                    if before_each_agent:
-                        before_each_agent(agent, before_each_loop_vars)
-                    # Cache the current state
-                    agent.state_before = agent.current_state_instance()
-                    # Tell the agent to act
-                    agent.execute()
-                    # Cache the next agent state
-                    agent.state_after = agent.current_state_instance()
-                    # Restore the current agent state
-                    agent.replace_state_instance(agent.state_before)
-
-                # Update and then draw them
-                for agent in agent_list:
-                    # Update to current state
-                    agent.replace_state_instance(agent.state_after)
-
-            else:
-
-                shuffle(agent_list)
-                for agent in agent_list:
-                    # Increment agent age
-                    agent.age += 1
-                    # Execute user-defined function
-                    if before_each_agent:
-                        before_each_agent(agent, before_each_loop_vars)
-                    # Tell the agent to act
-                    agent.execute()
-
-            # Draw agents
             for agent in agent_list:
-                draw_agent(screen, agent)
+                draw(screen, agent)
 
-            screen.refresh()
-            #sleep(1/20)
-            #loop(screen)
+            # Define our simulation loop
+            while 1:
 
-        # Handle GUI events etc.
-        Screen.wrapper(loop)
+                screen.clear()
+
+                # Increment simulation age
+                simulation.age += 1
+
+                # Decrement simulation timer
+                if self.timer:
+                    self.timer -= 1
+                    if self.timer == 0:
+                        print('Timer expired')
+                        sys.exit(0)
+
+                # Get a list of all the objects to be executed/drawn
+                # NOTE: We do this every loop because some agents
+                #       may have been born or died since last turn
+                agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
+                if not agent_list:
+                    raise Exception('No bound agent classes, so nothing to simulate!')
+
+                # Execute user-defined function
+                if before_each_loop:
+                    # We capture any emitted variables for use
+                    # in the before_each_agent section
+                    before_each_loop_vars = before_each_loop()
+
+                # Go through the list of agents and tell each of them to do something
+                
+                if synchronous:
+                    
+                    # Figure out what the agents' future state will be
+                    for agent in agent_list:
+                        # Increment agent age
+                        agent.age += 1
+                        # Execute user-defined function
+                        if before_each_agent:
+                            before_each_agent(agent, before_each_loop_vars)
+                        # Cache the current state
+                        agent.state_before = agent.current_state_instance()
+                        # Tell the agent to act
+                        agent.execute()
+                        # Cache the next agent state
+                        agent.state_after = agent.current_state_instance()
+                        # Restore the current agent state
+                        agent.replace_state_instance(agent.state_before)
+
+                    # Update and then draw them
+                    for agent in agent_list:
+                        # Update to current state
+                        agent.replace_state_instance(agent.state_after)
+
+                else:
+
+                    shuffle(agent_list)
+                    for agent in agent_list:
+                        # Increment agent age
+                        agent.age += 1
+                        # Execute user-defined function
+                        if before_each_agent:
+                            before_each_agent(agent, before_each_loop_vars)
+                        # Tell the agent to act
+                        agent.execute()
+
+                # Draw agents
+                for agent in agent_list:
+                    if draw_locations:
+                        draw(screen, agent)
+                    elif agent.dirty:
+                        draw(screen, agent)
+                    
+
+                screen.refresh()
+
+        # Get the party started
+        curses.wrapper(loop)
+        
