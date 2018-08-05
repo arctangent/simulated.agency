@@ -18,11 +18,6 @@ class NotOnFire(State):
     colour = 'green'
     glyph = glyphs.BLACK_UP_POINTING_TRIANGLE
 
-    def __init__(self, agent, **kwargs):
-        ''' Initialise '''
-        super().__init__(agent, **kwargs)
-        # Trees start small
-        self.agent.size = 0.4
 
     def handle(self):
         '''
@@ -35,10 +30,7 @@ class NotOnFire(State):
 
         tree = self.agent
 
-        # Grow tree a bit (up to max size)
-        if tree.size <= 0.8:
-            tree.size += 0.01
-        
+       
         # Did lightning strike?
         if randint(1, 100) == 1:
             # Oh no! The tree was struck by lightning.

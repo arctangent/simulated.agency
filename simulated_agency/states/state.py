@@ -15,7 +15,6 @@ class State(abc.ABC):
     required_params = []
     # Used for drawing
     glyph = glyphs.BLACK_SQUARE
-    size = 2
 
     def __init__(self, agent, **kwargs):
         self.agent = agent

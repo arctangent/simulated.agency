@@ -11,8 +11,6 @@ class Stateful(object, metaclass=HasOwnObjectList):
     '''
 
     simulation = None
-    # Used for drawing
-    size = 1
 
     def __init__(self, initial_state=None, **kwargs):
         # Ensure simulation is set
