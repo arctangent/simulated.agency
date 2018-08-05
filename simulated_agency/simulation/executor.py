@@ -89,13 +89,6 @@ class Executor(object):
                 # in the before_each_agent section
                 before_each_loop_vars = before_each_loop()
 
-            if draw_locations:
-                # Draw all the locations which have a colour
-                for location in locations.values():
-                    if location.colour and location.colour != background_colour:
-                        # FIXME: Need drawing code
-                        pass
-
             # Go through the list of agents and tell each of them to do something
              
             if synchronous:
@@ -120,13 +113,6 @@ class Executor(object):
                 for agent in agent_list:
                     # Update to current state
                     agent.replace_state_instance(agent.state_after)
-                    # Draw them
-                    # If we don't draw locations then we can skip
-                    # drawing agents too if we know they haven't changed.
-                    if draw_locations:
-                        draw_agent(screen, agent)
-                    elif agent.dirty:
-                        draw_agent(screen, agent)
 
             else:
 
@@ -139,16 +125,14 @@ class Executor(object):
                         before_each_agent(agent, before_each_loop_vars)
                     # Tell the agent to act
                     agent.execute()
-                    # Draw them
-                    # If we don't draw locations then we can skip
-                    # drawing agents too if we know they haven't changed.
-                    if draw_locations:
-                        draw_agent(screen, agent)
-                    elif agent.dirty:
-                        draw_agent(screen, agent)
+
+            # Draw agents
+            for agent in agent_list:
+                draw_agent(screen, agent)
 
             screen.refresh()
-            loop(screen)
+            #sleep(1/20)
+            #loop(screen)
 
         # Handle GUI events etc.
         Screen.wrapper(loop)
