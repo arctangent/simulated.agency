@@ -53,23 +53,6 @@ class Simulation(object):
         Seeder(self)
         Geometry(self)
         Executor(self)
-        Painter(self)
-
-        # GUI
-        self.window = Tk()
-        self.window.resizable(False, False)
-        # GUI - Canvas
-        self.canvas = Canvas(self.window, width=self.canvas_width, height=self.canvas_height, bg=self.background_colour, bd=0, highlightthickness=0)
-        self.canvas.pack()
-
-        # Sane program termination
-        def _quit(event=None):
-            self.window.destroy()
-            sys.exit()
-        self.window.protocol("WM_DELETE_WINDOW", _quit)
-
-        # Keyboard - Quit
-        self.window.bind('q', _quit)
 
     def init_locations(self):
         Location.simulation = self

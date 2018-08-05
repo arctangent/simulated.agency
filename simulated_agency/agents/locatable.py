@@ -31,7 +31,6 @@ class Locatable(Stateful):
         # this turn, so we proceed carefully
         try:
             self.location.contents.remove(self)
-            self.simulation.canvas.delete(self.canvas_id)
         except:
             pass
         # We need to delete the object last
