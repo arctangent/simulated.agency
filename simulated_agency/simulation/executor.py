@@ -1,6 +1,9 @@
 
+from asciimatics.screen import Screen
+
 from random import shuffle
 import sys
+from time import sleep
 
 
 class Executor(object):
@@ -13,6 +16,13 @@ class Executor(object):
         # Bind methods
         self.simulation.execute = self.execute
 
+    def draw_agent(self, screen, thing, fill=None):
+        screen.print_at(
+            thing.current_state_instance().glyph,
+            thing.location.x, thing.location.y,
+            7
+            #thing.colour()
+        )
 
     def execute(
         self, before_each_loop=None, before_each_agent=None,
@@ -39,29 +49,23 @@ class Executor(object):
         simulation = self.simulation
         locations = simulation.locations
         background_colour = simulation.background_colour
-        draw_location = simulation.draw_location
-        draw_agent = simulation.draw_agent
-        record_video = simulation.record_video
-        save_image = simulation.save_image
+        draw_agent = self.draw_agent
         name = simulation.name
-        canvas = simulation.canvas
         
         # Get a list of all the objects to be executed/drawn
         agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
         if not agent_list:
             raise Exception('No bound agent classes, so nothing to simulate!')
 
-        # Do an initial draw of all locations and all agents
-        if draw_locations:
-            # Draw all the locations which have a colour
-            for location in locations.values():
-                if location.colour and location.colour != background_colour:
-                    draw_location(location)
-        for agent in agent_list:
-            draw_agent(agent)
+        # FIXME: How do we do this now?
+        # Do an initial draw
+        #for agent in agent_list:
+        #    draw_agent(agent)
        
         # Define our simulation loop
-        def loop():
+        def loop(screen):
+
+            screen.clear()
 
             # Increment simulation age
             simulation.age += 1
@@ -70,9 +74,8 @@ class Executor(object):
             if self.timer:
                 self.timer -= 1
                 if self.timer == 0:
-                    simulation.window.destroy()
                     print('Timer expired')
-                    sys.exit()
+                    sys.exit(0)
 
             # Get a list of all the objects to be executed/drawn
             # NOTE: We do this every loop because some agents
@@ -91,7 +94,8 @@ class Executor(object):
                 # Draw all the locations which have a colour
                 for location in locations.values():
                     if location.colour and location.colour != background_colour:
-                        draw_location(location)
+                        # FIXME: Need drawing code
+                        pass
 
             # Go through the list of agents and tell each of them to do something
              
@@ -121,9 +125,9 @@ class Executor(object):
                     # If we don't draw locations then we can skip
                     # drawing agents too if we know they haven't changed.
                     if draw_locations:
-                        draw_agent(agent)
+                        draw_agent(screen, agent)
                     elif agent.dirty:
-                        draw_agent(agent)
+                        draw_agent(screen, agent)
 
             else:
 
@@ -140,19 +144,12 @@ class Executor(object):
                     # If we don't draw locations then we can skip
                     # drawing agents too if we know they haven't changed.
                     if draw_locations:
-                        draw_agent(agent)
+                        draw_agent(screen, agent)
                     elif agent.dirty:
-                        draw_agent(agent)
+                        draw_agent(screen, agent)
 
-            # Save images
-            if record_video:
-                save_image(name)
-
-            # Continue simulation loop
-            canvas.after(5, loop)
-
-        # Execute our simulation loop
-        loop()
+            screen.refresh()
+            loop(screen)
 
         # Handle GUI events etc.
-        self.simulation.window.mainloop()
+        Screen.wrapper(loop)

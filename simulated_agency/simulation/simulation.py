@@ -6,7 +6,6 @@ from time import time
 from tkinter import *
 
 from ..location import Location
-from .drawing import *
 from .executor import *
 from .geometry import *
 from .seeder import *
