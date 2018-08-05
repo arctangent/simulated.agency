@@ -28,14 +28,6 @@ class Location(object):
 
         # Contents
         self.contents = []
-        
-        # Pixel locations
-        self.x_left = self.x * self.simulation.cell_size
-        self.x_right = (self.x + 1) * self.simulation.cell_size
-        self.y_top = self.y * self.simulation.cell_size
-        self.y_bottom = (self.y + 1) * self.simulation.cell_size
-        self.x_center = self.simulation.cell_size/2 + self.x_left
-        self.y_center = self.simulation.cell_size/2 + self.y_top
 
         # Memoised results
         self._up = self._down = self._left = self._right = None

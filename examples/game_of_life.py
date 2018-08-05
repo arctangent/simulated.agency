@@ -65,7 +65,7 @@ class Dead(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=16, name='GameOfLife')
+simulation = Simulation(name='GameOfLife')
 
 # Bind models to simulation
 simulation.bind(Cell)

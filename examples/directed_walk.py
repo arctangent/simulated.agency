@@ -7,7 +7,7 @@ from simulated_agency.states import *
  
 
 # Initialise simulation
-simulation = Simulation(cell_size=10, name='DirectedWalk')
+simulation = Simulation(name='DirectedWalk')
 
 # Create custom version of base agent model
 class Walker(Mobile):

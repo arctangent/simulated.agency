@@ -20,7 +20,7 @@ class Simulation(object):
     # Strategy pattern for neighbour location
     neighbourhood_strategy = 'von_neumann'
     
-    def __init__(self, width=None, height=None, cell_size=None, name=None):
+    def __init__(self, width=None, height=None, name=None):
 
         # Name of this simulation - used for file output
         self.name = name or 'simulation'
@@ -32,12 +32,11 @@ class Simulation(object):
         self.bound_agent_classes = []
 
         # Constants - do not change these directly after simulation instantiation
-        self.canvas_width = width or 800
-        self.canvas_height = height or 800
+        self.width = width or 40
+        self.height = height or 40
         self.background_colour = 'black'
         
         # Computed properties
-        self.set_cell_size(cell_size)
         self.init_locations()
 
         # Preferences
@@ -71,15 +70,6 @@ class Simulation(object):
 
         # Keyboard - Quit
         self.window.bind('q', _quit)
-
-    def set_cell_size(self, cell_size):
-        '''
-        Call this method instead of changing cell_size directly
-        '''
-        cell_size = cell_size or 8
-        self.cell_size = cell_size
-        self.width = int(self.canvas_width / self.cell_size)
-        self.height = int(self.canvas_height / self.cell_size)
 
     def init_locations(self):
         Location.simulation = self

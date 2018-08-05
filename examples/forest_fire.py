@@ -108,7 +108,7 @@ class OnFire(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=40, name='ForestFire')
+simulation = Simulation(name='ForestFire')
 
 # Bind models to simulation
 simulation.bind(Tree)

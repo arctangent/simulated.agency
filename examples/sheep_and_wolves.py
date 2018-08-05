@@ -112,7 +112,7 @@ class SheepFleeing(State):
 
 
 # Initialise simulation
-simulation = Simulation(cell_size=16, name='SheepAndWolves')
+simulation = Simulation(name='SheepAndWolves')
 
 # Use same base model for two types of object
 class Sheep(Mobile): energy = 5
