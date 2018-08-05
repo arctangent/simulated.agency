@@ -10,7 +10,6 @@ from .drawing import *
 from .executor import *
 from .geometry import *
 from .seeder import *
-from .video import *
 
 
 class Simulation(object):
@@ -56,7 +55,6 @@ class Simulation(object):
         Geometry(self)
         Executor(self)
         Painter(self)
-        VideoRecorder(self)
 
         # GUI
         self.window = Tk()
