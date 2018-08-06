@@ -3,7 +3,6 @@ import sys
 
 from random import randint, choice, shuffle
 from time import time
-from tkinter import *
 
 from ..location import Location
 from .executor import *
