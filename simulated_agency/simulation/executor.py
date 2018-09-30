@@ -36,6 +36,9 @@ class Executor(object):
         # Finally, bind to self
         self.grid = grid
 
+    def draw(self,agent):
+        self.grid.set_cell(agent.location.x, agent.location.y, agent.colour())
+
     def execute(
         self, before_each_loop=None, before_each_agent=None,
         synchronous=False, timer=None, draw_locations=True
@@ -61,109 +64,84 @@ class Executor(object):
         simulation = self.simulation
         locations = simulation.locations
         name = simulation.name
+        draw = self.draw
 
+        # Initial screen draw
+        self.grid.clear_all_cells()
+        agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
+        for agent in agent_list:
+            draw(agent)
+        self.grid.draw()
+
+        # Define our simulation loop
         def loop(dt):
-            how_many = 10
-            w = self.grid.w
-            h = self.grid.h
-            # Init colours
+
             self.grid.clear_all_cells()
-            # Set the colours of some random cells in the grid
-            for x in range(how_many):
-                x = int(w * random())
-                y = int(h * random())
-                r = int(255 * random())
-                g = int(255 * random())
-                b = int(255 * random())
-                c = (r, g, b)
-                self.grid.set_cell(x, y, c)
-            # Draw the grid
-            self.grid.draw()
 
-        
+            # Increment simulation age
+            simulation.age += 1
 
-            '''
-            # Do an initial draw
+            # Decrement simulation timer
+            if self.timer:
+                self.timer -= 1
+                if self.timer == 0:
+                    print('Timer expired')
+                    sys.exit(0)
+
+            # Get a list of all the objects to be executed/drawn
+            # NOTE: We do this every loop because some agents
+            #       may have been born or died since last turn
             agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
-            for agent in agent_list:
-                draw(screen, agent)
+            if not agent_list:
+                raise Exception('No bound agent classes, so nothing to simulate!')
 
-            # Define our simulation loop
-            while 1:
+            # Execute user-defined function
+            if before_each_loop:
+                # We capture any emitted variables for use
+                # in the before_each_agent section
+                before_each_loop_vars = before_each_loop()
 
-                screen.clear()
-
-                # Increment simulation age
-                simulation.age += 1
-
-                # Decrement simulation timer
-                if self.timer:
-                    self.timer -= 1
-                    if self.timer == 0:
-                        print('Timer expired')
-                        sys.exit(0)
-
-                # Get a list of all the objects to be executed/drawn
-                # NOTE: We do this every loop because some agents
-                #       may have been born or died since last turn
-                agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
-                if not agent_list:
-                    raise Exception('No bound agent classes, so nothing to simulate!')
-
-                # Execute user-defined function
-                if before_each_loop:
-                    # We capture any emitted variables for use
-                    # in the before_each_agent section
-                    before_each_loop_vars = before_each_loop()
-
-                # Go through the list of agents and tell each of them to do something
+            # Go through the list of agents and tell each of them to do something
+            
+            if synchronous:
                 
-                if synchronous:
-                    
-                    # Figure out what the agents' future state will be
-                    for agent in agent_list:
-                        # Increment agent age
-                        agent.age += 1
-                        # Execute user-defined function
-                        if before_each_agent:
-                            before_each_agent(agent, before_each_loop_vars)
-                        # Cache the current state
-                        agent.state_before = agent.current_state_instance()
-                        # Tell the agent to act
-                        agent.execute()
-                        # Cache the next agent state
-                        agent.state_after = agent.current_state_instance()
-                        # Restore the current agent state
-                        agent.replace_state_instance(agent.state_before)
-
-                    # Update and then draw them
-                    for agent in agent_list:
-                        # Update to current state
-                        agent.replace_state_instance(agent.state_after)
-
-                else:
-
-                    shuffle(agent_list)
-                    for agent in agent_list:
-                        # Increment agent age
-                        agent.age += 1
-                        # Execute user-defined function
-                        if before_each_agent:
-                            before_each_agent(agent, before_each_loop_vars)
-                        # Tell the agent to act
-                        agent.execute()
-
-                # Draw agents
+                # Figure out what the agents' future state will be
                 for agent in agent_list:
-                    if draw_locations:
-                        draw(screen, agent)
-                    elif agent.dirty:
-                        draw(screen, agent)
-                    
+                    # Increment agent age
+                    agent.age += 1
+                    # Execute user-defined function
+                    if before_each_agent:
+                        before_each_agent(agent, before_each_loop_vars)
+                    # Cache the current state
+                    agent.state_before = agent.current_state_instance()
+                    # Tell the agent to act
+                    agent.execute()
+                    # Cache the next agent state
+                    agent.state_after = agent.current_state_instance()
+                    # Restore the current agent state
+                    agent.replace_state_instance(agent.state_before)
 
-                screen.refresh()
+                # Update and then draw them
+                for agent in agent_list:
+                    # Update to current state
+                    agent.replace_state_instance(agent.state_after)
 
-            '''
+            else:
+
+                shuffle(agent_list)
+                for agent in agent_list:
+                    # Increment agent age
+                    agent.age += 1
+                    # Execute user-defined function
+                    if before_each_agent:
+                        before_each_agent(agent, before_each_loop_vars)
+                    # Tell the agent to act
+                    agent.execute()
+
+            # Draw agents
+            for agent in agent_list:
+                draw(agent)
+            self.grid.draw()
         
         pyglet.clock.schedule(loop)
         pyglet.app.run()

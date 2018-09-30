@@ -15,7 +15,7 @@ class NotOnFire(State):
     '''
 
     name = 'NOT_ON_FIRE'
-    colour = 10 #'green'
+    colour = (0, 255, 0)
     glyph = glyphs.BLACK_UP_POINTING_TRIANGLE
 
 
@@ -57,7 +57,7 @@ class OnFire(State):
     '''
 
     name = 'ON_FIRE'
-    colour = 9 #'red'
+    colour = (255, 0, 0)
     glyph = glyphs.BLACK_UP_POINTING_TRIANGLE
     required_params = ['timer']
 
@@ -75,17 +75,17 @@ class OnFire(State):
         # It always takes 2 turns of yellow burning
         # before we get to orange burning
         if self.age <= 2:
-            self.colour = 11 #"yellow"
+            self.colour = (255, 255, 0) #"yellow"
             return
 
         # It always takes 2 turns of orange buring
         # before we get to red burning
         if self.age <= 4:
-            self.colour = 172 #"orange"
+            self.colour = (255, 153, 0) #"orange"
             return
 
         # Red burning trees are able to spread fire
-        self.colour = 9 #"red"
+        self.colour = (255, 0, 0)
 
         # See if the fire spreads to neighbouring trees that are not on fire already
         for target in [t for t in tree.location.neighbours() if not t.is_in_state(OnFire)]:

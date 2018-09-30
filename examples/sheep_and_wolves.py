@@ -14,7 +14,7 @@ class WolfChasingTarget(State):
     '''
 
     name = "WOLF_CHASING_TARGET"
-    colour = 20 #'blue'
+    colour = (0, 0, 255)
     required_params = ['target']
 
     def handle(self):
@@ -44,7 +44,7 @@ class WolfSelectingTarget(State):
     '''
 
     name = 'WOLF_SELECTING_TARGET'
-    colour = 20 #'blue'
+    colour = (0, 0, 255)
 
     def handle(self):
         super().handle()
@@ -68,7 +68,7 @@ class SheepGrazing(State):
     '''
     
     name = 'SHEEP_GRAZING'
-    colour = 10 #'green'
+    colour = (0, 255, 0)
 
     def handle(self):
         super().handle()
@@ -92,7 +92,7 @@ class SheepFleeing(State):
     '''
 
     name = 'SHEEP_FLEEING'
-    colour = 10 #'green'
+    colour = (0, 255, 0)
     required_params = ['enemy']
 
     def handle(self):

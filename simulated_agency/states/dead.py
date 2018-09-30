@@ -8,7 +8,7 @@ class Dead(State):
     '''
 
     name = 'DEAD'
-    colour = 9 #'red'
+    colour = (255, 0, 0)
     glyph = 'X'
 
     def handle(self):

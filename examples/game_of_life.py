@@ -12,7 +12,7 @@ class Alive(State):
     '''
 
     name = 'ALIVE'
-    colour = 15 #'white'
+    colour = (255, 255, 255)
 
     def handle(self):
         '''
@@ -24,15 +24,10 @@ class Alive(State):
 
         agent = self.agent
 
-        # Never needs to be drawn again after the
-        # initial screen draw unless it changes state
-        agent.dirty = False
-
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
         
         if neighbour_count not in [2, 3]:
             agent.replace_state(Dead)
-            agent.dirty = True
 
 
 class Dead(State):
@@ -41,7 +36,7 @@ class Dead(State):
     '''
 
     name = 'DEAD'
-    colour = 0 #'black'
+    colour = (0, 0, 0)
 
     def handle(self):
         '''
@@ -52,15 +47,10 @@ class Dead(State):
 
         agent = self.agent
 
-        # Never needs to be drawn again after the
-        # initial screen draw unless it changes state
-        agent.dirty = False
-
         neighbour_count = len([x for x in agent.location.neighbours() if x.is_in_state(Alive)])
         
         if neighbour_count == 3:
             agent.replace_state(Alive)
-            agent.dirty = True
 
 
 

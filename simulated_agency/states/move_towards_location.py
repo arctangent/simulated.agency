@@ -8,7 +8,7 @@ class MoveTowardsLocation(State):
     '''  
 
     name = 'MOVING_TOWARDS_LOCATION'
-    colour = 9 #'red'
+    colour = (255, 0, 0)
     required_params = ['location']
 
     def handle(self):

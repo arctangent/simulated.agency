@@ -8,7 +8,7 @@ class MoveTowardsTarget(State):
     '''
     
     name = 'MOVING_TOWARDS_TARGET'
-    colour = 9 #'red'
+    colour = (255, 0, 0)
     required_params = ['target']
 
     def handle(self):

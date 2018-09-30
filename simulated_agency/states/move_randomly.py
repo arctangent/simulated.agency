@@ -8,7 +8,7 @@ class MoveRandomly(State):
     ''' 
 
     name = 'MOVING_RANDOMLY'
-    colour = 10 #'green'
+    colour = (0, 255, 0)
 
     def handle(self):
         super().handle()
