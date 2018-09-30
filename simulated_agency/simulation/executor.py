@@ -1,9 +1,11 @@
 
 import curses
-from random import shuffle
+from random import shuffle, random
 import sys
 from time import sleep
 
+import pyglet
+from .pyglet_grid import Grid
 
 class Executor(object):
     '''
@@ -14,14 +16,25 @@ class Executor(object):
         self.simulation = simulation
         # Bind methods
         self.simulation.execute = self.execute
+        # Init Grid
+        self.init_grid(simulation)
 
-    def draw(self, screen, thing, fill=None):
-        screen.addstr(
-            # Note that y and x are provided "backwards"
-            thing.location.y, thing.location.x,
-            thing.current_state_instance().glyph,
-            curses.color_pair(thing.colour()) #thing.colour()
-        )
+    def init_grid(self, simulation):
+        # Initialise the Grid
+        grid = Grid()
+        grid.window_width = 800
+        grid.window_height = 800
+        grid.background = simulation.background_colour
+        grid.init_window()
+        # 2. Set up the cell size and border
+        grid.cell_height = int(grid.window_height / simulation.height)
+        grid.cell_width = int(grid.window_width / simulation.width)
+        grid.cell_border = 0
+        grid.init_grid()
+        # 3. Initialise the vertex list
+        grid.init_vertex_list()
+        # Finally, bind to self
+        self.grid = grid
 
     def execute(
         self, before_each_loop=None, before_each_agent=None,
@@ -47,18 +60,29 @@ class Executor(object):
         # do a lot of this inside the simulation loop
         simulation = self.simulation
         locations = simulation.locations
-        background_colour = simulation.background_colour
-        draw = self.draw
         name = simulation.name
 
-        def loop(screen):
-
+        def loop(dt):
+            how_many = 10
+            w = self.grid.w
+            h = self.grid.h
             # Init colours
-            curses.start_color()
-            curses.use_default_colors()
-            for i in range(0, curses.COLORS):
-                curses.init_pair(i, i, -1)
+            self.grid.clear_all_cells()
+            # Set the colours of some random cells in the grid
+            for x in range(how_many):
+                x = int(w * random())
+                y = int(h * random())
+                r = int(255 * random())
+                g = int(255 * random())
+                b = int(255 * random())
+                c = (r, g, b)
+                self.grid.set_cell(x, y, c)
+            # Draw the grid
+            self.grid.draw()
 
+        
+
+            '''
             # Do an initial draw
             agent_list = [a for agent_class in simulation.bound_agent_classes for a in agent_class.objects]
             for agent in agent_list:
@@ -139,6 +163,7 @@ class Executor(object):
 
                 screen.refresh()
 
-        # Get the party started
-        curses.wrapper(loop)
+            '''
         
+        pyglet.clock.schedule(loop)
+        pyglet.app.run()
