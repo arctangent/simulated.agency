@@ -82,7 +82,7 @@ class SheepGrazing(State):
             agent.replace_state(SheepFleeing, enemy=nearest_wolf)
             return
         # Occasionally move
-        if randint(1, 20) == 1:
+        if randint(1, 10) <= 3:
             self.agent.move_randomly()
 
 

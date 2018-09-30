@@ -36,8 +36,11 @@ class Executor(object):
         # Finally, bind to self
         self.grid = grid
 
-    def draw(self,agent):
+    def draw(self, agent):
         self.grid.set_cell(agent.location.x, agent.location.y, agent.colour())
+
+    def undraw(self, agent):
+        self.grid.unset_cell(agent.location.x, agent.location.y)
 
     def execute(
         self, before_each_loop=None, before_each_agent=None,
@@ -65,6 +68,7 @@ class Executor(object):
         locations = simulation.locations
         name = simulation.name
         draw = self.draw
+        undraw = self.undraw
 
         # Initial screen draw
         self.grid.clear_all_cells()
@@ -75,8 +79,6 @@ class Executor(object):
 
         # Define our simulation loop
         def loop(dt):
-
-            self.grid.clear_all_cells()
 
             # Increment simulation age
             simulation.age += 1
@@ -107,6 +109,7 @@ class Executor(object):
                 
                 # Figure out what the agents' future state will be
                 for agent in agent_list:
+                    undraw(agent)
                     # Increment agent age
                     agent.age += 1
                     # Execute user-defined function
@@ -121,15 +124,16 @@ class Executor(object):
                     # Restore the current agent state
                     agent.replace_state_instance(agent.state_before)
 
-                # Update and then draw them
+                # Update to current state
                 for agent in agent_list:
-                    # Update to current state
                     agent.replace_state_instance(agent.state_after)
+                    draw(agent)
 
             else:
 
                 shuffle(agent_list)
                 for agent in agent_list:
+                    undraw(agent)
                     # Increment agent age
                     agent.age += 1
                     # Execute user-defined function
@@ -137,10 +141,10 @@ class Executor(object):
                         before_each_agent(agent, before_each_loop_vars)
                     # Tell the agent to act
                     agent.execute()
+                    draw(agent)
 
-            # Draw agents
-            for agent in agent_list:
-                draw(agent)
+
+            # Update the grid
             self.grid.draw()
         
         pyglet.clock.schedule(loop)
